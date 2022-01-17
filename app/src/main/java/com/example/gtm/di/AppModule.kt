@@ -1,9 +1,11 @@
 package com.example.gtm.di
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.gtm.BuildConfig
 import com.example.gtm.data.remote.auth.AuthService
+import com.example.gtm.utils.animations.UiAnimations
 import com.example.gtm.utils.remote.Urls
 import com.example.gtm.utils.token.AuthInterceptor
 import com.example.gtm.utils.token.SessionManager
@@ -12,6 +14,7 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
@@ -68,6 +71,12 @@ object AppModule {
     @Singleton
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences("GTM", Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUiAnimations(@ActivityContext activity: Activity):UiAnimations {
+        return UiAnimations(activity)
     }
 
     @Provides
