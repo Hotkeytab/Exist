@@ -10,14 +10,12 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class AuthActivity : AppCompatActivity() {
 
-    private val uiAnimations = UiAnimations(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
-        //Hide Nav Bar
-        uiAnimations.hideNavBar()
+
 
     }
 }

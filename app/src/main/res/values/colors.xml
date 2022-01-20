@@ -11,5 +11,8 @@
     <color name="purpleLogin">#3A67D7</color>
     <color name="clear_grey">#dcdcdc</color>
     <color name="red">#FF0000</color>
+    <color name="yellow">#FFE60D</color>
+    <color name="blue">#1C33B1</color>
+
 
 </resources>

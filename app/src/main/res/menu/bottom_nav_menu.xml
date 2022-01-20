@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+
+    <item
+        android:id="@+id/task"
+        android:icon="@drawable/outline_receipt_long_black_24"
+        android:title="Today's Task"/>
+
+    <item
+        android:id="@+id/calendar"
+        android:icon="@drawable/outline_calendar_month_24"
+        android:title="Planning"/>
+
     <item
         android:id="@+id/map"
         android:icon="@drawable/outline_public_24"

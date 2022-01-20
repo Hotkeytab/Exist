@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+    <item
+        android:id="@+id/task"
+        android:icon="@drawable/outline_receipt_long_24"
+        android:title="Today's Task"/>
+
+    <item
+        android:id="@+id/nav_calendar"
+        android:icon="@drawable/outline_calendar_month_24"
+        android:title="Planning"/>
+
+    <item
+        android:id="@+id/nav_map"
+        android:icon="@drawable/outline_public_black_24"
+        android:title="Go to Map"/>
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/outline_person_24"
+        android:title="Edit Profile"/>
+
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/outline_logout_24"
+        android:title="Logout"/>
+
+</menu>

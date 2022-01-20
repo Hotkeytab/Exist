@@ -7,13 +7,20 @@ import android.os.Handler
 import android.os.Looper
 import com.example.gtm.R
 import com.example.gtm.ui.auth.AuthActivity
+import com.example.gtm.utils.animations.UiAnimations
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SplashScreen : AppCompatActivity() {
+
+    private val uiAnimations = UiAnimations(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splashscreen)
+
+        //Hide Nav Bar
+        uiAnimations.hideNavBar()
 
         //To Login Activity
         toLogin()

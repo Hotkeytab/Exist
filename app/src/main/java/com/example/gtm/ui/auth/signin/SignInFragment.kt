@@ -16,6 +16,7 @@ import com.example.gtm.R
 import com.example.gtm.data.entities.remote.SignInPost
 import com.example.gtm.data.entities.response.SignInResponse
 import com.example.gtm.databinding.FragmentSignInBinding
+import com.example.gtm.ui.drawer.DrawerActivity
 import com.example.gtm.ui.home.HomeActivity
 import com.example.gtm.utils.extensions.trimStringEditText
 import com.example.gtm.utils.resources.Resource
@@ -58,12 +59,18 @@ class SignInFragment : Fragment() {
 
 
         binding.signinButton.setOnClickListener {
-            signIn()
+            signInOffline()
         }
 
         return binding.root
     }
 
+
+    private fun signInOffline() {
+        val intent = Intent(activity, DrawerActivity::class.java)
+        activity?.startActivity(intent)
+        activity?.finish()
+    }
 
     @DelicateCoroutinesApi
     private fun signIn() {
@@ -145,7 +152,7 @@ class SignInFragment : Fragment() {
             R.string.app_name.toString(),
             Context.MODE_PRIVATE
         )
-        Log.i("shared",R.string.app_name.toString())
+        Log.i("shared", R.string.app_name.toString())
         val username = sharedPref.getString("username", "")
         val password = sharedPref.getString("password", "")
 
