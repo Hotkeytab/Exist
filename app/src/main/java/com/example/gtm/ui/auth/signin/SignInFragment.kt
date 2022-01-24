@@ -20,6 +20,7 @@ import com.example.gtm.ui.drawer.DrawerActivity
 import com.example.gtm.ui.home.HomeActivity
 import com.example.gtm.utils.extensions.trimStringEditText
 import com.example.gtm.utils.resources.Resource
+import com.example.gtm.utils.token.SessionManager
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -35,6 +36,7 @@ class SignInFragment : Fragment() {
     private val viewModel: SignInFragmentViewModel by viewModels()
     lateinit var responseData: Resource<SignInResponse>
     lateinit var sharedPref: SharedPreferences
+    private lateinit var sessionManager: SessionManager
 
 
     override fun onCreateView(
@@ -42,6 +44,8 @@ class SignInFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSignInBinding.inflate(inflater, container, false)
+
+        sessionManager = SessionManager(requireContext())
 
         initSignIn()
 
@@ -59,7 +63,8 @@ class SignInFragment : Fragment() {
 
 
         binding.signinButton.setOnClickListener {
-            signInOffline()
+            // signInOffline()
+            signIn()
         }
 
         return binding.root
@@ -96,7 +101,8 @@ class SignInFragment : Fragment() {
                 responseData = viewModel.login(sinInObject)
                 if (responseData.responseCode == 200) {
                     rememberMe()
-                    val intent = Intent(activity, HomeActivity::class.java)
+                     sessionManager.saveToken(responseData.data!!.token)
+                    val intent = Intent(activity, DrawerActivity::class.java)
                     activity?.startActivity(intent)
                     activity?.finish()
                 } else {
@@ -152,7 +158,7 @@ class SignInFragment : Fragment() {
             R.string.app_name.toString(),
             Context.MODE_PRIVATE
         )
-        Log.i("shared", R.string.app_name.toString())
+
         val username = sharedPref.getString("username", "")
         val password = sharedPref.getString("password", "")
 

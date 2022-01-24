@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.example.gtm.BuildConfig
 import com.example.gtm.data.remote.auth.AuthService
+import com.example.gtm.data.remote.user.UserService
 import com.example.gtm.utils.animations.UiAnimations
 import com.example.gtm.utils.remote.Urls
 import com.example.gtm.utils.token.AuthInterceptor
@@ -18,6 +19,7 @@ import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -31,10 +33,13 @@ object AppModule {
     @Singleton
     @Provides
     fun provideOkHttpClient(@ApplicationContext context: Context) = if (BuildConfig.DEBUG) {
-        val loggingInterceptor = AuthInterceptor(context)
+        val authInterceptor = AuthInterceptor(context)
+        val logIntercept = HttpLoggingInterceptor()
+        logIntercept.setLevel(HttpLoggingInterceptor.Level.BODY)
 
         OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
+            .addInterceptor(authInterceptor)
+            .addInterceptor(logIntercept)
             .build()
     } else {
         OkHttpClient
@@ -81,4 +86,8 @@ object AppModule {
 
     @Provides
     fun provideAuthService(retrofit: Retrofit): AuthService = retrofit.create(AuthService::class.java)
+
+
+    @Provides
+    fun provideUserService(retrofit: Retrofit): UserService = retrofit.create(UserService::class.java)
 }

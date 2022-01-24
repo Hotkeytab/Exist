@@ -1,6 +1,7 @@
 package com.example.gtm.ui.home.mytask
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +24,7 @@ class TaskFragment : Fragment(),TaskAdapter.TaskItemListener {
     ): View {
         binding = FragmentTaskBinding.inflate(inflater,container,false)
 
+        Log.i("Called","Called")
         addStatTasks()
         setupRecycleViewPredictionDetail()
 
@@ -48,6 +50,7 @@ class TaskFragment : Fragment(),TaskAdapter.TaskItemListener {
 
     private fun setupRecycleViewPredictionDetail()
     {
+
         adapterTask = TaskAdapter(this)
         binding.taskRecycleview.layoutManager = LinearLayoutManager(requireContext())
         binding.taskRecycleview.layoutManager = LinearLayoutManager(

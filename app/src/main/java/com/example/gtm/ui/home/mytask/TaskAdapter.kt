@@ -1,5 +1,7 @@
 package com.example.gtm.ui.home.mytask
 
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,15 +63,13 @@ class TaskViewHolder(
 
         when (item.type) {
             1 -> {
-                itemBinding.type.setImageResource(R.drawable.round_warning_black_24)
-                itemBinding.type.setColorFilter(R.color.yellow)
+                itemBinding.type.setImageResource(R.drawable.yellow_warning)
             }
             2 -> {
-                itemBinding.type.setImageResource(R.drawable.round_error_black_24)
-                itemBinding.type.setColorFilter(R.color.red)
+                itemBinding.type.setImageResource(R.drawable.final_red_ic)
             }
             3 -> {
-                itemBinding.type.setColorFilter(R.color.blue)
+                itemBinding.type.setImageResource(R.drawable.ic_blue_ex)
             }
         }
 

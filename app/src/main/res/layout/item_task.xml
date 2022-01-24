@@ -71,8 +71,18 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
+
+                <ImageView
+                    android:id="@+id/show_map"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:src="@drawable/round_travel_explore_24"
+                    android:tint="@color/purpleLogin"
+                    android:layout_gravity="center"/>
+
                 <ImageView
                     android:id="@+id/type"
+                    android:visibility="gone"
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="@dimen/_25sdp"
                     android:layout_gravity="center"

@@ -2,6 +2,7 @@ package com.example.gtm.utils.token
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import com.example.gtm.R
 
 class SessionManager(context: Context) {
