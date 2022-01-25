@@ -137,7 +137,7 @@ class SignInFragment : Fragment() {
                 context?.getSharedPreferences(R.string.app_name.toString(), Context.MODE_PRIVATE)!!
             with(sharedPref.edit()) {
                 this?.putString("username", binding.username.editText!!.trimStringEditText())
-                this?.putString("password", binding.password.editText!!.trimStringEditText())
+                this?.putString("passwordNC", binding.password.editText!!.trimStringEditText())
             }?.commit()
 
         } else {
@@ -160,7 +160,7 @@ class SignInFragment : Fragment() {
         )
 
         val username = sharedPref.getString("username", "")
-        val password = sharedPref.getString("password", "")
+        val password = sharedPref.getString("passwordNC", "")
 
         if (username != "" && password != "") {
             binding.username.editText?.setText(username)

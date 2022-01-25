@@ -103,6 +103,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:11.8.0'
 
 
-    implementation 'org.naishadhparmar.zcustomcalendar:zcustomcalendar:1.0.1'
+    //toJson
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.+'
 
 }

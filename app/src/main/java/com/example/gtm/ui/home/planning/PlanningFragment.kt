@@ -7,13 +7,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.gtm.R
 import com.example.gtm.databinding.FragmentPlanningBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_planning.*
-import org.naishadhparmar.zcustomcalendar.Property
-import java.util.*
-import kotlin.collections.HashMap
 
 
 @AndroidEntryPoint

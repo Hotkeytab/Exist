@@ -41,6 +41,20 @@
             android:textColor="@color/black"/>
 
             <TextView
+                android:id="@+id/lastname_only"
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:textColor="@color/black"
+                android:visibility="invisible"/>
+
+            <TextView
+                android:id="@+id/firstname_only"
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:textColor="@color/black"
+                android:visibility="invisible"/>
+
+            <TextView
                 android:id="@+id/email_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

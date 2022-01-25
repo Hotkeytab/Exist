@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import com.example.gtm.R
+import com.example.gtm.data.entities.ui.User
 
 class SessionManager(context: Context) {
     private var prefs: SharedPreferences =
@@ -28,6 +29,25 @@ class SessionManager(context: Context) {
      */
     fun fetchRefreshToken(): String? {
         return prefs.getString(Authorization_Refresh, null)
+    }
+
+
+    /**
+     * Function to fetch user
+     */
+    fun fetchUser(): User {
+
+
+        val id = prefs.getInt("id", 0)
+        val roleId = prefs.getInt("roleId", 0)
+        val firstname = prefs.getString("firstname", "")
+        val lastname = prefs.getString("lastname", "")
+        val email = prefs.getString("email", "")
+        val password = prefs.getString("password", "")
+        val phone = prefs.getString("phone", "")
+        val enabled = prefs.getString("enabled", "")
+        val gender = prefs.getString("gender", "")
+        return User(id,firstname!!,lastname!!,email!!,password!!,phone!!,enabled!!,gender!!,roleId)
     }
 
 }
