@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import com.example.gtm.BuildConfig
 import com.example.gtm.data.remote.auth.AuthService
 import com.example.gtm.data.remote.user.UserService
+import com.example.gtm.data.remote.visite.VisiteService
 import com.example.gtm.utils.animations.UiAnimations
 import com.example.gtm.utils.remote.Urls
 import com.example.gtm.utils.token.AuthInterceptor
@@ -80,14 +81,21 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUiAnimations(@ActivityContext activity: Activity):UiAnimations {
+    fun provideUiAnimations(@ActivityContext activity: Activity): UiAnimations {
         return UiAnimations(activity)
     }
 
     @Provides
-    fun provideAuthService(retrofit: Retrofit): AuthService = retrofit.create(AuthService::class.java)
+    fun provideAuthService(retrofit: Retrofit): AuthService =
+        retrofit.create(AuthService::class.java)
 
 
     @Provides
-    fun provideUserService(retrofit: Retrofit): UserService = retrofit.create(UserService::class.java)
+    fun provideUserService(retrofit: Retrofit): UserService =
+        retrofit.create(UserService::class.java)
+
+
+    @Provides
+    fun provideVisiteService(retrofit: Retrofit): VisiteService =
+        retrofit.create(VisiteService::class.java)
 }

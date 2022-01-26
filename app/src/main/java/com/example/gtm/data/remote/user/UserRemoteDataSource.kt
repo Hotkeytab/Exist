@@ -13,6 +13,6 @@ class UserRemoteDataSource @Inject constructor(
 
     suspend fun getUser(username: String) = getResult { userService.getUser(username) }
 
-    suspend fun changeProfile(file: RequestBody?, user: RequestBody) =
+    suspend fun changeProfile(file: MultipartBody.Part?, user: RequestBody) =
         getResult { userService.changeProfile(file, user) }
 }

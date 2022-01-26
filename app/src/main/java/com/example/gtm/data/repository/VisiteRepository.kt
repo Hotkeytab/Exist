@@ -5,15 +5,15 @@ import com.example.gtm.data.entities.ui.User
 import com.example.gtm.data.remote.BaseRemoteDataSource
 import com.example.gtm.data.remote.auth.AuthRemoteDataSource
 import com.example.gtm.data.remote.user.UserRemoteDataSource
+import com.example.gtm.data.remote.visite.VisiteRemoteDataSource
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
 
-class UserRepository @Inject constructor(
-    private val userDataSource: UserRemoteDataSource
+class VisiteRepository @Inject constructor(
+    private val visiteDataSource: VisiteRemoteDataSource
 ) {
 
-    suspend fun getUser(username: String) = userDataSource.getUser(username)
-
-    suspend fun changeProfile(file: MultipartBody.Part?, user: RequestBody)= userDataSource.changeProfile(file,user)
+    suspend fun getVisites(user_id: String, date_begin: String, date_end: String) =
+        visiteDataSource.getVisites(user_id, date_begin, date_end)
 }

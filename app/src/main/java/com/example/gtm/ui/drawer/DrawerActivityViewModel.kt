@@ -17,5 +17,5 @@ class DrawerActivityViewModel @Inject constructor(
 ) : ViewModel() {
     suspend fun getUser(username: String) = userRepository.getUser(username)
 
-    suspend fun changeProfile(file: RequestBody?, user: RequestBody) = userRepository.changeProfile(file,user)
+    suspend fun changeProfile(file: MultipartBody.Part?, user: RequestBody) = userRepository.changeProfile(file,user)
 }

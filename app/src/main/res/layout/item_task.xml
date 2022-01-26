@@ -77,7 +77,7 @@
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="@dimen/_25sdp"
                     android:src="@drawable/round_travel_explore_24"
-                    android:tint="@color/purpleLogin"
+                    app:tint="@color/purpleLogin"
                     android:layout_gravity="center"/>
 
                 <ImageView

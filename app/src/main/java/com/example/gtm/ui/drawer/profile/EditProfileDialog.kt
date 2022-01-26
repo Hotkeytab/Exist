@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
@@ -33,6 +34,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 import java.io.FileInputStream
@@ -51,7 +53,7 @@ class EditProfileDialog(
     firstNameONly: TextView,
     profilePicture: ImageView
 ) :
-    DialogFragment(),UploadRequestBody.UploadCallback {
+    DialogFragment(), UploadRequestBody.UploadCallback {
 
     private val userIn = user
     private val nameIn = name
@@ -64,6 +66,8 @@ class EditProfileDialog(
     lateinit var responseData: Resource<EditProfileResponse>
     private var selectedImageUri: Uri? = null
     private var profilePictureIn = profilePicture
+    private var file: File? = null
+    private var body: UploadRequestBody? = null
 
 
     override fun onCreateView(
@@ -83,7 +87,7 @@ class EditProfileDialog(
 
         val width = (resources.displayMetrics.widthPixels * 0.85).toInt()
         val height = (resources.displayMetrics.heightPixels * 0.6).toInt()
-        dialog!!.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog!!.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         dialog!!.window!!.setWindowAnimations(R.style.AnimationsForDialog)
     }
 
@@ -91,7 +95,11 @@ class EditProfileDialog(
         super.onViewCreated(view, savedInstanceState)
 
         profile_picture_dialog.setOnClickListener {
-            openImageChoser()
+            //  openImageChoser()
+        }
+
+        submit.setOnClickListener {
+            changeProfile()
         }
         initProfile()
     }
@@ -110,15 +118,10 @@ class EditProfileDialog(
     }
 
 
-    override fun onCancel(dialog: DialogInterface) {
-        super.onCancel(dialog)
-        changeProfile()
-
-
-    }
-
     @DelicateCoroutinesApi
     private fun changeProfile() {
+
+        progress_indicator_dialog.visibility = View.VISIBLE
 
         if (selectedImageUri != null) {
             val parcelFileDescriptor =
@@ -127,12 +130,12 @@ class EditProfileDialog(
 
             val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
 
-            val file = File(
+            file = File(
                 requireActivity().cacheDir,
                 requireActivity().contentResolver.getFileName(selectedImageUri!!)
             )
 
-            val body = UploadRequestBody(file, "image", this)
+            body = UploadRequestBody(file!!, "image", this)
 
             val outputStream = FileOutputStream(file)
             inputStream.copyTo(outputStream)
@@ -153,24 +156,28 @@ class EditProfileDialog(
         GlobalScope.launch(Dispatchers.Main) {
 
             val userNewJson = jacksonObjectMapper().writeValueAsString(userNew)
-            val body = RequestBody.create(
+            val bodyJson = RequestBody.create(
                 "application/json; charset=utf-8".toMediaTypeOrNull(),
                 userNewJson
             )
 
             if (firstname_dialog.editText?.isValidName() == true && lastname_dialog.editText?.isValidName() == true && email_dialog.editText?.isValidEmail() == true && phone_edit_dialog.editText?.isNumeric() == true) {
                 responseData =
-                    viewModelIn.changeProfile(null, body) as Resource<EditProfileResponse>
+                    viewModelIn.changeProfile(null, bodyJson) as Resource<EditProfileResponse>
 
                 Log.i("anaconda", "$responseData")
 
                 if (responseData.responseCode == 201) {
+
+                    progress_indicator_dialog.visibility = View.INVISIBLE
 
                     nameIn.text = "${userNew.first_name}  ${userNew.last_name}"
                     emailIn.text = userNew.email
                     phoneIn.text = userNew.phone_number
                     lastNameOnlyIn.text = userNew.last_name
                     firstNameOnlyIn.text = userNew.first_name
+
+                    dismiss()
                 }
 
             }
