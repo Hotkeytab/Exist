@@ -52,7 +52,7 @@ class TaskViewHolder(
 
 
     private lateinit var visiteResponse: DataX
-
+    private lateinit var dialog: PositionMapDialog
 
     init {
         itemBinding.root.setOnClickListener(this)
@@ -82,23 +82,24 @@ class TaskViewHolder(
 
         itemBinding.showMap.setOnClickListener {
 
+            if(!StaticMapClicked.mapIsRunning) {
+                StaticMapClicked.mapIsRunning = true
 
                 PositionMapDialog(
                     item.store.lat,
                     item.store.lng,
                     item.store.name
                 ).show(activityIns.supportFragmentManager, "PositionMapDialog")
+            }
 
         }
-
-
 
 
     }
 
 
     override fun onClick(v: View?) {
-        //  listener.onClickedTask(visiteResponse.id)
+          listener.onClickedTask(visiteResponse.id)
     }
 
 

@@ -37,7 +37,7 @@
                 android:id="@+id/signin_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sign in Now"
+                android:text="Se Connecter "
                 android:textColor="@color/purpleLogin"
                 android:textSize="@dimen/_20sdp"
                 android:textStyle="bold"
@@ -55,7 +55,7 @@
                 android:layout_marginLeft="@dimen/_30sdp"
                 android:layout_marginTop="@dimen/_20sdp"
                 android:layout_marginRight="@dimen/_30sdp"
-                android:hint="Username"
+                android:hint="Nomd'utilisatuer"
                 android:textColorHint="@color/clear_grey"
                 app:boxBackgroundColor="@null"
                 app:boxCornerRadiusBottomEnd="@dimen/_20sdp"
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/_30sdp"
                 android:layout_marginRight="@dimen/_30sdp"
-                android:hint="Password"
+                android:hint="Mot de passe"
                 android:textColorHint="@color/clear_grey"
                 app:boxBackgroundColor="@null"
                 app:boxCornerRadiusBottomEnd="@dimen/_20sdp"
@@ -121,7 +121,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="Remember me"
+                    android:hint="Se souvenir de moi"
                     android:textColorHint="@color/clear_grey" />
 
                 <TextView
@@ -132,7 +132,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="Forgot password"
+                    android:hint="Mot de passe oublié ? "
                     android:textColorHint="@color/clear_grey" />
 
             </LinearLayout>
@@ -146,7 +146,7 @@
                 android:layout_marginTop="@dimen/_60sdp"
                 android:layout_marginRight="@dimen/_30sdp"
                 android:background="@drawable/rounded_purple_button"
-                android:text="SIGN IN"
+                android:text="Se Connecter"
                 android:textColor="@color/white"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -165,7 +165,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:text="Don't have an account"
+                    android:text="Vous n'avez pas un compte ?"
                     android:textAlignment="center"
                     android:textColor="@color/clear_grey" />
 
@@ -174,7 +174,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:text="Sign Up from here"
+                    android:text="Créer un compte"
                     android:textAlignment="center"
                     android:textColor="@color/purpleLogin"
                     android:textStyle="bold" />

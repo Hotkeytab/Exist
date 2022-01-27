@@ -3,6 +3,7 @@ package com.example.gtm.ui.drawer
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -199,6 +200,10 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             .transform(CircleCrop())
             .into(profile_picture)
     }
+
+
+
+
 
 
 

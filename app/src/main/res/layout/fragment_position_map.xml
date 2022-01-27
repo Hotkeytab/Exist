@@ -31,7 +31,7 @@
             android:layout_margin="@dimen/_5sdp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:src="@drawable/outline_cancel_presentation_24"
+            android:src="@drawable/outline_close_24"
             app:tint="@color/red" />
         <View
             android:id="@+id/view"

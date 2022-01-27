@@ -10,9 +10,11 @@
     <color name="purpleMain">#556ee6</color>
     <color name="purpleLogin">#3A67D7</color>
     <color name="clear_grey">#dcdcdc</color>
-    <color name="red">#FF0000</color>
+    <color name="red">#DD3333</color>
     <color name="yellow">#FFE60D</color>
     <color name="blue">#1C33B1</color>
+    <color name="green">#065706</color>
+    <color name="blueclear">#3085D6</color>
 
 
 </resources>

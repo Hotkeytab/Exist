@@ -6,17 +6,17 @@
     <item
         android:id="@+id/task"
         android:icon="@drawable/outline_receipt_long_24"
-        android:title="Today's Task"/>
+        android:title="Planning du jour"/>
 
 
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/outline_person_24"
-        android:title="Edit Profile"/>
+        android:title="Modifier mon Profil"/>
 
     <item
         android:id="@+id/nav_logout"
         android:icon="@drawable/outline_logout_24"
-        android:title="Logout"/>
+        android:title="Se Déconnecter"/>
 
 </menu>

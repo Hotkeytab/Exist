@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.example.gtm.R
+import com.example.gtm.ui.home.mytask.StaticMapClicked
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -35,7 +36,7 @@ class PositionMapDialog(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        dialog!!.window!!.setBackgroundDrawableResource(R.drawable.corned_white_purple)
+     //   dialog!!.window!!.setBackgroundDrawableResource(R.drawable.corned_white_purple)
 
         return inflater.inflate(R.layout.fragment_position_map, container, false)
     }
@@ -43,10 +44,15 @@ class PositionMapDialog(
     override fun onStart() {
         super.onStart()
 
-        val width = (resources.displayMetrics.widthPixels * 0.8).toInt()
-        val height = (resources.displayMetrics.heightPixels * 0.8).toInt()
+        val width = (resources.displayMetrics.widthPixels * 0.99).toInt()
+        val height = (resources.displayMetrics.heightPixels * 0.88).toInt()
         dialog!!.window?.setLayout(width, height)
         dialog!!.window!!.setWindowAnimations(R.style.AnimationsForMapDialog)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        StaticMapClicked.mapIsRunning = false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -75,7 +81,7 @@ class PositionMapDialog(
         mMap.addMarker(MarkerOptions().position(marketPosition).title(nameIn))
 
         val location = CameraUpdateFactory.newLatLngZoom(
-            marketPosition, 15f
+            marketPosition, 13f
         )
         mMap.animateCamera(location)
     }
