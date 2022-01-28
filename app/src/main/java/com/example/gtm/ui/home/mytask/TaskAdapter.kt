@@ -18,7 +18,7 @@ class TaskAdapter(private val listener: TaskFragment, activity: FragmentActivity
     private val activityIns = activity
 
     interface TaskItemListener {
-        fun onClickedTask(taskId: Int)
+        fun onClickedTask(taskId: Int,latitude:Double,Longitude:Double)
     }
 
     private val items = ArrayList<DataX>()
@@ -99,7 +99,7 @@ class TaskViewHolder(
 
 
     override fun onClick(v: View?) {
-          listener.onClickedTask(visiteResponse.id)
+          listener.onClickedTask(visiteResponse.id,visiteResponse.store.lat,visiteResponse.store.lng)
     }
 
 

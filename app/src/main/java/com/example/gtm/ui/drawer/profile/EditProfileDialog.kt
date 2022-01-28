@@ -95,7 +95,10 @@ class EditProfileDialog(
         super.onViewCreated(view, savedInstanceState)
 
         profile_picture_dialog.setOnClickListener {
-            //  openImageChoser()
+            openImageChoser()
+        }
+        change_photo_text.setOnClickListener {
+            openImageChoser()
         }
 
         submit.setOnClickListener {
@@ -162,8 +165,17 @@ class EditProfileDialog(
             )
 
             if (firstname_dialog.editText?.isValidName() == true && lastname_dialog.editText?.isValidName() == true && email_dialog.editText?.isValidEmail() == true && phone_edit_dialog.editText?.isNumeric() == true) {
+                val objectSend: MultipartBody.Part?
+
+                if (file == null || body == null)
+                    objectSend = null
+                else
+                    objectSend = MultipartBody.Part.createFormData(
+                        "file", file?.name,
+                        body!!
+                    )
                 responseData =
-                    viewModelIn.changeProfile(null, bodyJson) as Resource<EditProfileResponse>
+                    viewModelIn.changeProfile(objectSend, bodyJson) as Resource<EditProfileResponse>
 
                 Log.i("anaconda", "$responseData")
 

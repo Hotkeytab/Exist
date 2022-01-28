@@ -50,9 +50,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-
 @AndroidEntryPoint
-class TaskFragment : Fragment(), TaskAdapter.TaskItemListener{
+class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
 
     private lateinit var binding: FragmentTaskBinding
@@ -67,6 +66,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener{
     private lateinit var locationManager: LocationManager
     private lateinit var tvGpsLocation: TextView
     private val REQUEST_CODE = 2
+    private var GpsStatus = false
 
 
     override fun onStart() {
@@ -101,7 +101,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener{
 
     private fun setupRecycleViewPredictionDetail() {
 
-        adapterTask = TaskAdapter(this,requireActivity())
+        adapterTask = TaskAdapter(this, requireActivity())
         binding.taskRecycleview.isMotionEventSplittingEnabled = false
         binding.taskRecycleview.layoutManager = LinearLayoutManager(requireContext())
         binding.taskRecycleview.layoutManager = LinearLayoutManager(
@@ -113,19 +113,18 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener{
         adapterTask.setItems(listaTasks)
     }
 
-    override fun onClickedTask(taskId: Int) {
-       // PositionMapDialog().show(fm,"PositionMapDialog")
-        askForPermissions()
+    override fun onClickedTask(taskId: Int,latitude:Double,Longitude:Double) {
+        // PositionMapDialog().show(fm,"PositionMapDialog")
+        askForPermissions(latitude,Longitude)
     }
 
     @DelicateCoroutinesApi
     private fun getVisites() {
         GlobalScope.launch(Dispatchers.Main) {
 
-            responseData = viewModel.getVisites(userId.toString(),dateTime,dateTime)
+            responseData = viewModel.getVisites(userId.toString(), dateTime, dateTime)
 
-            if(responseData.responseCode == 200)
-            {
+            if (responseData.responseCode == 200) {
                 listaTasks = responseData.data!!.data as ArrayList<DataX>
                 setupRecycleViewPredictionDetail()
             }
@@ -134,36 +133,38 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener{
     }
 
 
-
-
     fun isPermissionsAllowed(): Boolean {
-        return ContextCompat.checkSelfPermission(requireContext(),Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun askForPermissions(): Boolean {
+    fun askForPermissions(latitude:Double,Longitude:Double): Boolean {
         if (!isPermissionsAllowed()) {
             if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 showPermissionDeniedDialog()
             } else {
-                requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),REQUEST_CODE)
+                requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE)
             }
             return false
-        }
-        else
-        {
-            Log.i("PERMISSIONBITCH","4")
-            SurveyCheckDialog(requireActivity(),requireContext()).show(fm,"SurveyDialog")
+        } else {
+            Log.i("PERMISSIONBITCH", "4")
+            if (CheckGpsStatus())
+                SurveyCheckDialog(latitude, Longitude).show(fm, "SurveyDialog")
+            else {
+                showPermissionDeniedGPS()
+            }
         }
         return true
     }
 
 
-
     private fun showPermissionDeniedDialog() {
         AlertDialog.Builder(requireContext())
-            .setTitle("Permission Denied")
-            .setMessage("Permission is denied, Please allow permissions from App Settings.")
-            .setPositiveButton("App Settings",
+            .setTitle("Autorisation refusée")
+            .setMessage("L’autorisation est refusée, veuillez autoriser les autorisations à partir des paramètres de l’application.")
+            .setPositiveButton("Paramètres de l’application",
                 DialogInterface.OnClickListener { _, _ ->
                     // send to app settings if permission is denied permanently
                     val intent = Intent()
@@ -172,24 +173,61 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener{
                     intent.data = uri
                     startActivity(intent)
                 })
-            .setNegativeButton("Cancel",null)
+            .setNegativeButton("Cancel", null)
             .show()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<String>,grantResults: IntArray) {
+
+    private fun showPermissionDeniedGPS() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Autorisation GPS")
+            .setMessage("Veuillez autoriser le GPS à partir des paramètres de l’application.")
+            .setPositiveButton("Paramètres de l’application",
+                DialogInterface.OnClickListener { _, _ ->
+                    // send to app settings if permission is denied permanently
+
+                    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    startActivity(intent)
+
+                })
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         when (requestCode) {
             2 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission is granted, you can perform your operation here
+                   /* if (CheckGpsStatus())
+                        SurveyCheckDialog(requireActivity(), requireContext()).show(
+                            fm,
+                            "SurveyDialog"
+                        )
+                    else {
+                        showPermissionDeniedGPS()
+                    } */
 
                 } else {
                     // permission is denied, you can ask for permission again, if you want
-                      askForPermissions()
+                    askForPermissions(0.00,0.00)
 
                 }
                 return
             }
         }
+    }
+
+
+    fun CheckGpsStatus(): Boolean {
+        locationManager =
+            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        GpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        return GpsStatus
     }
 
 

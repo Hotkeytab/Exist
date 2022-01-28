@@ -9,6 +9,8 @@
 
 
 
+
+
     <application
         android:name=".ui.MainApplication"
         android:allowBackup="true"
