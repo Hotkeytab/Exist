@@ -15,7 +15,7 @@ import javax.inject.Inject
 class DrawerActivityViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
-   //suspend fun getUser(username: String) = userRepository.getUser(username)
+   suspend fun getUser(username: String) = userRepository.getUser(username)
 
     suspend fun changeProfile(file: MultipartBody.Part?, user: RequestBody) = userRepository.changeProfile(file,user)
 }

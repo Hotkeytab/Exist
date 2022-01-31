@@ -1,4 +1,4 @@
-package com.example.gtm.utils.remote
+package com.example.gtm.utils.remote.Internet
 
 import android.os.AsyncTask
 import java.io.IOException

@@ -12,7 +12,10 @@ import javax.inject.Inject
 class SignInFragmentViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository
+
 ) : ViewModel() {
     suspend fun login(signinObject: SignInPost) = authRepository.login(signinObject)
+
     suspend fun getUser(username: String) = userRepository.getUser(username)
+
 }

@@ -46,7 +46,7 @@ class SessionManager(context: Context) {
         val phone = prefs.getString("phone", "")
         val enabled = prefs.getString("enabled", "")
         val gender = prefs.getString("gender", "")
-        return User(id,firstname!!,lastname!!,email!!,password!!,phone!!,true,gender!!,roleId)
+        return User(id,firstname!!,lastname!!,email!!,password!!,phone!!,enabled!!,gender!!,roleId)
     }
 
 }
