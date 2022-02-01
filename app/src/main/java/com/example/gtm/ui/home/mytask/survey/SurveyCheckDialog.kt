@@ -74,6 +74,7 @@ class SurveyCheckDialog(
 
     override fun onDestroy() {
         super.onDestroy()
+        locationManager.removeUpdates(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -118,19 +119,20 @@ class SurveyCheckDialog(
             distance.text = distanceTest.toString()
             if (distanceTest > 1 && distanceTest <100)
             {
-                progress_bar.visibility = View.GONE
-                good.visibility = View.VISIBLE
-                textcontext2.visibility = View.GONE
+                locationManager.removeUpdates(this)
+                dismiss()
+                SurveyListDialog().show(requireActivity().supportFragmentManager,"survey list dialog")
             }
             else if(distanceTest > 100 )
             {
                 good.visibility = View.GONE
+                progress_bar.visibility = View.GONE
                 bad.visibility = View.VISIBLE
 
             }
             else
             {
-                title1.text = "ERROR"
+                dismiss()
             }
         }
 
@@ -154,7 +156,8 @@ class SurveyCheckDialog(
                 locationPermissionCode
             )
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1f, this)
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0.1f, this)
+
     }
 
     override fun onRequestPermissionsResult(
@@ -165,11 +168,9 @@ class SurveyCheckDialog(
         Toast.makeText(requireContext(), "Permission Granted", Toast.LENGTH_SHORT).show()
         if (requestCode == locationPermissionCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(requireContext(), "Permission Granted", Toast.LENGTH_SHORT).show()
-                Log.i("PERMISSIONBITCH", "GRANTED")
+
             } else {
-                Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
-                Log.i("PERMISSIONBITCH", "DENIED")
+
             }
         }
     }

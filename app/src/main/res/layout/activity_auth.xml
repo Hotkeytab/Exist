@@ -18,4 +18,6 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/auth_graph" />
 
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
