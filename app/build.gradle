@@ -100,10 +100,14 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
     //Google Maps
-    implementation 'com.google.android.gms:play-services-maps:11.8.0'
+    implementation 'com.google.android.gms:play-services-maps:18.0.2'
 
 
     //toJson
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.+'
+
+
+    //MAP GPS
+    implementation 'com.google.android.gms:play-services-location:19.0.1'
 
 }

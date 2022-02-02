@@ -9,13 +9,13 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationListener
+
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -27,8 +27,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gtm.R
 import com.example.gtm.data.entities.response.DataX
@@ -39,6 +42,7 @@ import com.example.gtm.ui.home.mytask.survey.SurveyCheckDialog
 import com.example.gtm.utils.resources.Resource
 import com.fasterxml.jackson.databind.util.ClassUtil.getPackageName
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.dialog_quiz_confirmation.*
 import kotlinx.android.synthetic.main.fragment_task.*
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -67,6 +71,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     private lateinit var tvGpsLocation: TextView
     private val REQUEST_CODE = 2
     private var GpsStatus = false
+    private lateinit var navController: NavController
 
 
     override fun onStart() {
@@ -96,6 +101,19 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+        val mDrawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
+        //Top Bar
+        topAppBar.setNavigationOnClickListener {
+            mDrawerLayout.openDrawer(Gravity.LEFT)
+        }
+
+         navController = NavHostFragment.findNavController(this)
     }
 
 
@@ -151,7 +169,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         } else {
             Log.i("PERMISSIONBITCH", "4")
             if (CheckGpsStatus())
-                SurveyCheckDialog(latitude, Longitude).show(fm, "SurveyDialog")
+                SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
             else {
                 showPermissionDeniedGPS()
             }

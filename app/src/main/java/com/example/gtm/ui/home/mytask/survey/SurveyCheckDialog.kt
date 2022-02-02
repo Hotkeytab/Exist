@@ -34,6 +34,10 @@ import kotlinx.android.synthetic.main.fragment_position_map.*
 import kotlinx.android.synthetic.main.item_task.*
 import android.location.GpsStatus
 import android.provider.Settings
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -42,7 +46,7 @@ import kotlin.math.sqrt
 
 @AndroidEntryPoint
 class SurveyCheckDialog(
-    lattitude: Double, longitude: Double
+    lattitude: Double, longitude: Double, navController: NavController
 ) :
     DialogFragment(), LocationListener {
 
@@ -53,12 +57,23 @@ class SurveyCheckDialog(
     var latIn = lattitude
     var longIn = longitude
     var veriftest = false
+    val navControllerIn = navController
+
+    // declare a global variable of FusedLocationProviderClient
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+
+        // in onCreate() initialize FusedLocationProviderClient
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
+
 
         return inflater.inflate(R.layout.dialog_quiz_confirmation, container, false)
     }
@@ -93,6 +108,8 @@ class SurveyCheckDialog(
             textcontext1.visibility = View.GONE
             textcontext2.visibility = View.VISIBLE
             veriftest = true
+
+            getLastKnownLocation()
         }
 
 
@@ -101,7 +118,7 @@ class SurveyCheckDialog(
     override fun onLocationChanged(location: Location) {
 
 
-        if (me != null && veriftest) {
+     /*   if (me != null && veriftest) {
             me.text = "LAT : ${location.latitude} / LONG : ${location.longitude}"
             him.text = "LAT : ${latIn} / LONG : ${longIn}"
             /* finalresult.text = distance(
@@ -117,24 +134,16 @@ class SurveyCheckDialog(
                 longIn.toFloat()
             )
             distance.text = distanceTest.toString()
-            if (distanceTest > 1 && distanceTest <100)
-            {
+            if (distanceTest > 1 && distanceTest < 100) {
                 locationManager.removeUpdates(this)
                 dismiss()
-                SurveyListDialog().show(requireActivity().supportFragmentManager,"survey list dialog")
-            }
-            else if(distanceTest > 100 )
-            {
-                good.visibility = View.GONE
-                progress_bar.visibility = View.GONE
-                bad.visibility = View.VISIBLE
+                //    SurveyListDialog().show(requireActivity().supportFragmentManager,"survey list dialog")
 
-            }
-            else
-            {
+                navControllerIn.navigate(R.id.action_taskFragment_to_quizFragment)
+            } else {
                 dismiss()
             }
-        }
+        } */
 
 
         Log.i("POSITIONGPSNOW", location.latitude.toString())
@@ -156,7 +165,7 @@ class SurveyCheckDialog(
                 locationPermissionCode
             )
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0.1f, this)
+      //  locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0.1f, this)
 
     }
 
@@ -187,6 +196,52 @@ class SurveyCheckDialog(
         val distance = earthRadius * c
         val meterConversion = 1609
         return (distance * meterConversion.toFloat()).toFloat()
+    }
+
+    fun getLastKnownLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            return
+        }
+
+        Log.i("HAHAH","called")
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location->
+                if (location != null) {
+                    val distanceTest = distance(
+                        location.latitude.toFloat(),
+                        location.longitude.toFloat(),
+                        latIn.toFloat(),
+                        longIn.toFloat()
+                    )
+
+
+                    Log.i("HAHAH","$distanceTest")
+                    if (distanceTest > 1 && distanceTest < 150) {
+                        locationManager.removeUpdates(this)
+                        dismiss()
+                        //    SurveyListDialog().show(requireActivity().supportFragmentManager,"survey list dialog")
+
+                        navControllerIn.navigate(R.id.action_taskFragment_to_quizFragment)
+                    } else {
+                        dismiss()
+                    }
+                }
+                else
+                {
+                    Log.i("HAHAH","NUL")
+                }
+
+            }
+
+
     }
 
 

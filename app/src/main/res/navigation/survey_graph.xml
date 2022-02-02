@@ -3,10 +3,59 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/survey_graph"
-    app:startDestination="@id/quizFragment">
+    app:startDestination="@id/taskFragment">
     <fragment
         android:id="@+id/quizFragment"
         android:name="com.example.gtm.ui.home.mytask.survey.quiz.QuizFragment"
         android:label="fragment_quiz"
-        tools:layout="@layout/fragment_quiz" />
+        tools:layout="@layout/fragment_quiz" >
+        <action
+            android:id="@+id/action_quizFragment_to_taskFragment"
+            app:destination="@id/taskFragment" />
+        <action
+            android:id="@+id/action_quizFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/taskFragment"
+        android:name="com.example.gtm.ui.home.mytask.TaskFragment"
+        android:label="fragment_task"
+        tools:layout="@layout/fragment_task" >
+        <action
+            android:id="@+id/action_taskFragment_to_quizFragment"
+            app:destination="@id/quizFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoryFragment"
+        android:name="com.example.gtm.ui.home.mytask.survey.category.CategoryFragment"
+        android:label="fragment_category"
+        tools:layout="@layout/fragment_category" >
+        <action
+            android:id="@+id/action_categoryFragment_to_quizFragment"
+            app:destination="@id/quizFragment" />
+        <action
+            android:id="@+id/action_categoryFragment_to_sousCategoryFragment"
+            app:destination="@id/sousCategoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/sousCategoryFragment"
+        android:name="com.example.gtm.ui.home.mytask.survey.souscategory.SousCategoryFragment"
+        android:label="fragment_sous_category"
+        tools:layout="@layout/fragment_sous_category" >
+        <action
+            android:id="@+id/action_sousCategoryFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
+        <action
+            android:id="@+id/action_sousCategoryFragment_to_questionFragment"
+            app:destination="@id/questionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/questionFragment"
+        android:name="com.example.gtm.ui.home.mytask.survey.question.QuestionFragment"
+        android:label="fragment_question"
+        tools:layout="@layout/fragment_question" >
+        <action
+            android:id="@+id/action_questionFragment_to_sousCategoryFragment"
+            app:destination="@id/sousCategoryFragment" />
+    </fragment>
 </navigation>

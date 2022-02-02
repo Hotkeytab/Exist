@@ -10,7 +10,10 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/_15sdp"
+            android:layout_marginLeft="@dimen/_15sdp"
             app:cardUseCompatPadding="true"
+            app:cardElevation="@dimen/_5sdp"
             app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
@@ -23,8 +26,8 @@
                     android:id="@+id/survey_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_10sdp"
-                    android:text="Questionnaire 1:"
+                    android:layout_marginLeft="@dimen/_6sdp"
+                    android:text="S_Categorie 1:"
                     android:textStyle="bold"
                     app:autoSizeMaxTextSize="80sp"
                     app:autoSizeMinTextSize="8sp"
@@ -38,16 +41,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Questionnaire Examplaire."
-                    android:layout_marginTop="@dimen/_15sdp"
-                    android:layout_marginBottom="@dimen/_15sdp"
+                    android:text="S_Catégorie Examplaire."
+                    android:layout_marginTop="@dimen/_9sdp"
+                    android:layout_marginBottom="@dimen/_9sdp"
                     android:textColor="@color/black"
                     app:autoSizeMaxTextSize="80sp"
                     app:autoSizeMinTextSize="8sp"
                     app:autoSizeStepGranularity="2sp"
                     app:autoSizeTextType="uniform"
                     android:layout_weight="1"/>
-
 
 
 
