@@ -33,11 +33,11 @@ import kotlinx.android.synthetic.main.dialog_quiz_confirmation.*
 import kotlinx.android.synthetic.main.fragment_position_map.*
 import kotlinx.android.synthetic.main.item_task.*
 import android.location.GpsStatus
+import android.os.Looper
 import android.provider.Settings
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -58,6 +58,7 @@ class SurveyCheckDialog(
     var longIn = longitude
     var veriftest = false
     val navControllerIn = navController
+    var testGps = false
 
     // declare a global variable of FusedLocationProviderClient
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -70,8 +71,7 @@ class SurveyCheckDialog(
     ): View? {
 
 
-        // in onCreate() initialize FusedLocationProviderClient
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
 
 
 
@@ -89,13 +89,13 @@ class SurveyCheckDialog(
 
     override fun onDestroy() {
         super.onDestroy()
-        locationManager.removeUpdates(this)
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        getLocation()
+       // getLocation()
 
         accept.setOnClickListener {
 
@@ -109,7 +109,11 @@ class SurveyCheckDialog(
             textcontext2.visibility = View.VISIBLE
             veriftest = true
 
-            getLastKnownLocation()
+        //    getLastKnownLocation()
+
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
+            setUpLocationListener()
         }
 
 
@@ -118,7 +122,7 @@ class SurveyCheckDialog(
     override fun onLocationChanged(location: Location) {
 
 
-     /*   if (me != null && veriftest) {
+        if (me != null && veriftest) {
             me.text = "LAT : ${location.latitude} / LONG : ${location.longitude}"
             him.text = "LAT : ${latIn} / LONG : ${longIn}"
             /* finalresult.text = distance(
@@ -143,7 +147,7 @@ class SurveyCheckDialog(
             } else {
                 dismiss()
             }
-        } */
+        }
 
 
         Log.i("POSITIONGPSNOW", location.latitude.toString())
@@ -165,7 +169,11 @@ class SurveyCheckDialog(
                 locationPermissionCode
             )
         }
-      //  locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0.1f, this)
+        // in onCreate() initialize FusedLocationProviderClient
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
+        //GPS ONE
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0.1f, this)
 
     }
 
@@ -227,6 +235,7 @@ class SurveyCheckDialog(
                     if (distanceTest > 1 && distanceTest < 150) {
                         locationManager.removeUpdates(this)
                         dismiss()
+
                         //    SurveyListDialog().show(requireActivity().supportFragmentManager,"survey list dialog")
 
                         navControllerIn.navigate(R.id.action_taskFragment_to_quizFragment)
@@ -242,6 +251,67 @@ class SurveyCheckDialog(
             }
 
 
+    }
+
+    private fun setUpLocationListener() {
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        // for getting the current location update after every 2 seconds with high accuracy
+        val locationRequest = LocationRequest().setInterval(2000).setFastestInterval(2000)
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        if(!testGps)
+
+            fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    super.onLocationResult(locationResult)
+                    for (location in locationResult.locations) {
+
+                        if (location != null) {
+                            val distanceTest = distance(
+                                location.latitude.toFloat(),
+                                location.longitude.toFloat(),
+                                latIn.toFloat(),
+                                longIn.toFloat()
+                            )
+
+
+                            Log.i("HAHAH", "$distanceTest")
+                            if (distanceTest > 1 && distanceTest < 150) {
+                                fusedLocationClient.removeLocationUpdates(this)
+                                dismiss()
+                                //    SurveyListDialog().show(requireActivity().supportFragmentManager,"survey list dialog")
+                                navControllerIn.navigate(R.id.action_taskFragment_to_quizFragment)
+
+                            } else {
+                                dismiss()
+                            }
+                        }
+
+                    }
+
+                }
+            },
+
+            Looper.myLooper()!!
+        )
     }
 
 

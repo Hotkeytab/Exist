@@ -6,13 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gtm.R
-import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.databinding.FragmentQuestionBinding
-import com.example.gtm.databinding.FragmentSousCategoryBinding
-import com.example.gtm.ui.home.mytask.survey.souscategory.SousCategoryAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_home.*
 
 @AndroidEntryPoint
 class QuestionFragment : Fragment() {
@@ -28,7 +25,6 @@ class QuestionFragment : Fragment() {
         binding = FragmentQuestionBinding.inflate(inflater, container, false)
 
 
-
         return binding.root
     }
 
@@ -36,12 +32,15 @@ class QuestionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        requireActivity().bottom_nav.visibility = View.GONE
+
         binding.backFromQuiz.setOnClickListener {
-            findNavController().navigate(R.id.action_questionFragment_to_sousCategoryFragment)
+            findNavController().navigate(R.id.action_questionFragment_to_categoryFragment)
         }
 
 
     }
+
 
 
 }

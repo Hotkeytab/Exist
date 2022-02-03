@@ -10,10 +10,11 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/_15sdp"
-            android:layout_marginLeft="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_2sdp"
             app:cardUseCompatPadding="true"
-            app:cardElevation="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_2sdp"
+            android:layout_marginLeft="@dimen/_15sdp"
+            android:layout_marginRight="@dimen/_15sdp"
             app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout

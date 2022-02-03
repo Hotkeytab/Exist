@@ -1,20 +1,19 @@
 package com.example.gtm.ui.home.mytask.survey.category
 
-import android.app.Activity
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.example.gtm.data.entities.response.DataX
 import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.databinding.ItemCategoryBinding
-import com.example.gtm.databinding.ItemQuizBinding
-import com.example.gtm.databinding.ItemTaskBinding
-import com.example.gtm.ui.drawer.DrawerActivity
-import com.example.gtm.ui.home.mytask.positionmap.PositionMapDialog
 import android.widget.LinearLayout
+import androidx.core.view.marginBottom
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import com.example.gtm.R
 
 
 class CategoryAdapter(private val listener: CategoryFragment, activity: FragmentActivity) :
@@ -39,7 +38,7 @@ class CategoryAdapter(private val listener: CategoryFragment, activity: Fragment
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         val binding: ItemCategoryBinding =
             ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CategoryViewHolder(binding, listener as CategoryItemListener, activityIns)
+        return CategoryViewHolder(binding, listener as CategoryItemListener, activityIns, parent)
 
     }
 
@@ -52,10 +51,13 @@ class CategoryAdapter(private val listener: CategoryFragment, activity: Fragment
 class CategoryViewHolder(
     private val itemBinding: ItemCategoryBinding,
     private val listener: CategoryAdapter.CategoryItemListener,
-    private val activityIns: FragmentActivity
+    private val activityIns: FragmentActivity,
+    private var parent: ViewGroup
 ) : RecyclerView.ViewHolder(itemBinding.root),
     View.OnClickListener {
 
+    var isOpenLinear = false
+    var addedValues = false
 
     private lateinit var categoryResponse: Survey
 
@@ -68,30 +70,68 @@ class CategoryViewHolder(
         this.categoryResponse = item
 
 
-     /*   val layout = itemBinding.testLinear
-        layout.orientation = LinearLayout.VERTICAL
-
-            for (j in 0..3) {
-                val btnTag = Button(this)
-                btnTag.setLayoutParams(
-                    LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT
-                    )
-                )
-                btnTag.setText("Button " + (j + 1 + i * 4))
-                btnTag.setId(j + 1 + i * 4)
-                row.addView(btnTag)
-            }
-            layout.addView(row) */
-
+        itemBinding.topCardv.setOnClickListener {
+            expandColapse()
+        }
 
     }
 
 
     override fun onClick(v: View?) {
         listener.onClickedCategory(categoryResponse.id)
+
+
     }
+
+
+    private fun expandColapse() {
+        var i = 0
+
+        if (!isOpenLinear) {
+
+            isOpenLinear = true
+            itemBinding.testLinear.visibility = View.VISIBLE
+            val layout = itemBinding.testLinear
+            layout.orientation = LinearLayout.VERTICAL
+
+            if (!addedValues) {
+                for (j in 0..3) {
+                    i++
+                    val inflater =
+                        LayoutInflater.from(parent.context)
+                            .inflate(R.layout.item_sous_category, null)
+
+                    inflater.id = j + 1 + i * 4
+                    inflater.setOnClickListener {
+                        Log.i("buttonlistener", inflater.id.toString())
+
+                        parent.findNavController().navigate(R.id.action_categoryFragment_to_questionFragment)
+                    }
+                    layout.addView(inflater)
+                }
+            }
+            addedValues = true
+
+            val param = itemBinding.constraintMargin.layoutParams as ViewGroup.MarginLayoutParams
+            param.setMargins(0, 0, 0, 50)
+            itemBinding.constraintMargin.layoutParams = param
+
+        } else {
+            itemBinding.testLinear.visibility = View.GONE
+            val param = itemBinding.constraintMargin.layoutParams as ViewGroup.MarginLayoutParams
+            param.setMargins(0, 0, 0, 0)
+            itemBinding.constraintMargin.layoutParams = param
+            isOpenLinear = false
+        }
+    }
+
+    /*    val btnTag = Button(parent.context)
+    btnTag.layoutParams = LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams.WRAP_CONTENT,
+        LinearLayout.LayoutParams.MATCH_PARENT
+    )
+    btnTag.text = "Button " + (j + 1 + i * 4)
+    btnTag.id = j + 1 + i * 4*/
 
 
 }

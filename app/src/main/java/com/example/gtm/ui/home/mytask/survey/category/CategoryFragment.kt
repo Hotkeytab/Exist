@@ -10,9 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gtm.R
 import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.databinding.FragmentCategoryBinding
-import com.example.gtm.databinding.FragmentQuizBinding
-import com.example.gtm.ui.home.mytask.survey.quiz.QuizAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_home.*
 
 
 @AndroidEntryPoint
@@ -38,6 +37,8 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        requireActivity().bottom_nav.visibility = View.VISIBLE
 
         binding.backFromQuiz.setOnClickListener {
             findNavController().navigate(R.id.action_categoryFragment_to_quizFragment)
