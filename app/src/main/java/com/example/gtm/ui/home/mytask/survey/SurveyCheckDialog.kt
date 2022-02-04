@@ -116,6 +116,10 @@ class SurveyCheckDialog(
             setUpLocationListener()
         }
 
+        cancel_button.setOnClickListener {
+            dismiss()
+        }
+
 
     }
 

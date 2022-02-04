@@ -23,18 +23,15 @@
                 android:orientation="horizontal"
                 android:gravity="center">
 
-                <TextView
-                    android:id="@+id/survey_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_6sdp"
-                    android:text="S_Categorie 1:"
-                    android:textStyle="bold"
-                    app:autoSizeMaxTextSize="80sp"
-                    app:autoSizeMinTextSize="8sp"
-                    app:autoSizeStepGranularity="2sp"
-                    app:autoSizeTextType="uniform"
-                    android:layout_weight="1"/>
+
+                <ImageView
+                    android:layout_width="@dimen/_10sdp"
+                    android:layout_height="@dimen/_10sdp"
+                    android:src="@drawable/outline_circle_24"
+                    app:tint="@color/purpleLogin"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    />
+
 
 
                 <TextView
@@ -42,16 +39,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="S_Catégorie Examplaire."
-                    android:layout_marginTop="@dimen/_9sdp"
-                    android:layout_marginBottom="@dimen/_9sdp"
-                    android:textColor="@color/black"
+                    android:text="Femme enceinte."
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginBottom="@dimen/_12sdp"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:textStyle="bold"
                     app:autoSizeMaxTextSize="80sp"
                     app:autoSizeMinTextSize="8sp"
                     app:autoSizeStepGranularity="2sp"
                     app:autoSizeTextType="uniform"
                     android:layout_weight="1"/>
-
 
 
             </LinearLayout>

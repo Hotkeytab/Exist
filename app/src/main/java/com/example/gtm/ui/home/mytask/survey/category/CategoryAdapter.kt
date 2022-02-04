@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.databinding.ItemCategoryBinding
 import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.marginBottom
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -90,6 +91,8 @@ class CategoryViewHolder(
         if (!isOpenLinear) {
 
             isOpenLinear = true
+            itemBinding.dropArrow.setImageResource(R.drawable.ic_baseline_arrow_drop_up_24)
+            itemBinding.dropArrow.setColorFilter(ContextCompat.getColor(parent.context, R.color.purpleLogin), android.graphics.PorterDuff.Mode.MULTIPLY);
             itemBinding.testLinear.visibility = View.VISIBLE
             val layout = itemBinding.testLinear
             layout.orientation = LinearLayout.VERTICAL
@@ -117,6 +120,7 @@ class CategoryViewHolder(
             itemBinding.constraintMargin.layoutParams = param
 
         } else {
+            itemBinding.dropArrow.setImageResource(R.drawable.ic_baseline_arrow_drop_down_24)
             itemBinding.testLinear.visibility = View.GONE
             val param = itemBinding.constraintMargin.layoutParams as ViewGroup.MarginLayoutParams
             param.setMargins(0, 0, 0, 0)

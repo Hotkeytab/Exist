@@ -63,7 +63,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_10sdp"
             app:cardCornerRadius="@dimen/_4sdp"
-
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintBottom_toTopOf="@id/surveyimage"
             app:layout_constraintTop_toBottomOf="@id/cutom_bar_top">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -73,6 +74,16 @@
 
 
         </androidx.cardview.widget.CardView>
+
+        <ImageView
+            android:id="@+id/surveyimage"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_300sdp"
+            android:src="@drawable/surveyimage"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

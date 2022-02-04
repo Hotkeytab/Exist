@@ -22,12 +22,26 @@
                 android:orientation="horizontal"
                 android:gravity="center">
 
+
+                <ImageView
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:src="@drawable/outline_circle_24"
+                    app:tint="@color/purpleLogin"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    />
+
+
+
                 <TextView
-                    android:id="@+id/survey_number"
+                    android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_8sdp"
-                    android:text="Categorie 1:"
+                    android:layout_gravity="center"
+                    android:text="Vêtements pour femme enceinte et enfant."
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginBottom="@dimen/_12sdp"
+                    android:layout_marginLeft="@dimen/_10sdp"
                     android:textStyle="bold"
                     app:autoSizeMaxTextSize="80sp"
                     app:autoSizeMinTextSize="8sp"
@@ -36,22 +50,14 @@
                     android:layout_weight="1"/>
 
 
-                <TextView
-                    android:id="@+id/title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Catégorie Examplaire."
-                    android:layout_marginTop="@dimen/_12sdp"
-                    android:layout_marginBottom="@dimen/_12sdp"
-                    android:textColor="@color/black"
-                    app:autoSizeMaxTextSize="80sp"
-                    app:autoSizeMinTextSize="8sp"
-                    app:autoSizeStepGranularity="2sp"
-                    app:autoSizeTextType="uniform"
-                    android:layout_weight="1"/>
 
-
+                <ImageView
+                    android:id="@+id/drop_arrow"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:src="@drawable/ic_baseline_arrow_drop_down_24"
+                    app:tint="@color/purpleLogin"
+                    />
 
             </LinearLayout>
 
