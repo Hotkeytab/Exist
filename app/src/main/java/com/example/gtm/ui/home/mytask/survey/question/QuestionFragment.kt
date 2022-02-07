@@ -24,6 +24,7 @@ class QuestionFragment : Fragment() ,ImageAdapter.ImageItemListener{
     private lateinit var binding: FragmentQuestionBinding
     private lateinit var adapterImage: ImageAdapter
     private val listaImage = ArrayList<Image>()
+    private lateinit var choix_image_dialog : ChoixImageDialog
 
 
     override fun onCreateView(
@@ -46,18 +47,24 @@ class QuestionFragment : Fragment() ,ImageAdapter.ImageItemListener{
 
         setupRecycleViewQuestion()
 
+
+        choix_image_dialog = ChoixImageDialog(show_image,adapterImage,listaImage,camera_linear,binding.plusImage,binding.myPhotoRecycle)
+
         binding.backFromQuiz.setOnClickListener {
             findNavController().navigate(R.id.action_questionFragment_to_categoryFragment)
         }
 
 
         binding.addphoto.setOnClickListener {
-            ChoixImageDialog(show_image,adapterImage,listaImage,camera_linear,binding.plusImage).show(requireActivity().supportFragmentManager,"ChoixImage")
+            choix_image_dialog.show(requireActivity().supportFragmentManager,"ChoixImage")
         }
 
         binding.plusImage.setOnClickListener {
-            ChoixImageDialog(show_image,adapterImage,listaImage,camera_linear,binding.plusImage).show(requireActivity().supportFragmentManager,"ChoixImage")
+            choix_image_dialog.show(requireActivity().supportFragmentManager,"ChoixImage")
         }
+
+
+
 
 
     }
@@ -78,8 +85,8 @@ class QuestionFragment : Fragment() ,ImageAdapter.ImageItemListener{
        // adapterImage.setItems(listaImage)
     }
 
-    override fun onClickedImage(imageUrl: Bitmap) {
-        AfficherImageDialog(imageUrl).show(requireActivity().supportFragmentManager,"afficherimage")
+    override fun onClickedImage(position: Int) {
+        AfficherImageDialog(position,listaImage,camera_linear,binding.plusImage,adapterImage,binding.myPhotoRecycle).show(requireActivity().supportFragmentManager,"afficherimage")
     }
 
 

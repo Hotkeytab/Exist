@@ -23,6 +23,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -31,6 +32,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.example.gtm.BuildConfig
 import com.example.gtm.data.entities.ui.Image
 import kotlinx.android.synthetic.main.dialog_afficher_image.*
@@ -43,14 +45,23 @@ import java.security.Permission
 
 @AndroidEntryPoint
 class AfficherImageDialog(
-    imageUrl2: Bitmap
+    position2: Int,
+    listaImage2: ArrayList<Image>,
+    linearImage2: LinearLayout,
+    plus_image2: CardView,
+    adapterImage2: ImageAdapter,
+    recycle_view2: RecyclerView
 
 ) :
     DialogFragment() {
 
 
-    private val imageUrl = imageUrl2
-
+    private var position = position2
+    private val listaImage = listaImage2
+    private val linearImage = linearImage2
+    private val plus_image = plus_image2
+    private val adapterImage = adapterImage2
+    private val recycle_view = recycle_view2
 
 
     override fun onCreateView(
@@ -64,20 +75,69 @@ class AfficherImageDialog(
     override fun onStart() {
         super.onStart()
 
-        val width = (resources.displayMetrics.widthPixels * 0.8).toInt()
-        val height = (resources.displayMetrics.heightPixels * 0.75).toInt()
+        val width = (resources.displayMetrics.widthPixels).toInt()
+        val height = (resources.displayMetrics.heightPixels).toInt()
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog!!.window?.setLayout(width,height)
+        dialog!!.window?.setLayout(width, height)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        afficher_image.setImageBitmap(imageUrl)
+        afficher_image.setImageBitmap(listaImage[position].url)
+        Log.i("imageposition", position.toString())
+
+        return_from_dialog.setOnClickListener {
+            dismiss()
+        }
+
+        left_arrow.setOnClickListener {
+            if (position != 0 && listaImage.size != 1) {
+                position--
+                afficher_image.setImageBitmap(listaImage[position].url)
+            }
+        }
+
+        right_arrow.setOnClickListener {
+            if (listaImage.size - 1 != position && listaImage.size != 1) {
+                position++
+                afficher_image.setImageBitmap(listaImage[position].url)
+            }
+
+        }
+
+        delete.setOnClickListener {
+            if (listaImage.size == 1) {
+                listaImage.removeAt(0)
+                linearImage.visibility = View.VISIBLE
+                plus_image.visibility = View.GONE
+                adapterImage.setItems(listaImage)
+                recycle_view.visibility = View.GONE
+                dismiss()
+
+            } else if (listaImage.size > 1) {
+                if (position == 0) {
+
+                    listaImage.removeAt(0)
+                    afficher_image.setImageBitmap(listaImage[position].url)
+                    adapterImage.setItems(listaImage)
+
+                } else if (position == listaImage.size - 1) {
+
+                    listaImage.removeAt(listaImage.size - 1)
+                    position --
+                    afficher_image.setImageBitmap(listaImage[position].url)
+                    adapterImage.setItems(listaImage)
+                } else {
+                    listaImage.removeAt(position)
+                    afficher_image.setImageBitmap(listaImage[position].url)
+                    adapterImage.setItems(listaImage)
+                }
+            } else
+                dismiss()
+        }
 
     }
-
-
 
 
 }

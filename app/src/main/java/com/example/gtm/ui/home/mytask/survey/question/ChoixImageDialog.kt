@@ -30,6 +30,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.example.gtm.BuildConfig
 import com.example.gtm.data.entities.ui.Image
 import kotlinx.android.synthetic.main.dialog_choix_image.*
@@ -45,7 +46,8 @@ class ChoixImageDialog(
     adapterImage2: ImageAdapter,
     listaImage2: ArrayList<Image>,
     linearImage2: LinearLayout,
-    plus_image2: CardView
+    plus_image2: CardView,
+    recycle_view2 : RecyclerView
 ) :
     DialogFragment() {
 
@@ -55,6 +57,7 @@ class ChoixImageDialog(
     private lateinit var imageBitmap: Image
     private val linearImage = linearImage2
     private val plus_image = plus_image2
+    private val recycle_view = recycle_view2
 
     private var uri: Uri? = null
 
@@ -144,6 +147,7 @@ class ChoixImageDialog(
             imageBitmap = Image(1, bitmap)
             linearImage.visibility = View.GONE
             plus_image.visibility = View.VISIBLE
+            recycle_view.visibility = View.VISIBLE
             listaImage.add(0,imageBitmap)
             adapterImage.setItems(listaImage)
 
@@ -224,6 +228,7 @@ class ChoixImageDialog(
                     imageBitmap = Image(1, bitmap)
                     linearImage.visibility = View.GONE
                     plus_image.visibility = View.VISIBLE
+                    recycle_view.visibility = View.VISIBLE
                     listaImage.add(0,imageBitmap)
                     adapterImage.setItems(listaImage)
                 }
@@ -234,7 +239,6 @@ class ChoixImageDialog(
                     }
                 }
         }
-
 
     }
 }

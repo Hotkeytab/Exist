@@ -27,7 +27,7 @@ class ImageAdapter(private val listener: QuestionFragment, activity: FragmentAct
     private val activityIns = activity
 
     interface ImageItemListener {
-        fun onClickedImage(imageUrl: Bitmap)
+        fun onClickedImage(position: Int)
     }
 
     private val items = ArrayList<Image>()
@@ -79,7 +79,7 @@ class ImageViewHolder(
 
 
     override fun onClick(v: View?) {
-        listener.onClickedImage(imageResponse.url)
+        listener.onClickedImage(adapterPosition)
 
 
 
