@@ -59,7 +59,7 @@ class EditProfileDialog(
     private val phoneIn = phone
     private val lastNameOnlyIn = lastNameOnly
     private val firstNameOnlyIn = firstNameONly
-    private val pictureIn = picture
+    private var pictureIn = picture
     private val viewModelIn = viewModel
     lateinit var responseData: Resource<EditProfileResponse>
     private var selectedImageUri: Uri? = null

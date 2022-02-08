@@ -46,7 +46,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     lateinit var responseData: Resource<UserResponse>
     private lateinit var sessionManager: SessionManager
     private lateinit var user: User
-    private lateinit var picture: String
+    private  var picture: String? = null
     private var defaultInterval: Int = 500
     private var lastTimeClicked: Long = 0
 
@@ -54,8 +54,6 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawer)
-
-
 
         sessionManager = SessionManager(this)
 
@@ -122,11 +120,12 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 user.email = email_profile.text.toString()
                 user.phone_number = number_profile.text.toString()
 
-
+                if(picture == null)
+                    picture =""
 
                 EditProfileDialog(
                     user,
-                    picture,
+                    picture!!,
                     viewModel,
                     name_lastname,
                     email_profile,

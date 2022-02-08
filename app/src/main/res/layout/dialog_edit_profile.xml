@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
             android:textColor="@color/blue"
-            android:text="Chnager photo"/>
+            android:text="Changer photo"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/firstname_dialog"
