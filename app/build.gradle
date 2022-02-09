@@ -4,7 +4,9 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-android-extensions'
+    id 'androidx.navigation.safeargs'
 }
+
 
 android {
     compileSdk 32
@@ -109,5 +111,9 @@ dependencies {
 
     //MAP GPS
     implementation 'com.google.android.gms:play-services-location:19.0.1'
+
+
+    //Serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
 }

@@ -1,6 +1,7 @@
 package com.example.gtm.ui.home.mytask.survey.category
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +9,12 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gtm.R
-import com.example.gtm.data.entities.ui.Survey
+import com.example.gtm.data.entities.response.QuestionCategory
+import com.example.gtm.data.entities.response.Quiz
+import com.example.gtm.data.entities.response.QuizData
 import com.example.gtm.databinding.FragmentCategoryBinding
+import com.example.gtm.utils.resources.Resource
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_home.*
 
@@ -19,7 +24,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener {
 
     private lateinit var binding: FragmentCategoryBinding
     private lateinit var adapterCategory: CategoryAdapter
-    private val listaCategory = ArrayList<Survey>()
+    private var listaCategory = ArrayList<QuestionCategory>()
 
 
     override fun onCreateView(
@@ -28,7 +33,6 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentCategoryBinding.inflate(inflater, container, false)
-
 
 
         return binding.root
@@ -43,22 +47,23 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener {
         binding.backFromQuiz.setOnClickListener {
             findNavController().navigate(R.id.action_categoryFragment_to_quizFragment)
         }
-        statisData()
 
-    }
+        val myVal = arguments?.getString("quizObject")
 
-    private fun statisData()
-    {
+        val gson = Gson()
+        val objectList = gson.fromJson(myVal, QuizData::class.java)
 
 
-        val newOne = Survey(1)
+        if(objectList!=null)
+        listaCategory= objectList.questionCategories as ArrayList<QuestionCategory>
 
-        listaCategory.add(newOne)
-        listaCategory.add(newOne)
-        listaCategory.add(newOne)
 
         setupRecycleViewCategory()
+
+        // val objectList = gson.fromJson(json, Array<SomeObject>::class.java).asList()
     }
+
+
 
     private fun setupRecycleViewCategory() {
 

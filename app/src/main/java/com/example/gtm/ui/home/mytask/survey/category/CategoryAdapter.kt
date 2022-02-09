@@ -4,17 +4,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.databinding.ItemCategoryBinding
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginBottom
+import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.gtm.R
+import com.example.gtm.data.entities.response.QuestionCategory
+import com.example.gtm.data.entities.response.QuizData
+import com.google.gson.Gson
+import kotlinx.android.synthetic.main.item_sous_category.view.*
 
 
 class CategoryAdapter(private val listener: CategoryFragment, activity: FragmentActivity) :
@@ -27,10 +29,10 @@ class CategoryAdapter(private val listener: CategoryFragment, activity: Fragment
         fun onClickedCategory(categoryId: Int)
     }
 
-    private val items = ArrayList<Survey>()
+    private val items = ArrayList<QuestionCategory>()
 
 
-    fun setItems(items: ArrayList<Survey>) {
+    fun setItems(items: ArrayList<QuestionCategory>) {
         this.items.clear()
         this.items.addAll(items)
         notifyDataSetChanged()
@@ -60,16 +62,17 @@ class CategoryViewHolder(
     var isOpenLinear = false
     var addedValues = false
 
-    private lateinit var categoryResponse: Survey
+    private lateinit var categoryResponse: QuestionCategory
 
 
     init {
         itemBinding.root.setOnClickListener(this)
     }
 
-    fun bind(item: Survey) {
+    fun bind(item: QuestionCategory) {
         this.categoryResponse = item
 
+        itemBinding.title.text = item.name
 
         itemBinding.topCardv.setOnClickListener {
             expandColapse()
@@ -92,23 +95,32 @@ class CategoryViewHolder(
 
             isOpenLinear = true
             itemBinding.dropArrow.setImageResource(R.drawable.ic_baseline_arrow_drop_up_24)
-            itemBinding.dropArrow.setColorFilter(ContextCompat.getColor(parent.context, R.color.purpleLogin), android.graphics.PorterDuff.Mode.MULTIPLY);
+            itemBinding.dropArrow.setColorFilter(
+                ContextCompat.getColor(
+                    parent.context,
+                    R.color.purpleLogin
+                ), android.graphics.PorterDuff.Mode.MULTIPLY
+            );
             itemBinding.testLinear.visibility = View.VISIBLE
             val layout = itemBinding.testLinear
             layout.orientation = LinearLayout.VERTICAL
 
             if (!addedValues) {
-                for (j in 0..3) {
+                for (j in categoryResponse.questionSubCategories) {
                     i++
                     val inflater =
                         LayoutInflater.from(parent.context)
                             .inflate(R.layout.item_sous_category, null)
 
-                    inflater.id = j + 1 + i * 4
+                    inflater.id = j.id
+                    inflater.title_subcateg.text = j.name
                     inflater.setOnClickListener {
                         Log.i("buttonlistener", inflater.id.toString())
 
-                        parent.findNavController().navigate(R.id.action_categoryFragment_to_questionFragment)
+                        val responsJson : String  = Gson().toJson(j)
+
+                        val bundle = bundleOf("questionObject" to responsJson)
+                        parent.findNavController().navigate(R.id.action_categoryFragment_to_questionFragment,bundle)
                     }
                     layout.addView(inflater)
                 }

@@ -86,6 +86,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     ): View {
         binding = FragmentTaskBinding.inflate(inflater, container, false)
 
+
         fm = requireActivity().supportFragmentManager
 
         sharedPref = requireContext().getSharedPreferences(
@@ -113,6 +114,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             mDrawerLayout.openDrawer(Gravity.LEFT)
         }
 
+        if(isAdded)
          navController = NavHostFragment.findNavController(this)
     }
 

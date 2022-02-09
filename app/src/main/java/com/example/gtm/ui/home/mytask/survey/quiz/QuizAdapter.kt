@@ -1,16 +1,13 @@
 package com.example.gtm.ui.home.mytask.survey.quiz
 
-import android.app.Activity
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.example.gtm.data.entities.response.DataX
-import com.example.gtm.data.entities.ui.Survey
+import com.example.gtm.data.entities.response.QuizData
 import com.example.gtm.databinding.ItemQuizBinding
-import com.example.gtm.databinding.ItemTaskBinding
-import com.example.gtm.ui.drawer.DrawerActivity
 import com.example.gtm.ui.home.mytask.positionmap.PositionMapDialog
 
 class QuizAdapter(private val listener: QuizFragment, activity: FragmentActivity) :
@@ -20,13 +17,13 @@ class QuizAdapter(private val listener: QuizFragment, activity: FragmentActivity
     private val activityIns = activity
 
     interface QuizItemListener {
-        fun onClickedQuiz(quizId: Int)
+        fun onClickedQuiz(quiz: QuizData)
     }
 
-    private val items = ArrayList<Survey>()
+    private val items = ArrayList<QuizData>()
 
 
-    fun setItems(items: ArrayList<Survey>) {
+    fun setItems(items: ArrayList<QuizData>) {
         this.items.clear()
         this.items.addAll(items)
         notifyDataSetChanged()
@@ -53,21 +50,24 @@ class TaskViewHolder(
     View.OnClickListener {
 
 
-    private lateinit var quizResponse: Survey
+    private lateinit var quizResponse: QuizData
     private lateinit var dialog: PositionMapDialog
 
     init {
         itemBinding.root.setOnClickListener(this)
     }
 
-    fun bind(item: Survey) {
+    fun bind(item: QuizData) {
         this.quizResponse = item
+
+
+        itemBinding.surveyName.text = item.name
 
     }
 
 
     override fun onClick(v: View?) {
-          listener.onClickedQuiz(quizResponse.id)
+          listener.onClickedQuiz(quizResponse)
     }
 
 

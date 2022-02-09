@@ -1,21 +1,10 @@
 package com.example.gtm.ui.home.mytask.survey.question
 
-import android.graphics.Bitmap
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.example.gtm.data.entities.ui.Survey
-import com.example.gtm.databinding.ItemCategoryBinding
-import android.widget.LinearLayout
-import androidx.core.content.ContextCompat
-import androidx.core.view.marginBottom
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import com.example.gtm.R
 import com.example.gtm.data.entities.ui.Image
 import com.example.gtm.databinding.ItemImageBinding
 

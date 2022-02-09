@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.example.gtm.BuildConfig
 import com.example.gtm.data.remote.auth.AuthService
+import com.example.gtm.data.remote.survey.SurveyService
 import com.example.gtm.data.remote.user.UserService
 import com.example.gtm.data.remote.visite.VisiteService
 import com.example.gtm.utils.animations.UiAnimations
@@ -98,4 +99,7 @@ object AppModule {
     @Provides
     fun provideVisiteService(retrofit: Retrofit): VisiteService =
         retrofit.create(VisiteService::class.java)
+    @Provides
+    fun provideSurveyService(retrofit: Retrofit): SurveyService =
+        retrofit.create(SurveyService::class.java)
 }

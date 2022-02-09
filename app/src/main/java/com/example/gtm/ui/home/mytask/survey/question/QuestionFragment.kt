@@ -1,7 +1,7 @@
 package com.example.gtm.ui.home.mytask.survey.question
 
-import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,14 +9,15 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gtm.R
+import com.example.gtm.data.entities.response.Question
+import com.example.gtm.data.entities.response.QuestionSubCategory
+import com.example.gtm.data.entities.response.QuizData
 import com.example.gtm.data.entities.ui.Image
-import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.databinding.FragmentQuestionBinding
-import com.example.gtm.ui.home.mytask.survey.category.CategoryAdapter
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.fragment_question.*
-import kotlinx.android.synthetic.main.item_image.*
 
 @AndroidEntryPoint
 class QuestionFragment : Fragment() ,ImageAdapter.ImageItemListener{
@@ -25,6 +26,7 @@ class QuestionFragment : Fragment() ,ImageAdapter.ImageItemListener{
     private lateinit var adapterImage: ImageAdapter
     private val listaImage = ArrayList<Image>()
     private lateinit var choix_image_dialog : ChoixImageDialog
+    private lateinit var questionList : ArrayList<Question>
 
 
     override fun onCreateView(
@@ -34,6 +36,15 @@ class QuestionFragment : Fragment() ,ImageAdapter.ImageItemListener{
     ): View {
         binding = FragmentQuestionBinding.inflate(inflater, container, false)
 
+
+
+        val myVal = arguments?.getString("questionObject")
+
+        val gson = Gson()
+        val objectList = gson.fromJson(myVal, QuestionSubCategory::class.java)
+
+        questionList = objectList.questions as ArrayList<Question>
+        Log.i("objectList","$objectList")
 
         return binding.root
     }
