@@ -9,10 +9,13 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
 
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.view.Gravity
@@ -34,13 +37,14 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gtm.R
-import com.example.gtm.data.entities.response.DataX
+import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.data.entities.response.VisiteResponse
 import com.example.gtm.databinding.FragmentTaskBinding
 import com.example.gtm.ui.home.mytask.positionmap.PositionMapDialog
 import com.example.gtm.ui.home.mytask.survey.SurveyCheckDialog
 import com.example.gtm.utils.resources.Resource
 import com.fasterxml.jackson.databind.util.ClassUtil.getPackageName
+import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.dialog_quiz_confirmation.*
@@ -52,6 +56,10 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 
 @AndroidEntryPoint
@@ -60,7 +68,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
     private lateinit var binding: FragmentTaskBinding
     private lateinit var adapterTask: TaskAdapter
-    private var listaTasks = ArrayList<DataX>()
+    private var listaTasks = ArrayList<Visite>()
     lateinit var sharedPref: SharedPreferences
     private lateinit var responseData: Resource<VisiteResponse>
     private val viewModel: MyTaskViewModel by viewModels()
@@ -68,15 +76,21 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     private lateinit var dateTime: String
     private lateinit var fm: FragmentManager
     private lateinit var locationManager: LocationManager
-    private lateinit var tvGpsLocation: TextView
     private val REQUEST_CODE = 2
     private var GpsStatus = false
     private lateinit var navController: NavController
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
 
     override fun onStart() {
         super.onStart()
-        getVisites()
+
+        if(isAdded) {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+            askForPermissions()
+        }
+
+
     }
 
     override fun onCreateView(
@@ -85,6 +99,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentTaskBinding.inflate(inflater, container, false)
+
 
 
         fm = requireActivity().supportFragmentManager
@@ -114,28 +129,31 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             mDrawerLayout.openDrawer(Gravity.LEFT)
         }
 
-        if(isAdded)
-         navController = NavHostFragment.findNavController(this)
+        if (isAdded)
+            navController = NavHostFragment.findNavController(this)
     }
 
 
     private fun setupRecycleViewPredictionDetail() {
 
-        adapterTask = TaskAdapter(this, requireActivity())
-        binding.taskRecycleview.isMotionEventSplittingEnabled = false
-        binding.taskRecycleview.layoutManager = LinearLayoutManager(requireContext())
-        binding.taskRecycleview.layoutManager = LinearLayoutManager(
-            context,
-            LinearLayoutManager.VERTICAL,
-            false
-        )
-        binding.taskRecycleview.adapter = adapterTask
-        adapterTask.setItems(listaTasks)
+
+            adapterTask = TaskAdapter(this, requireActivity())
+            binding.taskRecycleview.isMotionEventSplittingEnabled = false
+            binding.taskRecycleview.layoutManager = LinearLayoutManager(requireContext())
+            binding.taskRecycleview.layoutManager = LinearLayoutManager(
+                context,
+                LinearLayoutManager.VERTICAL,
+                false
+            )
+            binding.taskRecycleview.adapter = adapterTask
+            adapterTask.setItems(listaTasks)
+
+
     }
 
-    override fun onClickedTask(taskId: Int,latitude:Double,Longitude:Double) {
+    override fun onClickedTask(taskId: Int, latitude: Double, Longitude: Double) {
         // PositionMapDialog().show(fm,"PositionMapDialog")
-        askForPermissions(latitude,Longitude)
+        //  askForPermissions(latitude,Longitude)
     }
 
     @DelicateCoroutinesApi
@@ -145,8 +163,13 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             responseData = viewModel.getVisites(userId.toString(), dateTime, dateTime)
 
             if (responseData.responseCode == 200) {
-                listaTasks = responseData.data!!.data as ArrayList<DataX>
+                listaTasks = responseData.data!!.data as ArrayList<Visite>
+                listaTasks[0].store.lat = 22.3
+                listaTasks[0].store.lng = 22.3
+                listaTasks.sortBy { list -> list.store.calculateDistance(locationValueListener.myLocation.latitude.toFloat(),locationValueListener.myLocation.longitude.toFloat()) }
                 setupRecycleViewPredictionDetail()
+                binding.progressIndicator.visibility = View.GONE
+
             }
 
         }
@@ -160,7 +183,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun askForPermissions(latitude:Double,Longitude:Double): Boolean {
+    fun askForPermissions(): Boolean {
         if (!isPermissionsAllowed()) {
             if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 showPermissionDeniedDialog()
@@ -171,8 +194,11 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         } else {
             Log.i("PERMISSIONBITCH", "4")
             if (CheckGpsStatus())
-                SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
-            else {
+            // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
+            {
+                setUpLocationListener()
+
+            } else {
                 showPermissionDeniedGPS()
             }
         }
@@ -210,7 +236,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
                     startActivity(intent)
 
                 })
-            .setNegativeButton("Cancel", null)
+            .setCancelable(false)
             .show()
     }
 
@@ -223,18 +249,26 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             2 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission is granted, you can perform your operation here
-                   /* if (CheckGpsStatus())
-                        SurveyCheckDialog(requireActivity(), requireContext()).show(
-                            fm,
-                            "SurveyDialog"
-                        )
-                    else {
+                    /* if (CheckGpsStatus())
+                         SurveyCheckDialog(requireActivity(), requireContext()).show(
+                             fm,
+                             "SurveyDialog"
+                         )
+                     else {
+                         showPermissionDeniedGPS()
+                     } */
+                    if (CheckGpsStatus())
+                    // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
+                    {
+                        setUpLocationListener()
+
+                    } else {
                         showPermissionDeniedGPS()
-                    } */
+                    }
 
                 } else {
                     // permission is denied, you can ask for permission again, if you want
-                    askForPermissions(0.00,0.00)
+                    askForPermissions()
 
                 }
                 return
@@ -251,8 +285,101 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     }
 
 
+    private fun setUpLocationListener() {
+
+
+        if(listaTasks.size == 0)
+        binding.progressIndicator.visibility = View.VISIBLE
+        // for getting the current location update after every 2 seconds with high accuracy
+        val locationRequest = LocationRequest().setInterval(2000).setFastestInterval(2000)
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.i("entrance", "Bad")
+            return
+        }
+
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    super.onLocationResult(locationResult)
+
+
+                    for (location in locationResult.locations) {
+
+                        if (location != null) {
+                            if (listaTasks.size == 0) {
+                                locationValueListener.myLocation = location
+                                getVisites()
+
+                            }
+
+                            else
+                            {
+                                locationValueListener.myLocation = location
+                                adapterTask.setItems(listaTasks)
+                            }
+                        } else
+                            askForPermissions()
+                        /*  if (location != null) {
+                              val distanceTest = distance(
+                                  location.latitude.toFloat(),
+                                  location.longitude.toFloat(),
+                                  latIn.toFloat(),
+                                  longIn.toFloat()
+                              )
+
+
+                              Log.i("HAHAH", "$distanceTest")
+                              if (distanceTest > 1 && distanceTest < 150) {
+                                  fusedLocationClient.removeLocationUpdates(this)
+                                  dismiss()
+                                  //    SurveyListDialog().show(requireActivity().supportFragmentManager,"survey list dialog")
+                                  navControllerIn.navigate(R.id.action_taskFragment_to_quizFragment)
+
+                              } else {
+                                  dismiss()
+                              }
+                          }*/
+
+                    }
+
+                }
+            },
+
+            Looper.myLooper()!!
+        )
+    }
+
+
+
+    fun distance(lat_a: Float, lng_a: Float, lat_b: Float, lng_b: Float): Float {
+        val earthRadius = 3958.75
+        val latDiff = Math.toRadians((lat_b - lat_a).toDouble())
+        val lngDiff = Math.toRadians((lng_b - lng_a).toDouble())
+        val a = sin(latDiff / 2) * sin(latDiff / 2) +
+                cos(Math.toRadians(lat_a.toDouble())) * cos(Math.toRadians(lat_b.toDouble())) *
+                sin(lngDiff / 2) * sin(lngDiff / 2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        val distance = earthRadius * c
+        val meterConversion = 1609
+        return (distance * meterConversion.toFloat()).toFloat()
+    }
+
+
 }
 
 object StaticMapClicked {
     var mapIsRunning = false
+}
+
+object locationValueListener {
+    lateinit var myLocation: Location
 }

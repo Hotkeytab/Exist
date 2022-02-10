@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gtm.R
@@ -27,6 +28,9 @@ class QuestionFragment : Fragment() ,ImageAdapter.ImageItemListener{
     private val listaImage = ArrayList<Image>()
     private lateinit var choix_image_dialog : ChoixImageDialog
     private lateinit var questionList : ArrayList<Question>
+    private var myVar2 : String? = ""
+    private var scName: String? = ""
+    private var i = 0
 
 
     override fun onCreateView(
@@ -36,9 +40,10 @@ class QuestionFragment : Fragment() ,ImageAdapter.ImageItemListener{
     ): View {
         binding = FragmentQuestionBinding.inflate(inflater, container, false)
 
-
+        scName = arguments?.getString("scName")
 
         val myVal = arguments?.getString("questionObject")
+        myVar2 = arguments?.getString("quizObject")
 
         val gson = Gson()
         val objectList = gson.fromJson(myVal, QuestionSubCategory::class.java)
@@ -55,6 +60,7 @@ class QuestionFragment : Fragment() ,ImageAdapter.ImageItemListener{
 
         requireActivity().bottom_nav.visibility = View.GONE
 
+        binding.bfTitle.text = scName+ ": "
 
         setupRecycleViewQuestion()
 
@@ -62,7 +68,9 @@ class QuestionFragment : Fragment() ,ImageAdapter.ImageItemListener{
         choix_image_dialog = ChoixImageDialog(show_image,adapterImage,listaImage,camera_linear,binding.plusImage,binding.myPhotoRecycle)
 
         binding.backFromQuiz.setOnClickListener {
-            findNavController().navigate(R.id.action_questionFragment_to_categoryFragment)
+
+            val bundle = bundleOf("quizObject" to myVar2)
+            findNavController().navigate(R.id.action_questionFragment_to_categoryFragment,bundle)
         }
 
 
@@ -76,7 +84,7 @@ class QuestionFragment : Fragment() ,ImageAdapter.ImageItemListener{
 
 
 
-
+        setQuestion()
 
     }
 
@@ -98,6 +106,34 @@ class QuestionFragment : Fragment() ,ImageAdapter.ImageItemListener{
 
     override fun onClickedImage(position: Int) {
         AfficherImageDialog(position,listaImage,camera_linear,binding.plusImage,adapterImage,binding.myPhotoRecycle).show(requireActivity().supportFragmentManager,"afficherimage")
+    }
+
+
+    private fun setQuestion()
+    {
+        //Afficher image ou non
+        if(questionList[i].images)
+            binding.cameraLinear.visibility = View.VISIBLE
+        else
+            binding.cameraLinear.visibility = View.GONE
+
+
+        //Image Obligatoire ou non
+        if(questionList[i].imagesRequired)
+            binding.noteText.text = "Ajouter des photos (Obligatoire)"
+        else
+            binding.noteText.text = "Ajouter des photos"
+
+
+        //note obligatoire ou non
+        if(questionList[i].required)
+            binding.noteText.text = "Donner une note (Obligatoire) :"
+        else
+            binding.noteText.text = "Donner une note :"
+
+        binding.questionContenu.text = questionList[i].name
+
+
     }
 
 

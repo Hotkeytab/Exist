@@ -13,7 +13,9 @@
             android:id="@+id/cutom_bar_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginRight="@dimen/_5sdp"
+            android:layout_marginLeft="@dimen/_5sdp"
             app:cardCornerRadius="@dimen/_4sdp"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -57,15 +59,30 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progress_indicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_5sdp"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            app:layout_constraintTop_toBottomOf="@+id/cutom_bar_top" />
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/recycleview_questionnaire"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
             app:cardCornerRadius="@dimen/_4sdp"
-            app:layout_constraintVertical_bias="0"
             app:layout_constraintBottom_toTopOf="@id/surveyimage"
-            app:layout_constraintTop_toBottomOf="@id/cutom_bar_top">
+            app:layout_constraintTop_toBottomOf="@id/progress_indicator"
+            app:layout_constraintVertical_bias="0">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/quiz_recycleview"

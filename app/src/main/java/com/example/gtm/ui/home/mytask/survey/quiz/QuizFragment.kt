@@ -1,7 +1,8 @@
 package com.example.gtm.ui.home.mytask.survey.quiz
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +12,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gtm.R
-import com.example.gtm.data.entities.response.DataX
 import com.example.gtm.data.entities.response.Quiz
 import com.example.gtm.data.entities.response.QuizData
 import com.example.gtm.databinding.FragmentQuizBinding
@@ -25,13 +25,15 @@ import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class QuizFragment : Fragment(),QuizAdapter.QuizItemListener {
+class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
 
     private lateinit var binding: FragmentQuizBinding
     private lateinit var adapterSurvey: QuizAdapter
     private lateinit var responseDataQuiz: Resource<Quiz>
     private var listaQuiz = ArrayList<QuizData>()
     private val viewModel: MyQuizViewModel by viewModels()
+    private var storeName: String? = ""
+    lateinit var sharedPref: SharedPreferences
 
 
     override fun onCreateView(
@@ -42,6 +44,11 @@ class QuizFragment : Fragment(),QuizAdapter.QuizItemListener {
         binding = FragmentQuizBinding.inflate(inflater, container, false)
 
 
+        sharedPref = requireContext().getSharedPreferences(
+            R.string.app_name.toString(),
+            Context.MODE_PRIVATE
+        )
+        storeName = sharedPref.getString("storeName", "")
 
         return binding.root
     }
@@ -53,6 +60,9 @@ class QuizFragment : Fragment(),QuizAdapter.QuizItemListener {
         binding.backFromQuiz.setOnClickListener {
             findNavController().navigate(R.id.action_quizFragment_to_taskFragment)
         }
+
+        binding.title.text = storeName
+
         getVisites()
 
     }
@@ -70,20 +80,23 @@ class QuizFragment : Fragment(),QuizAdapter.QuizItemListener {
         )
         binding.quizRecycleview.adapter = adapterSurvey
         adapterSurvey.setItems(listaQuiz)
+        binding.progressIndicator.visibility = View.GONE
 
     }
 
     override fun onClickedQuiz(quiz: QuizData) {
 
-        val responsJson : String  = Gson().toJson(quiz)
+        val responsJson: String = Gson().toJson(quiz)
 
+        putQuestionName(quiz.name)
         val bundle = bundleOf("quizObject" to responsJson)
-        findNavController().navigate(R.id.action_quizFragment_to_categoryFragment,bundle)
+        findNavController().navigate(R.id.action_quizFragment_to_categoryFragment, bundle)
 
     }
 
     @DelicateCoroutinesApi
     private fun getVisites() {
+        binding.progressIndicator.visibility = View.VISIBLE
         GlobalScope.launch(Dispatchers.Main) {
 
             responseDataQuiz = viewModel.getSurvey()
@@ -94,6 +107,19 @@ class QuizFragment : Fragment(),QuizAdapter.QuizItemListener {
             }
 
         }
+    }
+
+
+    private fun putQuestionName(questionName:String)
+    {
+        sharedPref =
+          requireContext().getSharedPreferences(
+                R.string.app_name.toString(),
+                Context.MODE_PRIVATE
+            )!!
+        with(sharedPref.edit()) {
+            this?.putString("questionName", questionName)
+        }?.commit()
     }
 
 }

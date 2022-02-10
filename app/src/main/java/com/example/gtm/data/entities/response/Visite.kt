@@ -1,6 +1,6 @@
 package com.example.gtm.data.entities.response
 
-data class DataX(
+data class Visite(
     val createdAt: String,
     val day: String,
     val id: Int,

@@ -19,11 +19,12 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.item_sous_category.view.*
 
 
-class CategoryAdapter(private val listener: CategoryFragment, activity: FragmentActivity) :
+class CategoryAdapter(private val listener: CategoryFragment, activity: FragmentActivity,myVal : String) :
     RecyclerView.Adapter<CategoryViewHolder>() {
 
 
     private val activityIns = activity
+    private val myValIns = myVal
 
     interface CategoryItemListener {
         fun onClickedCategory(categoryId: Int)
@@ -41,7 +42,7 @@ class CategoryAdapter(private val listener: CategoryFragment, activity: Fragment
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         val binding: ItemCategoryBinding =
             ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CategoryViewHolder(binding, listener as CategoryItemListener, activityIns, parent)
+        return CategoryViewHolder(binding, listener as CategoryItemListener, activityIns, parent,myValIns)
 
     }
 
@@ -55,7 +56,8 @@ class CategoryViewHolder(
     private val itemBinding: ItemCategoryBinding,
     private val listener: CategoryAdapter.CategoryItemListener,
     private val activityIns: FragmentActivity,
-    private var parent: ViewGroup
+    private var parent: ViewGroup,
+    private var myVal: String
 ) : RecyclerView.ViewHolder(itemBinding.root),
     View.OnClickListener {
 
@@ -119,7 +121,7 @@ class CategoryViewHolder(
 
                         val responsJson : String  = Gson().toJson(j)
 
-                        val bundle = bundleOf("questionObject" to responsJson)
+                        val bundle = bundleOf("questionObject" to responsJson,"quizObject" to myVal,"scName" to j.name)
                         parent.findNavController().navigate(R.id.action_categoryFragment_to_questionFragment,bundle)
                     }
                     layout.addView(inflater)

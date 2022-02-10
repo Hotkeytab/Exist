@@ -141,7 +141,7 @@ class SurveyCheckDialog(
                 latIn.toFloat(),
                 longIn.toFloat()
             )
-            distance.text = distanceTest.toString()
+         //   distance.text = distanceTest.toString()
             if (distanceTest > 1 && distanceTest < 100) {
                 locationManager.removeUpdates(this)
                 dismiss()

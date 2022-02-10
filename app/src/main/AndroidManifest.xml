@@ -21,7 +21,8 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".ui.drawer.DrawerActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -30,6 +31,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD-d7SEajMsOG2_lS4Hk3dUJSlJOrWiuWA" />
+
 
         <activity
             android:name=".ui.home.HomeActivity"

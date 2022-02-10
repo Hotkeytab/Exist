@@ -1,5 +1,7 @@
 package com.example.gtm.ui.home.mytask.survey.category
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -25,6 +27,9 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener {
     private lateinit var binding: FragmentCategoryBinding
     private lateinit var adapterCategory: CategoryAdapter
     private var listaCategory = ArrayList<QuestionCategory>()
+    lateinit var sharedPref: SharedPreferences
+    private var questionName: String? = ""
+    private var myVal :String? =""
 
 
     override fun onCreateView(
@@ -33,7 +38,11 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentCategoryBinding.inflate(inflater, container, false)
-
+        sharedPref = requireContext().getSharedPreferences(
+            R.string.app_name.toString(),
+            Context.MODE_PRIVATE
+        )
+        questionName = sharedPref.getString("questionName", "")
 
         return binding.root
     }
@@ -42,20 +51,22 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.title.text = questionName
+
         requireActivity().bottom_nav.visibility = View.VISIBLE
 
         binding.backFromQuiz.setOnClickListener {
             findNavController().navigate(R.id.action_categoryFragment_to_quizFragment)
         }
 
-        val myVal = arguments?.getString("quizObject")
+         myVal = arguments?.getString("quizObject")
 
         val gson = Gson()
         val objectList = gson.fromJson(myVal, QuizData::class.java)
 
 
-        if(objectList!=null)
-        listaCategory= objectList.questionCategories as ArrayList<QuestionCategory>
+        if (objectList != null)
+            listaCategory = objectList.questionCategories as ArrayList<QuestionCategory>
 
 
         setupRecycleViewCategory()
@@ -64,10 +75,9 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener {
     }
 
 
-
     private fun setupRecycleViewCategory() {
 
-        adapterCategory = CategoryAdapter(this, requireActivity())
+        adapterCategory = CategoryAdapter(this, requireActivity(),myVal!!)
         binding.categoryRecycleview.isMotionEventSplittingEnabled = false
         binding.categoryRecycleview.layoutManager = LinearLayoutManager(requireContext())
         binding.categoryRecycleview.layoutManager = LinearLayoutManager(
@@ -80,7 +90,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener {
     }
 
     override fun onClickedCategory(categoryId: Int) {
-      //  findNavController().navigate(R.id.action_categoryFragment_to_sousCategoryFragment)
+        //  findNavController().navigate(R.id.action_categoryFragment_to_sousCategoryFragment)
     }
 
 }
