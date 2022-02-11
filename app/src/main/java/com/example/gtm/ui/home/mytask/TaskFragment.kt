@@ -85,7 +85,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     override fun onStart() {
         super.onStart()
 
-        if(isAdded) {
+        if (isAdded) {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
             askForPermissions()
         }
@@ -137,23 +137,25 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     private fun setupRecycleViewPredictionDetail() {
 
 
-            adapterTask = TaskAdapter(this, requireActivity())
-            binding.taskRecycleview.isMotionEventSplittingEnabled = false
-            binding.taskRecycleview.layoutManager = LinearLayoutManager(requireContext())
-            binding.taskRecycleview.layoutManager = LinearLayoutManager(
-                context,
-                LinearLayoutManager.VERTICAL,
-                false
-            )
-            binding.taskRecycleview.adapter = adapterTask
-            adapterTask.setItems(listaTasks)
+        adapterTask = TaskAdapter(this, requireActivity())
+        binding.taskRecycleview.isMotionEventSplittingEnabled = false
+        binding.taskRecycleview.layoutManager = LinearLayoutManager(requireContext())
+        binding.taskRecycleview.layoutManager = LinearLayoutManager(
+            context,
+            LinearLayoutManager.VERTICAL,
+            false
+        )
+        binding.taskRecycleview.adapter = adapterTask
+        adapterTask.setItems(listaTasks)
 
 
     }
 
-    override fun onClickedTask(taskId: Int, latitude: Double, Longitude: Double) {
-        // PositionMapDialog().show(fm,"PositionMapDialog")
-        //  askForPermissions(latitude,Longitude)
+    override fun onClickedTask(taskId: Int, distance: String) {
+
+        askForPermissionsDialog()
+
+
     }
 
     @DelicateCoroutinesApi
@@ -166,7 +168,12 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
                 listaTasks = responseData.data!!.data as ArrayList<Visite>
                 listaTasks[0].store.lat = 22.3
                 listaTasks[0].store.lng = 22.3
-                listaTasks.sortBy { list -> list.store.calculateDistance(locationValueListener.myLocation.latitude.toFloat(),locationValueListener.myLocation.longitude.toFloat()) }
+                listaTasks.sortBy { list ->
+                    list.store.calculateDistance(
+                        locationValueListener.myLocation.latitude.toFloat(),
+                        locationValueListener.myLocation.longitude.toFloat()
+                    )
+                }
                 setupRecycleViewPredictionDetail()
                 binding.progressIndicator.visibility = View.GONE
 
@@ -197,6 +204,29 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
             {
                 setUpLocationListener()
+
+            } else {
+                showPermissionDeniedGPS()
+            }
+        }
+        return true
+    }
+
+    fun askForPermissionsDialog(): Boolean {
+        if (!isPermissionsAllowed()) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                showPermissionDeniedDialog()
+            } else {
+                requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE)
+            }
+            return false
+        } else {
+            Log.i("PERMISSIONBITCH", "4")
+            if (CheckGpsStatus())
+            // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
+            {
+
+                SurveyCheckDialog(navController).show(fm, "SurveyDialog")
 
             } else {
                 showPermissionDeniedGPS()
@@ -288,8 +318,8 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     private fun setUpLocationListener() {
 
 
-        if(listaTasks.size == 0)
-        binding.progressIndicator.visibility = View.VISIBLE
+        if (listaTasks.size == 0)
+            binding.progressIndicator.visibility = View.VISIBLE
         // for getting the current location update after every 2 seconds with high accuracy
         val locationRequest = LocationRequest().setInterval(2000).setFastestInterval(2000)
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -319,10 +349,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
                                 locationValueListener.myLocation = location
                                 getVisites()
 
-                            }
-
-                            else
-                            {
+                            } else {
                                 locationValueListener.myLocation = location
                                 adapterTask.setItems(listaTasks)
                             }
@@ -357,7 +384,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             Looper.myLooper()!!
         )
     }
-
 
 
     fun distance(lat_a: Float, lng_a: Float, lat_b: Float, lng_b: Float): Float {

@@ -1,11 +1,25 @@
 package com.example.gtm.ui.home.mytask
 
+import android.Manifest
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.GpsStatus
+import android.location.LocationManager
+import android.net.Uri
+import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat.requestPermissions
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.findNavController
@@ -26,7 +40,7 @@ class TaskAdapter(private val listener: TaskFragment, activity: FragmentActivity
     private val activityIns = activity
 
     interface TaskItemListener {
-        fun onClickedTask(taskId: Int, latitude: Double, Longitude: Double)
+        fun onClickedTask(taskId: Int, distance: String)
     }
 
     private val items = ArrayList<Visite>()
@@ -63,6 +77,8 @@ class TaskViewHolder(
     private lateinit var visiteResponse: Visite
     private lateinit var dialog: PositionMapDialog
     lateinit var sharedPref: SharedPreferences
+    private val REQUEST_CODE = 2
+    private var finalDistance = ""
 
     init {
         itemBinding.root.setOnClickListener(this)
@@ -71,8 +87,9 @@ class TaskViewHolder(
     fun bind(item: Visite) {
         this.visiteResponse = item
 
-        var finalDistance = ""
+
         var clicked = false
+
 
 
 
@@ -95,14 +112,22 @@ class TaskViewHolder(
 
             itemBinding.storeIcon.setOnClickListener {
                 putStoreName(item.store.name)
-                parent.findNavController()
-                    .navigate(R.id.action_taskFragment_to_quizFragment)
+                listener.onClickedTask(
+                    visiteResponse.id,
+                    finalDistance
+                )
+              /*  parent.findNavController()
+                    .navigate(R.id.action_taskFragment_to_quizFragment)*/
             }
 
             itemBinding.storeText.setOnClickListener {
                 putStoreName(item.store.name)
-                parent.findNavController()
-                    .navigate(R.id.action_taskFragment_to_quizFragment)
+                listener.onClickedTask(
+                    visiteResponse.id,
+                    finalDistance
+                )
+               /* parent.findNavController()
+                    .navigate(R.id.action_taskFragment_to_quizFragment)*/
             }
         } else {
             finalDistance = (theDistance.toInt() / 1000).toString() + " km"
@@ -111,19 +136,6 @@ class TaskViewHolder(
         }
 
         itemBinding.distance.text = finalDistance
-
-        /* when (item.type) {
-             1 -> {
-                 itemBinding.type.setImageResource(R.drawable.yellow_warning)
-             }
-             2 -> {
-                 itemBinding.type.setImageResource(R.drawable.final_red_ic)
-             }
-             3 -> {
-                 itemBinding.type.setImageResource(R.drawable.ic_blue_ex)
-             }
-         } */
-
 
 
 
@@ -149,8 +161,7 @@ class TaskViewHolder(
     override fun onClick(v: View?) {
         listener.onClickedTask(
             visiteResponse.id,
-            visiteResponse.store.lat,
-            visiteResponse.store.lng
+            finalDistance
         )
     }
 
@@ -169,8 +180,7 @@ class TaskViewHolder(
     }
 
 
-    private fun putStoreName(storeName:String)
-    {
+    private fun putStoreName(storeName: String) {
         sharedPref =
             parent.context.getSharedPreferences(
                 R.string.app_name.toString(),

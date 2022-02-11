@@ -12,7 +12,6 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.example.gtm.R
 import dagger.hilt.android.AndroidEntryPoint
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
@@ -22,11 +21,9 @@ import android.net.Uri
 import android.os.Build
 import android.provider.DocumentsContract
 import android.provider.MediaStore
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -34,10 +31,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gtm.BuildConfig
 import com.example.gtm.data.entities.ui.Image
 import kotlinx.android.synthetic.main.dialog_choix_image.*
-import kotlinx.android.synthetic.main.dialog_internet_connection.*
-import kotlinx.android.synthetic.main.fragment_question.*
 import java.io.File
-import java.security.Permission
 
 
 @AndroidEntryPoint
@@ -46,8 +40,8 @@ class ChoixImageDialog(
     adapterImage2: ImageAdapter,
     listaImage2: ArrayList<Image>,
     linearImage2: LinearLayout,
-    plus_image2: CardView,
-    recycle_view2 : RecyclerView
+    plus_image2: LinearLayout,
+    recycle_view2: RecyclerView
 ) :
     DialogFragment() {
 
