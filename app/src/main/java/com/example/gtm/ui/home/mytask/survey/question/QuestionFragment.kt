@@ -2,10 +2,8 @@ package com.example.gtm.ui.home.mytask.survey.question
 
 import android.os.Bundle
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,18 +16,26 @@ import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.fragment_question.*
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import com.example.gtm.data.entities.response.QuizData
+import com.example.gtm.data.entities.ui.Survey
+
 
 @AndroidEntryPoint
 class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener {
 
     private lateinit var binding: FragmentQuestionBinding
     private lateinit var adapterImage: ImageAdapter
-    private val listaImage = ArrayList<Image>()
+    private var listaImage = ArrayList<Image>()
     private lateinit var choix_image_dialog: ChoixImageDialog
     private lateinit var questionList: ArrayList<Question>
     private var myVar2: String? = ""
     private var scName: String? = ""
     private var i = 0
+    private var leftAnimation: Animation? = null
+    private var rightAnimation: Animation? = null
+    private var listaSurvey = ArrayList<Survey>()
 
 
     override fun onCreateView(
@@ -59,6 +65,20 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        leftAnimation = AnimationUtils.loadAnimation(
+            requireContext(),
+            R.anim.right_to_left_animation_forquestion
+        )
+
+
+
+        rightAnimation = AnimationUtils.loadAnimation(
+            requireContext(),
+            R.anim.left_to_right_animation_forquestion
+        )
+
 
         requireActivity().bottom_nav.visibility = View.GONE
 
@@ -93,27 +113,17 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener {
 
         binding.suivant.setOnClickListener {
 
-            if (i < questionList.size) {
-                i++
-                setQuestion()
-            }
+            suivantFun()
 
         }
 
         binding.precedent.setOnClickListener {
-
-            if (i > 0) {
-                i--
-                setQuestion()
-            }
+            precedentFun()
 
         }
 
 
-
-
         setQuestion()
-
     }
 
 
@@ -128,7 +138,6 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener {
             false
         )
         binding.myPhotoRecycle.adapter = adapterImage
-        // adapterImage.setItems(listaImage)
     }
 
     override fun onClickedImage(position: Int) {
@@ -145,7 +154,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener {
 
     private fun setQuestion() {
         //Disable suivant or precedent
-        if (questionList.size < 2 || i ==0) {
+        if (questionList.size < 2 || i == 0) {
             binding.precedent.visibility = View.GONE
             binding.suivant.visibility = View.VISIBLE
         } else
@@ -155,6 +164,9 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener {
 
             }
 
+
+        //Top Menu Quetion Number
+        binding.title.text = "Question ${i + 1}"
 
         //Afficher image ou non
         if (questionList[i].images)
@@ -178,6 +190,100 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener {
 
         binding.questionContenu.text = questionList[i].name
 
+
+    }
+
+
+    private fun suivantFun() {
+        if (i < questionList.size) {
+            binding.cardviewContent.animation = leftAnimation
+            leftAnimation = null
+            leftAnimation = AnimationUtils.loadAnimation(
+                requireContext(),
+                R.anim.right_to_left_animation_forquestion
+            )
+            i++
+            setQuestion()
+            initQuestion()
+        }
+
+    }
+
+
+    private fun precedentFun() {
+        if (i > 0) {
+            binding.cardviewContent.animation = rightAnimation
+            rightAnimation = null
+            rightAnimation = AnimationUtils.loadAnimation(
+                requireContext(),
+                R.anim.left_to_right_animation_forquestion
+            )
+            i--
+            setQuestion()
+            initQuestion()
+        }
+    }
+
+    private fun addItemSurvey() {
+        val surveyItem =
+            Survey(binding.ratingBar.rating, binding.editText.text.toString(), listaImage)
+     /*   if (listaSurvey.size > i)
+            listaSurvey.removeAt(i) */
+        listaSurvey.add(i, surveyItem)
+        listaImage = ArrayList<Image>()
+        Log.i("surveyitem", "$i")
+        Log.i("surveyitem", "$listaSurvey")
+
+    }
+
+    private fun retrieveItemSurvey() {
+        if (listaSurvey.size > i) {
+            binding.ratingBar.rating = listaSurvey[i].note
+
+            if (listaSurvey[i].remarque != "") {
+                binding.editText.setText("")
+                binding.editText.setText(listaSurvey[i].remarque)
+            } else {
+                binding.editText.setText("")
+                binding.editText.hint = "Laisser une remarque..."
+            }
+
+
+          /*  if (listaSurvey[i].urls.size != 0) {
+                adapterImage.setItems(ArrayList<Image>())
+                binding.cameraLinear.visibility = View.GONE
+                binding.plusImage.visibility = View.VISIBLE
+                listaImage = listaSurvey[i].urls
+                adapterImage.setItems(listaSurvey[i].urls)
+
+
+            } else {
+                binding.cameraLinear.visibility = View.VISIBLE
+                binding.plusImage.visibility = View.GONE
+
+            } */
+
+
+        } else {
+            binding.ratingBar.rating = 0f
+            binding.editText.setText("")
+            binding.editText.hint = "Laisser une remarque..."
+            binding.cameraLinear.visibility = View.VISIBLE
+            binding.plusImage.visibility = View.GONE
+        }
+
+
+    }
+
+    private fun initQuestion()
+    {
+        binding.editText.setText("")
+        binding.editText.hint = "Laisser une remarque..."
+
+        binding.ratingBar.rating = 0f
+
+        binding.cameraLinear.visibility = View.VISIBLE
+        binding.plusImage.visibility = View.GONE
 
     }
 

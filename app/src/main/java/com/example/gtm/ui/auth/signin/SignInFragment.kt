@@ -51,37 +51,40 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
     ): View {
         binding = FragmentSignInBinding.inflate(inflater, container, false)
 
-        sessionManager = SessionManager(requireContext())
+        if (isAdded) {
 
-        fm = requireActivity().supportFragmentManager
+            sessionManager = SessionManager(requireContext())
 
-        dialog = InternetCheckDialog()
+            fm = requireActivity().supportFragmentManager
 
-
-
-
-        initSignIn()
-
-        val animationLeftToRight =
-            AnimationUtils.loadAnimation(requireContext(), R.anim.left_to_right)
-
-        val animationRightToLeft =
-            AnimationUtils.loadAnimation(requireContext(), R.anim.right_to_left)
-
-        val animationBottomToTop =
-            AnimationUtils.loadAnimation(requireContext(), R.anim.bottom_to_top)
-
-        animationSignin(animationLeftToRight, animationRightToLeft, animationBottomToTop)
+            dialog = InternetCheckDialog()
 
 
 
-        binding.signinButton.setOnClickListener {
-            // signInOffline()
-            checkInternet()
+
+            initSignIn()
+
+            val animationLeftToRight =
+                AnimationUtils.loadAnimation(requireContext(), R.anim.left_to_right)
+
+            val animationRightToLeft =
+                AnimationUtils.loadAnimation(requireContext(), R.anim.right_to_left)
+
+            val animationBottomToTop =
+                AnimationUtils.loadAnimation(requireContext(), R.anim.bottom_to_top)
+
+            animationSignin(animationLeftToRight, animationRightToLeft, animationBottomToTop)
+
+
+
+            binding.signinButton.setOnClickListener {
+                // signInOffline()
+                checkInternet()
+
+            }
+
 
         }
-
-
 
         return binding.root
     }
