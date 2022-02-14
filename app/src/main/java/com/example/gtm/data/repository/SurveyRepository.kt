@@ -15,5 +15,7 @@ class SurveyRepository @Inject constructor(
     private val surveyDataSource: SurveyRemoteDataSource
 ) {
 
-    suspend fun getSurvey() =  surveyDataSource.getSurvey()
+    suspend fun getSurvey() = surveyDataSource.getSurvey()
+    suspend fun postSurveyResponse(surveyResponse: RequestBody) =
+        surveyDataSource.postSurveyResponse(surveyResponse)
 }

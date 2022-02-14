@@ -37,6 +37,7 @@ import android.os.Looper
 import android.provider.Settings
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.example.gtm.ui.home.mytask.LocationValueListener
 import com.google.android.gms.location.*
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -67,12 +68,6 @@ class SurveyCheckDialog(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-
-
-
-
-
         return inflater.inflate(R.layout.dialog_quiz_confirmation, container, false)
     }
 
@@ -97,11 +92,13 @@ class SurveyCheckDialog(
 
         accept.setOnClickListener {
 
+            LocationValueListener.locationOn = false
             navControllerIn.navigate(R.id.action_taskFragment_to_quizFragment)
             dismiss()
         }
 
         cancel_button.setOnClickListener {
+            LocationValueListener.locationOn = true
             dismiss()
         }
 

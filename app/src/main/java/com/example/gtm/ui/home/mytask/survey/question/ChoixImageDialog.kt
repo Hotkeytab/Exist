@@ -38,10 +38,11 @@ import java.io.File
 class ChoixImageDialog(
     imagehaha2: ImageView,
     adapterImage2: ImageAdapter,
-    listaImage2: ArrayList<Image>,
+    listaImage2: HashMap<Int, ArrayList<Image>>,
     linearImage2: LinearLayout,
     plus_image2: LinearLayout,
-    recycle_view2: RecyclerView
+    recycle_view2: RecyclerView,
+    i2: Int
 ) :
     DialogFragment() {
 
@@ -52,6 +53,7 @@ class ChoixImageDialog(
     private val linearImage = linearImage2
     private val plus_image = plus_image2
     private val recycle_view = recycle_view2
+    private val i = i2
 
     private var uri: Uri? = null
 
@@ -142,8 +144,14 @@ class ChoixImageDialog(
             linearImage.visibility = View.GONE
             plus_image.visibility = View.VISIBLE
             recycle_view.visibility = View.VISIBLE
-            listaImage.add(0,imageBitmap)
-            adapterImage.setItems(listaImage)
+            if (listaImage[i] == null) {
+                val arrayNob = ArrayList<Image>()
+                arrayNob.add(imageBitmap)
+                listaImage[i] = arrayNob
+            } else {
+                listaImage[i]!!.add(imageBitmap)
+            }
+            adapterImage.setItems(listaImage[i]!!)
 
 
         } else {
@@ -223,8 +231,14 @@ class ChoixImageDialog(
                     linearImage.visibility = View.GONE
                     plus_image.visibility = View.VISIBLE
                     recycle_view.visibility = View.VISIBLE
-                    listaImage.add(0,imageBitmap)
-                    adapterImage.setItems(listaImage)
+                    if (listaImage[i] == null) {
+                        val arrayNob = ArrayList<Image>()
+                        arrayNob.add(imageBitmap)
+                        listaImage[i] = arrayNob
+                    } else {
+                        listaImage[i]!!.add(imageBitmap)
+                    }
+                    adapterImage.setItems(listaImage[i]!!)
                 }
             CHOOSE_PHOTO ->
                 if (resultCode == Activity.RESULT_OK) {

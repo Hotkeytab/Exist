@@ -87,7 +87,6 @@ class TaskViewHolder(
     fun bind(item: Visite) {
         this.visiteResponse = item
 
-
         var clicked = false
 
 
@@ -98,8 +97,8 @@ class TaskViewHolder(
 
 
         val theDistance = distance(
-            locationValueListener.myLocation.latitude.toFloat(),
-            locationValueListener.myLocation.longitude.toFloat(),
+            LocationValueListener.myLocation.latitude.toFloat(),
+            LocationValueListener.myLocation.longitude.toFloat(),
             item.store.lat.toFloat(),
             item.store.lng.toFloat()
         )
@@ -109,15 +108,14 @@ class TaskViewHolder(
         if (theDistance < 1000) {
             finalDistance = theDistance.toInt().toString() + " m"
             itemBinding.cardviewColorEnable.setCardBackgroundColor(Color.rgb(255, 255, 255))
-
             itemBinding.storeIcon.setOnClickListener {
                 putStoreName(item.store.name)
                 listener.onClickedTask(
                     visiteResponse.id,
                     finalDistance
                 )
-              /*  parent.findNavController()
-                    .navigate(R.id.action_taskFragment_to_quizFragment)*/
+                /*  parent.findNavController()
+                      .navigate(R.id.action_taskFragment_to_quizFragment)*/
             }
 
             itemBinding.storeText.setOnClickListener {
@@ -126,8 +124,8 @@ class TaskViewHolder(
                     visiteResponse.id,
                     finalDistance
                 )
-               /* parent.findNavController()
-                    .navigate(R.id.action_taskFragment_to_quizFragment)*/
+                /* parent.findNavController()
+                     .navigate(R.id.action_taskFragment_to_quizFragment)*/
             }
         } else {
             finalDistance = (theDistance.toInt() / 1000).toString() + " km"

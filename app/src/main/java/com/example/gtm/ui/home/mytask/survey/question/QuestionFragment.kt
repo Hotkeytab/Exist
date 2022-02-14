@@ -27,7 +27,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener {
 
     private lateinit var binding: FragmentQuestionBinding
     private lateinit var adapterImage: ImageAdapter
-    private var listaImage = ArrayList<Image>()
+    private var listaImage = HashMap<Int,ArrayList<Image>>()
     private lateinit var choix_image_dialog: ChoixImageDialog
     private lateinit var questionList: ArrayList<Question>
     private var myVar2: String? = ""
@@ -35,7 +35,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener {
     private var i = 0
     private var leftAnimation: Animation? = null
     private var rightAnimation: Animation? = null
-    private var listaSurvey = ArrayList<Survey>()
+    private var listaSurvey = HashMap<Int, Survey>()
 
 
     override fun onCreateView(
@@ -93,7 +93,8 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener {
             listaImage,
             camera_linear,
             binding.plusImage,
-            binding.myPhotoRecycle
+            binding.myPhotoRecycle,
+            i
         )
 
         binding.backFromQuiz.setOnClickListener {
@@ -123,6 +124,11 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener {
         }
 
 
+        binding.terminer.setOnClickListener {
+
+        }
+
+
         setQuestion()
     }
 
@@ -147,23 +153,37 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener {
             camera_linear,
             binding.plusImage,
             adapterImage,
-            binding.myPhotoRecycle
+            binding.myPhotoRecycle,
+            i
         ).show(requireActivity().supportFragmentManager, "afficherimage")
     }
 
 
     private fun setQuestion() {
         //Disable suivant or precedent
-        if (questionList.size < 2 || i == 0) {
-            binding.precedent.visibility = View.GONE
-            binding.suivant.visibility = View.VISIBLE
-        } else
-            if (questionList.size - 1 == i) {
+        if (i == 0) {
+            if (questionList.size == 1) {
+                binding.precedent.visibility = View.GONE
                 binding.suivant.visibility = View.GONE
-                binding.precedent.visibility = View.VISIBLE
-
+                binding.terminer.visibility = View.VISIBLE
+            } else {
+                binding.precedent.visibility = View.GONE
+                binding.suivant.visibility = View.VISIBLE
+                binding.terminer.visibility = View.GONE
             }
 
+        } else
+            if (i == questionList.size - 1) {
+                binding.precedent.visibility = View.VISIBLE
+                binding.suivant.visibility = View.GONE
+                binding.terminer.visibility = View.VISIBLE
+            } else {
+                binding.precedent.visibility = View.VISIBLE
+                binding.suivant.visibility = View.VISIBLE
+                binding.terminer.visibility = View.GONE
+
+            }
+        questionList.size - 1 == i
 
         //Top Menu Quetion Number
         binding.title.text = "Question ${i + 1}"
@@ -189,8 +209,6 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener {
             binding.noteText.text = "Donner une note :"
 
         binding.questionContenu.text = questionList[i].name
-
-
     }
 
 
@@ -202,9 +220,11 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener {
                 requireContext(),
                 R.anim.right_to_left_animation_forquestion
             )
+
             i++
             setQuestion()
             initQuestion()
+            adapterImage.clear()
         }
 
     }
@@ -218,74 +238,25 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener {
                 requireContext(),
                 R.anim.left_to_right_animation_forquestion
             )
+
             i--
             setQuestion()
             initQuestion()
+            adapterImage.clear()
         }
     }
 
-    private fun addItemSurvey() {
-        val surveyItem =
-            Survey(binding.ratingBar.rating, binding.editText.text.toString(), listaImage)
-     /*   if (listaSurvey.size > i)
-            listaSurvey.removeAt(i) */
-        listaSurvey.add(i, surveyItem)
-        listaImage = ArrayList<Image>()
-        Log.i("surveyitem", "$i")
-        Log.i("surveyitem", "$listaSurvey")
 
-    }
-
-    private fun retrieveItemSurvey() {
-        if (listaSurvey.size > i) {
-            binding.ratingBar.rating = listaSurvey[i].note
-
-            if (listaSurvey[i].remarque != "") {
-                binding.editText.setText("")
-                binding.editText.setText(listaSurvey[i].remarque)
-            } else {
-                binding.editText.setText("")
-                binding.editText.hint = "Laisser une remarque..."
-            }
-
-
-          /*  if (listaSurvey[i].urls.size != 0) {
-                adapterImage.setItems(ArrayList<Image>())
-                binding.cameraLinear.visibility = View.GONE
-                binding.plusImage.visibility = View.VISIBLE
-                listaImage = listaSurvey[i].urls
-                adapterImage.setItems(listaSurvey[i].urls)
-
-
-            } else {
-                binding.cameraLinear.visibility = View.VISIBLE
-                binding.plusImage.visibility = View.GONE
-
-            } */
-
-
-        } else {
-            binding.ratingBar.rating = 0f
-            binding.editText.setText("")
-            binding.editText.hint = "Laisser une remarque..."
-            binding.cameraLinear.visibility = View.VISIBLE
-            binding.plusImage.visibility = View.GONE
-        }
-
-
-    }
-
-    private fun initQuestion()
-    {
+    private fun initQuestion() {
         binding.editText.setText("")
         binding.editText.hint = "Laisser une remarque..."
-
         binding.ratingBar.rating = 0f
-
         binding.cameraLinear.visibility = View.VISIBLE
         binding.plusImage.visibility = View.GONE
-
     }
+
+
+
 
 
 }

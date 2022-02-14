@@ -19,11 +19,12 @@ import kotlinx.android.synthetic.main.dialog_afficher_image.*
 @AndroidEntryPoint
 class AfficherImageDialog(
     position2: Int,
-    listaImage2: ArrayList<Image>,
+    listaImage2: HashMap<Int,ArrayList<Image>>,
     linearImage2: LinearLayout,
     plus_image2: LinearLayout,
     adapterImage2: ImageAdapter,
-    recycle_view2: RecyclerView
+    recycle_view2: RecyclerView,
+    i2: Int
 
 ) :
     DialogFragment() {
@@ -35,6 +36,7 @@ class AfficherImageDialog(
     private val plus_image = plus_image2
     private val adapterImage = adapterImage2
     private val recycle_view = recycle_view2
+    private val i = i2
 
 
     override fun onCreateView(
@@ -57,7 +59,7 @@ class AfficherImageDialog(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        afficher_image.setImageBitmap(listaImage[position].url)
+        afficher_image.setImageBitmap(listaImage[i]!![position].url)
         Log.i("imageposition", position.toString())
 
         return_from_dialog.setOnClickListener {
@@ -65,46 +67,46 @@ class AfficherImageDialog(
         }
 
         left_arrow.setOnClickListener {
-            if (position != 0 && listaImage.size != 1) {
+            if (position != 0 && listaImage[i]!!.size != 1) {
                 position--
-                afficher_image.setImageBitmap(listaImage[position].url)
+                afficher_image.setImageBitmap(listaImage[i]!![position].url)
             }
         }
 
         right_arrow.setOnClickListener {
-            if (listaImage.size - 1 != position && listaImage.size != 1) {
+            if (listaImage[i]!!.size - 1 != position && listaImage[i]!!.size != 1) {
                 position++
-                afficher_image.setImageBitmap(listaImage[position].url)
+                afficher_image.setImageBitmap(listaImage[i]!![position].url)
             }
 
         }
 
         delete.setOnClickListener {
-            if (listaImage.size == 1) {
-                listaImage.removeAt(0)
+            if (listaImage[i]!!.size == 1) {
+                listaImage[i]!!.removeAt(0)
                 linearImage.visibility = View.VISIBLE
                 plus_image.visibility = View.GONE
-                adapterImage.setItems(listaImage)
+                adapterImage.setItems(listaImage[i]!!)
                 recycle_view.visibility = View.GONE
                 dismiss()
 
-            } else if (listaImage.size > 1) {
+            } else if (listaImage[i]!!.size > 1) {
                 if (position == 0) {
 
-                    listaImage.removeAt(0)
-                    afficher_image.setImageBitmap(listaImage[position].url)
-                    adapterImage.setItems(listaImage)
+                    listaImage[i]!!.removeAt(0)
+                    afficher_image.setImageBitmap(listaImage[i]!![position].url)
+                    adapterImage.setItems(listaImage[i]!!)
 
-                } else if (position == listaImage.size - 1) {
+                } else if (position == listaImage[i]!!.size - 1) {
 
-                    listaImage.removeAt(listaImage.size - 1)
+                    listaImage[i]!!.removeAt(listaImage[i]!!.size - 1)
                     position --
-                    afficher_image.setImageBitmap(listaImage[position].url)
-                    adapterImage.setItems(listaImage)
+                    afficher_image.setImageBitmap(listaImage[i]!![position].url)
+                    adapterImage.setItems(listaImage[i]!!)
                 } else {
-                    listaImage.removeAt(position)
-                    afficher_image.setImageBitmap(listaImage[position].url)
-                    adapterImage.setItems(listaImage)
+                    listaImage[i]!!.removeAt(position)
+                    afficher_image.setImageBitmap(listaImage[i]!![position].url)
+                    adapterImage.setItems(listaImage[i]!!)
                 }
             } else
                 dismiss()

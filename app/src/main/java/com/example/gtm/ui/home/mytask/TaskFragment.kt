@@ -1,17 +1,13 @@
 package com.example.gtm.ui.home.mytask
 
 import android.Manifest
-import android.app.Activity
 import android.app.AlertDialog
-import android.app.ProgressDialog.show
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationListener
-
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
@@ -23,11 +19,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -40,14 +31,10 @@ import com.example.gtm.R
 import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.data.entities.response.VisiteResponse
 import com.example.gtm.databinding.FragmentTaskBinding
-import com.example.gtm.ui.home.mytask.positionmap.PositionMapDialog
 import com.example.gtm.ui.home.mytask.survey.SurveyCheckDialog
 import com.example.gtm.utils.resources.Resource
-import com.fasterxml.jackson.databind.util.ClassUtil.getPackageName
 import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.dialog_quiz_confirmation.*
 import kotlinx.android.synthetic.main.fragment_task.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -86,6 +73,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         super.onStart()
 
         if (isAdded) {
+            LocationValueListener.locationOn = true
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
             askForPermissions()
         }
@@ -154,8 +142,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     override fun onClickedTask(taskId: Int, distance: String) {
 
         askForPermissionsDialog()
-
-
     }
 
     @DelicateCoroutinesApi
@@ -165,13 +151,14 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             responseData = viewModel.getVisites(userId.toString(), dateTime, dateTime)
 
             if (responseData.responseCode == 200) {
+
                 listaTasks = responseData.data!!.data as ArrayList<Visite>
-                listaTasks[0].store.lat = 22.3
-                listaTasks[0].store.lng = 22.3
+               /* listaTasks[0].store.lat = 22.3
+                listaTasks[0].store.lng = 22.3*/
                 listaTasks.sortBy { list ->
                     list.store.calculateDistance(
-                        locationValueListener.myLocation.latitude.toFloat(),
-                        locationValueListener.myLocation.longitude.toFloat()
+                        LocationValueListener.myLocation.latitude.toFloat(),
+                        LocationValueListener.myLocation.longitude.toFloat()
                     )
                 }
                 setupRecycleViewPredictionDetail()
@@ -341,16 +328,20 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
                 override fun onLocationResult(locationResult: LocationResult) {
                     super.onLocationResult(locationResult)
 
+                    if(!LocationValueListener.locationOn)
+                    {
+                        fusedLocationClient.removeLocationUpdates(this)
+                    }
 
                     for (location in locationResult.locations) {
 
                         if (location != null) {
                             if (listaTasks.size == 0) {
-                                locationValueListener.myLocation = location
+                                LocationValueListener.myLocation = location
                                 getVisites()
 
                             } else {
-                                locationValueListener.myLocation = location
+                                LocationValueListener.myLocation = location
                                 adapterTask.setItems(listaTasks)
                             }
                         } else
@@ -375,6 +366,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
                                   dismiss()
                               }
                           }*/
+
 
                     }
 
@@ -406,6 +398,7 @@ object StaticMapClicked {
     var mapIsRunning = false
 }
 
-object locationValueListener {
+object LocationValueListener {
     lateinit var myLocation: Location
+    var locationOn = true
 }

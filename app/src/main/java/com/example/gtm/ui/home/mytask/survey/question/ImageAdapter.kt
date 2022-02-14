@@ -28,6 +28,13 @@ class ImageAdapter(private val listener: QuestionFragment, activity: FragmentAct
         notifyDataSetChanged()
     }
 
+    fun clear() {
+        val size: Int = items.size
+        items.clear()
+        notifyItemRangeRemoved(0, size)
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val binding: ItemImageBinding =
             ItemImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
