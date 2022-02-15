@@ -20,7 +20,7 @@ class QuizAdapter(private val listener: QuizFragment, activity: FragmentActivity
     private val activityIns = activity
 
     interface QuizItemListener {
-        fun onClickedQuiz(quiz: QuizData)
+        fun onClickedQuiz(quiz: QuizData,surveyId : Int)
     }
 
     private val items = ArrayList<QuizData>()
@@ -72,7 +72,7 @@ class TaskViewHolder(
 
 
     override fun onClick(v: View?) {
-          listener.onClickedQuiz(quizResponse)
+          listener.onClickedQuiz(quizResponse,quizResponse.id)
     }
 
 

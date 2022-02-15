@@ -142,6 +142,11 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     override fun onClickedTask(taskId: Int, distance: String) {
 
         askForPermissionsDialog()
+        sharedPref =
+            requireContext().getSharedPreferences(R.string.app_name.toString(), Context.MODE_PRIVATE)!!
+        with(sharedPref.edit()) {
+            this?.putInt("storeId", taskId)
+        }?.commit()
     }
 
     @DelicateCoroutinesApi

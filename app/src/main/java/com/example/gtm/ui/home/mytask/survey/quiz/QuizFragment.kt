@@ -84,12 +84,19 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
 
     }
 
-    override fun onClickedQuiz(quiz: QuizData) {
+    override fun onClickedQuiz(quiz: QuizData,surveyId:Int) {
 
         val responsJson: String = Gson().toJson(quiz)
 
         putQuestionName(quiz.name)
         val bundle = bundleOf("quizObject" to responsJson)
+
+        sharedPref =
+            requireContext().getSharedPreferences(R.string.app_name.toString(), Context.MODE_PRIVATE)!!
+        with(sharedPref.edit()) {
+            this?.putInt("surveyId", surveyId)
+        }?.commit()
+
         findNavController().navigate(R.id.action_quizFragment_to_categoryFragment, bundle)
 
     }

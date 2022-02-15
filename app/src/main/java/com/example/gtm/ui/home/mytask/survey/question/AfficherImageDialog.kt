@@ -87,7 +87,7 @@ class AfficherImageDialog(
                 linearImage.visibility = View.VISIBLE
                 plus_image.visibility = View.GONE
                 adapterImage.setItems(listaImage[i]!!)
-                recycle_view.visibility = View.GONE
+                //recycle_view.visibility = View.GONE
                 dismiss()
 
             } else if (listaImage[i]!!.size > 1) {

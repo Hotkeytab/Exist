@@ -161,6 +161,8 @@ class TaskViewHolder(
             visiteResponse.id,
             finalDistance
         )
+
+
     }
 
 

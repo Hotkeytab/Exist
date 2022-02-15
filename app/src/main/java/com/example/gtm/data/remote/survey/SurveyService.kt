@@ -1,6 +1,7 @@
 package com.example.gtm.data.remote.survey
 
 import com.example.gtm.data.entities.response.Quiz
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 
@@ -15,6 +16,6 @@ interface SurveyService {
 
     @Multipart
     @POST("surveyResponse")
-    suspend fun postSurveyResponse(@Part("surveyResponse") surveyResponse: RequestBody) : Response<String>
+    suspend fun postSurveyResponse(@Part files: ArrayList<MultipartBody.Part?>, @Part("surveyResponse") surveyResponse: RequestBody) : Response<String>
 
 }

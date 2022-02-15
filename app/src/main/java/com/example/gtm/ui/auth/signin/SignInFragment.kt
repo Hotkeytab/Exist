@@ -125,7 +125,7 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
                         binding.password.editText!!.trimStringEditText()
                     )
 
-
+                if (isAdded) {
                     GlobalScope.launch(Dispatchers.Main) {
                         responseData = viewModel.login(sinInObject)
                         if (responseData.responseCode == 200) {
@@ -154,6 +154,7 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
                             binding.password.error = "Username or Password is Incorrect"
                         }
                     }
+                }
 
 
                 }
