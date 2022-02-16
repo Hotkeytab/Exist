@@ -48,7 +48,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     private lateinit var user: User
     private  var picture: String? = null
     private var defaultInterval: Int = 500
-    private var lastTimeClicked: Long = 0
+    public var lastTimeClicked: Long = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -136,6 +136,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 ).show(fm, "EditProfileFRagment")
             }
             R.id.nav_logout -> {
+                sharedPref.edit().clear().apply()
                 val intent = Intent(this, AuthActivity::class.java)
                 this.startActivity(intent)
                 this.finish()
@@ -232,5 +233,10 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             .into(profile_picture)
     }
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+        sharedPref.edit().clear().apply()
+    }
 
 }

@@ -41,6 +41,7 @@ class TaskAdapter(private val listener: TaskFragment, activity: FragmentActivity
 
     interface TaskItemListener {
         fun onClickedTask(taskId: Int, distance: String)
+
     }
 
     private val items = ArrayList<Visite>()
@@ -88,6 +89,7 @@ class TaskViewHolder(
         this.visiteResponse = item
 
         var clicked = false
+
 
 
 
@@ -152,17 +154,31 @@ class TaskViewHolder(
 
         }
 
+        itemBinding.storeIcon.setOnClickListener {
+            listener.onClickedTask(
+                visiteResponse.storeId,
+                finalDistance
+            )
+        }
+
+
+        itemBinding.storeText.setOnClickListener {
+            listener.onClickedTask(
+                visiteResponse.storeId,
+                finalDistance
+            )
+        }
+
 
     }
 
 
     override fun onClick(v: View?) {
+        Log.i("Clicked","${visiteResponse.storeId}")
         listener.onClickedTask(
-            visiteResponse.id,
+            visiteResponse.storeId,
             finalDistance
         )
-
-
     }
 
 
@@ -190,6 +206,8 @@ class TaskViewHolder(
             this?.putString("storeName", storeName)
         }?.commit()
     }
+
+
 
 
 }

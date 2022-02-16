@@ -23,19 +23,18 @@ import android.view.animation.AnimationUtils
 import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.utils.Image.UploadRequestBody
 import com.example.gtm.utils.extensions.getFileName
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import android.provider.MediaStore.Images
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
 import androidx.fragment.app.viewModels
 import com.example.gtm.data.entities.remote.ImagePath
 import com.example.gtm.data.entities.remote.QuestionPost
 import com.example.gtm.data.entities.remote.SurveyPost
-import com.example.gtm.data.entities.response.EditProfileResponse
-import com.example.gtm.ui.home.mytask.survey.quiz.MyQuizViewModel
+import com.example.gtm.data.entities.response.SuccessResponse
+import com.example.gtm.ui.drawer.DrawerActivity
+import com.example.gtm.utils.remote.Internet.ProgressRequestBody
 import com.example.gtm.utils.resources.Resource
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -45,13 +44,16 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import java.io.ByteArrayOutputStream
-import java.lang.reflect.Array
+import java.io.*
+
+
+
+
 
 
 @AndroidEntryPoint
 class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
-    UploadRequestBody.UploadCallback {
+    UploadRequestBody.UploadCallback, ProgressRequestBody.UploadCallbacks {
 
     private lateinit var binding: FragmentQuestionBinding
     private lateinit var adapterImage: ImageAdapter
@@ -66,7 +68,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
     private var rightAnimation: Animation? = null
     private lateinit var finalSurvey: SurveyPost
     private var survey: Survey? = null
-    lateinit var responseData: Resource<String>
+    lateinit var responseData: Resource<SuccessResponse>
     private var imagePathString = ""
     private var imagePathArrayList: ArrayList<ImagePath?> = ArrayList<ImagePath?>()
     private var listaOnlyImage = ArrayList<Image>()
@@ -94,14 +96,16 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
         questionList = objectList.questions as ArrayList<Question>
 
 
+        (activity as DrawerActivity).lastTimeClicked = 1
+        Log.i("lastTime","${(activity as DrawerActivity).lastTimeClicked}")
 
         sharedPref = requireContext().getSharedPreferences(
             R.string.app_name.toString(),
             Context.MODE_PRIVATE
         )
         userId = sharedPref.getInt("id", 0)
-        storeId = sharedPref.getInt("storeId",0)
-        surveyId = sharedPref.getInt("surveyId",0)
+        storeId = sharedPref.getInt("storeId", 0)
+        surveyId = sharedPref.getInt("surveyId", 0)
 
         Log.i("welcome", "$surveyId")
         return binding.root
@@ -241,9 +245,9 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
 
         //Image Obligatoire ou non
         if (questionList[i].imagesRequired)
-            binding.noteText.text = "Ajouter des photos (Obligatoire)"
+            binding.cameraText.text = "Ajouter des photos (Obligatoire)"
         else
-            binding.noteText.text = "Ajouter des photos"
+            binding.cameraText.text = "Ajouter des photos"
 
 
         //note obligatoire ou non
@@ -258,17 +262,20 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
 
 
     private fun suivantFun() {
-        if (i < questionList.size) {
-            binding.cardviewContent.animation = leftAnimation
-            leftAnimation = null
-            leftAnimation = AnimationUtils.loadAnimation(
-                requireContext(),
-                R.anim.right_to_left_animation_forquestion
-            )
-            saveQuestion()
-            i++
-            initQuestion()
-            setQuestion()
+        if (controleSaisie()) {
+            if (i < questionList.size) {
+                binding.cardviewContent.animation = leftAnimation
+                leftAnimation = null
+                leftAnimation = AnimationUtils.loadAnimation(
+                    requireContext(),
+                    R.anim.right_to_left_animation_forquestion
+                )
+                saveQuestion()
+                i++
+                initQuestion()
+                setQuestion()
+
+            }
         }
 
     }
@@ -292,13 +299,11 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
 
     private fun envoyerReponses() {
 
-        saveQuestion()
-        /* val test =  convertToFile(listaImage[i]!![0])
-             Log.i("byebye", "${listaImage[i]!![0]}")
-        Log.i("byebye", "$test")*/
-
-
-        getFinalSurvey()
+        if (controleSaisie()) {
+            saveQuestion()
+            //getFinalSurvey()
+        nextCategory()
+        }
     }
 
     private fun initQuestion() {
@@ -423,7 +428,9 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
                 requireActivity().contentResolver.getFileName(selectedImageUri)
             )
 
-            val body = UploadRequestBody(file, "image", this)
+            val body = ProgressRequestBody(file,"image", this)
+
+            //val body = UploadRequestBody(file, "image", this)
 
             val outputStream = FileOutputStream(file)
             inputStream.copyTo(outputStream)
@@ -432,9 +439,9 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
 
             images!!.add(ImagePath(file.name))
 
-            val mbp  = MultipartBody.Part.createFormData(
-            file.name, file.name,
-            body
+            val mbp = MultipartBody.Part.createFormData(
+                file.name, file.name,
+                body
             )
 
             listMultipartBody.add(mbp)
@@ -477,23 +484,26 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
         val listBody = ArrayList<QuestionPost>()
 
         // reset after callback
-        listaSurvey.forEach { (k, v) ->
+        listaSurvey.forEach { (_, v) ->
 
             val images = ArrayList<ImagePath?>()
 
-            v!!.urls!!.forEach { i ->
-                convertToFile(i, images, listMultipartBody)
+            if (v?.urls != null) {
+                v.urls.forEach { i ->
+                    Log.i("uploaded","BeforeCalled")
+                    convertToFile(i, images, listMultipartBody)
+                }
             }
 
-            val questionPost = QuestionPost(v.id.toLong(), v.rate.toLong(), v.description, images)
-            Log.i("kamehameha", "$questionPost")
+            val questionPost = QuestionPost(v!!.id.toLong(), v.rate.toLong(), v.description, images)
+
 
             listBody.add(questionPost)
 
         }
 
-        val qp2 = SurveyPost(userId.toLong(),storeId.toLong(),surveyId.toLong(),listBody)
-
+        val qp2 = SurveyPost(userId.toLong(), storeId.toLong(), surveyId.toLong(), listBody)
+        Log.i("kamehameha", "$qp2")
 
         val userNewJson = jacksonObjectMapper().writeValueAsString(qp2)
         val bodyJson = RequestBody.create(
@@ -501,13 +511,28 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
             userNewJson
         )
 
-
         GlobalScope.launch(Dispatchers.Main) {
-             responseData = viewModel.postSurveyResponse(listMultipartBody,bodyJson)
-             Log.i("surveyresponse","Called")
-             Log.i("surveyresponse","$responseData")
-         }
+            responseData = viewModel.postSurveyResponse(
+                listMultipartBody,
+                bodyJson
+            ) as Resource<SuccessResponse>
+            Log.i("surveyresponse", "Called")
+            Log.i("surveyresponse", "$responseData")
+        }
 
+    }
+
+
+
+    private fun nextCategory()
+    {
+        var listDoneScId : ArrayList<Int>? = arguments?.getIntegerArrayList("listDoneScId")
+        if(listDoneScId == null)
+            listDoneScId = ArrayList<Int>()
+        listDoneScId?.add(questionList[0].questionSubCategoryId)
+        val bundle = bundleOf("quizObject" to myVar2,"listDoneScId" to listDoneScId)
+        Log.i("start0","${listDoneScId[0]}")
+        findNavController().navigate(R.id.action_questionFragment_to_categoryFragment,bundle)
     }
 
     private fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
@@ -518,7 +543,43 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
     }
 
     override fun onProgressUpdate(percentage: Int) {
+        Log.i("upload","$percentage")
     }
+
+    override fun onError() {
+        Log.i("upload","Error")
+    }
+
+    override fun onFinish(finished:Boolean) {
+        Log.i("finished","$finished")
+    }
+
+
+    private fun controleSaisie(): Boolean {
+
+        //Image Obligatoire ou non
+        if (questionList[i].imagesRequired && (listaImage[i] == null || listaImage[i]!!.size == 0)) {
+            binding.cameraText.setTextColor(Color.RED)
+            return false
+        } else {
+            binding.cameraText.setTextColor(Color.BLACK)
+        }
+
+
+        //note obligatoire ou non
+        if (binding.ratingBar.rating == 0f) {
+            binding.noteText.setTextColor(Color.RED)
+            return false
+        } else {
+            binding.noteText.setTextColor(Color.BLACK)
+        }
+
+
+
+        return true
+    }
+
+
 
 
 }

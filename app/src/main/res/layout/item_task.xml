@@ -52,7 +52,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/_15sdp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:layout_weight="5">
 
                     <TextView
                         android:id="@+id/name"

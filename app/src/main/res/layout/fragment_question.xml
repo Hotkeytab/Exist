@@ -121,6 +121,7 @@
                         android:text="Donner une note:"
                         android:textStyle="bold" />
 
+
                     <RatingBar
                         android:id="@+id/ratingBar"
                         android:layout_width="wrap_content"

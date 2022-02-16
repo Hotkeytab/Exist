@@ -61,9 +61,12 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener {
 
          myVal = arguments?.getString("quizObject")
 
+
         val gson = Gson()
         val objectList = gson.fromJson(myVal, QuizData::class.java)
 
+        Log.i("zabwbara","helo")
+        Log.i("zabwbara","$objectList")
 
         if (objectList != null)
             listaCategory = objectList.questionCategories as ArrayList<QuestionCategory>
