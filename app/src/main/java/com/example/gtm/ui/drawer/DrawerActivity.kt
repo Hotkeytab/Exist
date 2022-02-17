@@ -16,7 +16,9 @@ import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.gtm.R
+import com.example.gtm.data.entities.remote.QuestionPost
 import com.example.gtm.data.entities.response.UserResponse
+import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.data.entities.ui.User
 import com.example.gtm.ui.auth.AuthActivity
 import com.example.gtm.ui.drawer.profile.EditProfileDialog
@@ -34,6 +36,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 
 
 @AndroidEntryPoint
@@ -48,7 +51,10 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     private lateinit var user: User
     private  var picture: String? = null
     private var defaultInterval: Int = 500
-    public var lastTimeClicked: Long = 0
+    private var lastTimeClicked: Long = 0
+    val listOfQuestionsPerSc = HashMap<Int,HashMap<Int,Survey?>>()
+    var envoyerTest = true
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -238,5 +244,8 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         super.onDestroy()
         sharedPref.edit().clear().apply()
     }
+
+
+
 
 }

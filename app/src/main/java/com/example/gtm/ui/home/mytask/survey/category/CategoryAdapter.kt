@@ -1,5 +1,6 @@
 package com.example.gtm.ui.home.mytask.survey.category
 
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,15 +16,19 @@ import androidx.navigation.fragment.findNavController
 import com.example.gtm.R
 import com.example.gtm.data.entities.response.QuestionCategory
 import com.example.gtm.data.entities.response.QuizData
+import com.example.gtm.data.entities.ui.Survey
+import com.example.gtm.ui.drawer.DrawerActivity
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.fragment_category.*
 import kotlinx.android.synthetic.main.item_sous_category.view.*
 
 
-class CategoryAdapter(private val listener: CategoryFragment, activity: FragmentActivity,myVal : String) :
+class CategoryAdapter(private val listener: CategoryFragment, activity: FragmentActivity,myVal : String,activityDrawer2 : DrawerActivity) :
     RecyclerView.Adapter<CategoryViewHolder>() {
 
 
     private val activityIns = activity
+    private val drawerActivity = activityDrawer2
     private val myValIns = myVal
 
     interface CategoryItemListener {
@@ -42,7 +47,7 @@ class CategoryAdapter(private val listener: CategoryFragment, activity: Fragment
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         val binding: ItemCategoryBinding =
             ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CategoryViewHolder(binding, listener as CategoryItemListener, activityIns, parent,myValIns)
+        return CategoryViewHolder(binding, listener as CategoryItemListener, activityIns, parent,myValIns,drawerActivity)
 
     }
 
@@ -57,7 +62,8 @@ class CategoryViewHolder(
     private val listener: CategoryAdapter.CategoryItemListener,
     private val activityIns: FragmentActivity,
     private var parent: ViewGroup,
-    private var myVal: String
+    private var myVal: String,
+    private var drawerActivity: DrawerActivity
 ) : RecyclerView.ViewHolder(itemBinding.root),
     View.OnClickListener {
 
@@ -76,6 +82,7 @@ class CategoryViewHolder(
 
         itemBinding.title.text = item.name
 
+        expandColapse()
         itemBinding.topCardv.setOnClickListener {
             expandColapse()
         }
@@ -93,6 +100,7 @@ class CategoryViewHolder(
     private fun expandColapse() {
         var i = 0
 
+
         if (!isOpenLinear) {
 
             isOpenLinear = true
@@ -106,25 +114,69 @@ class CategoryViewHolder(
             itemBinding.testLinear.visibility = View.VISIBLE
             val layout = itemBinding.testLinear
             layout.orientation = LinearLayout.VERTICAL
-
+            var test: HashMap<Int, Survey?>?
             if (!addedValues) {
                 for (j in categoryResponse.questionSubCategories) {
                     i++
-                    val inflater =
-                        LayoutInflater.from(parent.context)
-                            .inflate(R.layout.item_sous_category, null)
+                     test = drawerActivity.listOfQuestionsPerSc[j.questions[0].questionSubCategoryId]
 
-                    inflater.id = j.id
-                    inflater.title_subcateg.text = j.name
-                    inflater.setOnClickListener {
-                        Log.i("buttonlistener", inflater.id.toString())
+                    if(test != null && test.size != 0) {
+                        val inflater =
+                            LayoutInflater.from(parent.context)
+                                .inflate(R.layout.item_sous_category_good, null)
 
-                        val responsJson : String  = Gson().toJson(j)
+                        inflater.id = j.id
 
-                        val bundle = bundleOf("questionObject" to responsJson,"quizObject" to myVal,"scName" to j.name)
-                        parent.findNavController().navigate(R.id.action_categoryFragment_to_questionFragment,bundle)
+
+
+
+                        inflater.title_subcateg.text = j.name
+                        inflater.setOnClickListener {
+                            Log.i("buttonlistener", inflater.id.toString())
+
+                            val responsJson: String = Gson().toJson(j)
+
+                            val bundle = bundleOf(
+                                "questionObject" to responsJson,
+                                "quizObject" to myVal,
+                                "scName" to j.name
+                            )
+                            parent.findNavController()
+                                .navigate(R.id.action_categoryFragment_to_questionFragment, bundle)
+                        }
+                        layout.addView(inflater)
                     }
-                    layout.addView(inflater)
+
+
+                    else
+                    {
+                        activityIns.envoyer_questionnaire_button.setBackgroundColor(Color.LTGRAY)
+                        val inflater =
+                            LayoutInflater.from(parent.context)
+                                .inflate(R.layout.item_sous_category, null)
+
+
+                        inflater.id = j.id
+
+
+
+
+                        inflater.title_subcateg.text = j.name
+                        inflater.setOnClickListener {
+                            Log.i("buttonlistener", inflater.id.toString())
+
+                            val responsJson: String = Gson().toJson(j)
+
+                            val bundle = bundleOf(
+                                "questionObject" to responsJson,
+                                "quizObject" to myVal,
+                                "scName" to j.name
+                            )
+                            parent.findNavController()
+                                .navigate(R.id.action_categoryFragment_to_questionFragment, bundle)
+                        }
+                        layout.addView(inflater)
+                    }
                 }
             }
             addedValues = true

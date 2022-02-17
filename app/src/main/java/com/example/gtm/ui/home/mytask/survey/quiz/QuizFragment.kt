@@ -15,9 +15,11 @@ import com.example.gtm.R
 import com.example.gtm.data.entities.response.Quiz
 import com.example.gtm.data.entities.response.QuizData
 import com.example.gtm.databinding.FragmentQuizBinding
+import com.example.gtm.ui.drawer.DrawerActivity
 import com.example.gtm.utils.resources.Resource
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -36,6 +38,7 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
     lateinit var sharedPref: SharedPreferences
 
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -50,12 +53,14 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
         )
         storeName = sharedPref.getString("storeName", "")
 
+        requireActivity().bottom_nav.visibility = View.GONE
         return binding.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         binding.backFromQuiz.setOnClickListener {
             findNavController().navigate(R.id.action_quizFragment_to_taskFragment)

@@ -22,7 +22,6 @@ import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gtm.R
 import com.example.gtm.data.entities.response.Visite
@@ -108,6 +107,7 @@ class TaskViewHolder(
 
 
         if (theDistance < 1000) {
+
             finalDistance = theDistance.toInt().toString() + " m"
             itemBinding.cardviewColorEnable.setCardBackgroundColor(Color.rgb(255, 255, 255))
             itemBinding.storeIcon.setOnClickListener {
@@ -155,6 +155,7 @@ class TaskViewHolder(
         }
 
         itemBinding.storeIcon.setOnClickListener {
+            putStoreName(item.store.name)
             listener.onClickedTask(
                 visiteResponse.storeId,
                 finalDistance
@@ -163,6 +164,7 @@ class TaskViewHolder(
 
 
         itemBinding.storeText.setOnClickListener {
+            putStoreName(item.store.name)
             listener.onClickedTask(
                 visiteResponse.storeId,
                 finalDistance
@@ -175,6 +177,7 @@ class TaskViewHolder(
 
     override fun onClick(v: View?) {
         Log.i("Clicked","${visiteResponse.storeId}")
+        putStoreName(visiteResponse.store.name)
         listener.onClickedTask(
             visiteResponse.storeId,
             finalDistance
@@ -197,6 +200,7 @@ class TaskViewHolder(
 
 
     private fun putStoreName(storeName: String) {
+        Log.i("storename",storeName)
         sharedPref =
             parent.context.getSharedPreferences(
                 R.string.app_name.toString(),

@@ -47,10 +47,6 @@ import okhttp3.RequestBody
 import java.io.*
 
 
-
-
-
-
 @AndroidEntryPoint
 class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
     UploadRequestBody.UploadCallback, ProgressRequestBody.UploadCallbacks {
@@ -85,6 +81,8 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
     ): View {
         binding = FragmentQuestionBinding.inflate(inflater, container, false)
 
+        requireActivity().bottom_nav.visibility = View.GONE
+
         scName = arguments?.getString("scName")
 
         val myVal = arguments?.getString("questionObject")
@@ -96,8 +94,13 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
         questionList = objectList.questions as ArrayList<Question>
 
 
-        (activity as DrawerActivity).lastTimeClicked = 1
-        Log.i("lastTime","${(activity as DrawerActivity).lastTimeClicked}")
+
+        if ((activity as DrawerActivity).listOfQuestionsPerSc[questionList[0].questionSubCategoryId] != null)
+            listaSurvey =
+                (activity as DrawerActivity).listOfQuestionsPerSc[questionList[0].questionSubCategoryId]!!
+
+        /*(activity as DrawerActivity).lastTimeClicked = 1
+        Log.i("lastTime","${(activity as DrawerActivity).lastTimeClicked}") */
 
         sharedPref = requireContext().getSharedPreferences(
             R.string.app_name.toString(),
@@ -114,6 +117,8 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
 
 
         leftAnimation = AnimationUtils.loadAnimation(
@@ -183,8 +188,21 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
             envoyerReponses()
         }
 
+        if ((activity as DrawerActivity).listOfQuestionsPerSc[questionList[0].questionSubCategoryId] != null) {
+            listaSurvey = (activity as DrawerActivity).listOfQuestionsPerSc[questionList[0].questionSubCategoryId]!!
 
-        setQuestion()
+            (activity as DrawerActivity).listOfQuestionsPerSc[questionList[0].questionSubCategoryId]!!.forEach { (k,v) ->
+                listaImage[k] = v!!.urls!!
+            }
+
+            initQuestion()
+            setQuestion()
+        }
+        else
+
+        {setQuestion()}
+
+
     }
 
 
@@ -275,6 +293,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
                 initQuestion()
                 setQuestion()
 
+                Log.i("listasurvey", "$listaSurvey")
             }
         }
 
@@ -302,7 +321,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
         if (controleSaisie()) {
             saveQuestion()
             //getFinalSurvey()
-        nextCategory()
+            nextCategory()
         }
     }
 
@@ -428,7 +447,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
                 requireActivity().contentResolver.getFileName(selectedImageUri)
             )
 
-            val body = ProgressRequestBody(file,"image", this)
+            val body = ProgressRequestBody(file, "image", this)
 
             //val body = UploadRequestBody(file, "image", this)
 
@@ -490,7 +509,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
 
             if (v?.urls != null) {
                 v.urls.forEach { i ->
-                    Log.i("uploaded","BeforeCalled")
+                    Log.i("uploaded", "BeforeCalled")
                     convertToFile(i, images, listMultipartBody)
                 }
             }
@@ -523,16 +542,14 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
     }
 
 
+    private fun nextCategory() {
+        (activity as DrawerActivity).listOfQuestionsPerSc[questionList[i].questionSubCategoryId] =
+            listaSurvey
+        Log.i("questionlist", "$questionList")
+        val bundle = bundleOf("quizObject" to myVar2)
+        findNavController().navigate(R.id.action_questionFragment_to_categoryFragment, bundle)
 
-    private fun nextCategory()
-    {
-        var listDoneScId : ArrayList<Int>? = arguments?.getIntegerArrayList("listDoneScId")
-        if(listDoneScId == null)
-            listDoneScId = ArrayList<Int>()
-        listDoneScId?.add(questionList[0].questionSubCategoryId)
-        val bundle = bundleOf("quizObject" to myVar2,"listDoneScId" to listDoneScId)
-        Log.i("start0","${listDoneScId[0]}")
-        findNavController().navigate(R.id.action_questionFragment_to_categoryFragment,bundle)
+
     }
 
     private fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
@@ -543,15 +560,15 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
     }
 
     override fun onProgressUpdate(percentage: Int) {
-        Log.i("upload","$percentage")
+        Log.i("upload", "$percentage")
     }
 
     override fun onError() {
-        Log.i("upload","Error")
+        Log.i("upload", "Error")
     }
 
-    override fun onFinish(finished:Boolean) {
-        Log.i("finished","$finished")
+    override fun onFinish(finished: Boolean) {
+        Log.i("finished", "$finished")
     }
 
 
@@ -578,8 +595,6 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
 
         return true
     }
-
-
 
 
 }

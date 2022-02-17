@@ -31,10 +31,12 @@ import com.example.gtm.R
 import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.data.entities.response.VisiteResponse
 import com.example.gtm.databinding.FragmentTaskBinding
+import com.example.gtm.ui.home.HomeActivity
 import com.example.gtm.ui.home.mytask.survey.SurveyCheckDialog
 import com.example.gtm.utils.resources.Resource
 import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.fragment_task.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -73,6 +75,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         super.onStart()
 
         if (isAdded) {
+
             LocationValueListener.locationOn = true
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
             askForPermissions()
@@ -87,6 +90,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentTaskBinding.inflate(inflater, container, false)
+
 
 
 
@@ -116,6 +120,8 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         topAppBar.setNavigationOnClickListener {
             mDrawerLayout.openDrawer(Gravity.LEFT)
         }
+
+        requireActivity().bottom_nav.visibility = View.VISIBLE
 
         if (isAdded)
             navController = NavHostFragment.findNavController(this)

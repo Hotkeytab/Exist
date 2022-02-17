@@ -39,7 +39,6 @@ class ProgressRequestBody(file: File, content_type: String?, listener: UploadCal
 
     @Throws(IOException::class)
     override fun writeTo(sink: BufferedSink) {
-        //Log.i("uploaded","${mFile}")
         val fileLength = mFile!!.length()
         val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
         val `in` = FileInputStream(mFile)

@@ -367,7 +367,7 @@
                         android:layout_marginLeft="@dimen/_10sdp"
                         android:layout_marginRight="@dimen/_10sdp"
                         android:gravity="center"
-                        android:text="Envoyer"
+                        android:text="Terminer"
                         android:textColor="@color/black"
                         android:textStyle="bold" />
 
