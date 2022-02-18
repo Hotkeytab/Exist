@@ -52,8 +52,9 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     private  var picture: String? = null
     private var defaultInterval: Int = 500
     private var lastTimeClicked: Long = 0
-    val listOfQuestionsPerSc = HashMap<Int,HashMap<Int,Survey?>>()
+    var listOfQuestionsPerSc = HashMap<Int,HashMap<Int,Survey?>>()
     var envoyerTest = true
+    var loading = false
 
 
 

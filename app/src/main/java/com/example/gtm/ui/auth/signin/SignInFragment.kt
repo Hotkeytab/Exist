@@ -79,6 +79,7 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
 
             binding.signinButton.setOnClickListener {
                 // signInOffline()
+                binding.signinButton.isEnabled = false
                 checkInternet()
 
             }
@@ -109,12 +110,13 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
         if (binding.username.editText!!.trimStringEditText().isEmpty()) {
             clearError()
             binding.username.error = "Username is Empty"
+            binding.signinButton.isEnabled = true
         } else if (binding.password.editText!!.trimStringEditText().isEmpty()) {
             clearError()
             binding.password.error = "Password is Empty"
+            binding.signinButton.isEnabled = true
         } else {
 
-            binding.signinButton.isEnabled = false
             binding.progressIndicator.visibility = View.VISIBLE
 
 
@@ -228,7 +230,6 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
             else {
 
                 binding.progressIndicator.visibility = View.INVISIBLE
-                binding.signinButton.isEnabled = true
                 dialog.show(
                     fm,
                     "Internet check"

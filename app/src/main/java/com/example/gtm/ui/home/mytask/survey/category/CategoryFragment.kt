@@ -1,5 +1,6 @@
 package com.example.gtm.ui.home.mytask.survey.category
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Bitmap
@@ -36,6 +37,7 @@ import com.example.gtm.utils.extensions.getFileName
 import com.example.gtm.utils.remote.Internet.ProgressRequestBody
 import com.example.gtm.utils.resources.Resource
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_home.*
@@ -53,6 +55,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.concurrent.schedule
+import android.widget.FrameLayout
 
 
 @AndroidEntryPoint
@@ -105,7 +108,8 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
 
         binding.backFromQuiz.setOnClickListener {
-            findNavController().navigate(R.id.action_categoryFragment_to_quizFragment)
+            if (!((activity as DrawerActivity).loading))
+                findNavController().navigate(R.id.action_categoryFragment_to_quizFragment)
         }
 
         myVal = arguments?.getString("quizObject")
@@ -119,12 +123,17 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
             listaCategory = objectList.questionCategories as ArrayList<QuestionCategory>
 
 
+        binding.envoyerQuestionnaireButton.tag = "good"
         setupRecycleViewCategory()
 
         binding.envoyerQuestionnaireButton.setOnClickListener {
-            binding.progressBarUpload.visibility = View.VISIBLE
-            Timer().schedule(1000) {
-                envoyerQuestionnaire()
+
+            if (binding.envoyerQuestionnaireButton.tag != "bad") {
+                (activity as DrawerActivity).loading = true
+                binding.progressBarUpload.visibility = View.VISIBLE
+                Timer().schedule(1000) {
+                    envoyerQuestionnaire()
+                }
             }
         }
 
@@ -152,6 +161,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
     }
 
 
+    @SuppressLint("ResourceAsColor")
     private fun envoyerQuestionnaire() {
 
 
@@ -209,25 +219,30 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
             Log.i("surveyresponse", "$responseData")
 
             if (responseData.responseCode == 201) {
-                val myToast = Toast.makeText(
-                    requireContext(),
+                val snack = Snackbar.make(
+                    requireView(),
                     "Questionnaire Envoyé avec succès",
-                    Toast.LENGTH_SHORT
-                )
-                val toastView: View = myToast.view!!
-                toastView.setBackgroundResource(R.drawable.toast_success)
-                myToast.show()
+                    Snackbar.LENGTH_LONG
+                ).setBackgroundTint(R.color.purpleLogin)
+                val view: View = snack.view
+                val params = view.layoutParams as FrameLayout.LayoutParams
+                params.gravity = Gravity.BOTTOM
+                view.layoutParams = params
                 binding.progressBarUpload.visibility = View.GONE
+                (activity as DrawerActivity).loading = false
+                findNavController().navigate(R.id.action_categoryFragment_to_quizFragment)
+                snack.show()
             } else {
-                val myToast = Toast.makeText(
-                    requireContext(),
-                    "Une Erreur s'est produite , veuilez réessayer !",
-                    Toast.LENGTH_SHORT
-                )
-                val toastView: View = myToast.view!!
-                toastView.setBackgroundResource(R.drawable.toast_failure)
-                myToast.show()
+                val snack =
+                    Snackbar.make(requireView(), "Une Erreur s'est produite", Snackbar.LENGTH_LONG)
+
+                val view: View = snack.view
+                val params = view.layoutParams as FrameLayout.LayoutParams
+                params.gravity = Gravity.BOTTOM
+                view.layoutParams = params
+                snack.show()
                 binding.progressBarUpload.visibility = View.GONE
+                (activity as DrawerActivity).loading = false
             }
         }
     }
@@ -291,12 +306,16 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onProgressUpdate(percentage: Int) {
 
+
         if (percentage == 99) {
             percent++
-            binding.textPercentage.text =
-                (((percent.toFloat() / (filesNumber * 2)) * 100).toInt()).toString() + "%"
+            if ((((percent.toFloat() / (filesNumber * 2)) * 100).toInt()) <= 100) {
+                binding.textPercentage.text =
+                    (((percent.toFloat() / (filesNumber * 2)) * 100).toInt()).toString() + "%"
+            }
             binding.progressUpload.setProgress(percent, true)
         }
+
     }
 
     override fun onError() {

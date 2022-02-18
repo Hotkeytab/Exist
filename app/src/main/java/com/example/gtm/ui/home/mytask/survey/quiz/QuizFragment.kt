@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gtm.R
 import com.example.gtm.data.entities.response.Quiz
 import com.example.gtm.data.entities.response.QuizData
+import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.databinding.FragmentQuizBinding
 import com.example.gtm.ui.drawer.DrawerActivity
 import com.example.gtm.utils.resources.Resource
@@ -46,7 +47,7 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
     ): View {
         binding = FragmentQuizBinding.inflate(inflater, container, false)
 
-
+        (activity as DrawerActivity).listOfQuestionsPerSc =  HashMap<Int,HashMap<Int, Survey?>>()
         sharedPref = requireContext().getSharedPreferences(
             R.string.app_name.toString(),
             Context.MODE_PRIVATE

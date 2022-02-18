@@ -141,6 +141,7 @@ class CategoryViewHolder(
                                 "quizObject" to myVal,
                                 "scName" to j.name
                             )
+                            if(!drawerActivity.loading)
                             parent.findNavController()
                                 .navigate(R.id.action_categoryFragment_to_questionFragment, bundle)
                         }
@@ -151,6 +152,8 @@ class CategoryViewHolder(
                     else
                     {
                         activityIns.envoyer_questionnaire_button.setBackgroundColor(Color.LTGRAY)
+                        activityIns.envoyer_questionnaire_button.tag = "bad"
+
                         val inflater =
                             LayoutInflater.from(parent.context)
                                 .inflate(R.layout.item_sous_category, null)
@@ -172,6 +175,7 @@ class CategoryViewHolder(
                                 "quizObject" to myVal,
                                 "scName" to j.name
                             )
+                            if(!drawerActivity.loading)
                             parent.findNavController()
                                 .navigate(R.id.action_categoryFragment_to_questionFragment, bundle)
                         }
