@@ -1,6 +1,7 @@
 package com.example.gtm.ui.home.mytask
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -19,6 +20,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -31,6 +34,7 @@ import com.example.gtm.R
 import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.data.entities.response.VisiteResponse
 import com.example.gtm.databinding.FragmentTaskBinding
+import com.example.gtm.ui.drawer.DrawerActivity
 import com.example.gtm.ui.home.HomeActivity
 import com.example.gtm.ui.home.mytask.survey.SurveyCheckDialog
 import com.example.gtm.utils.resources.Resource
@@ -43,6 +47,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.atan2
@@ -69,6 +74,9 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     private var GpsStatus = false
     private lateinit var navController: NavController
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var dayFilter = 1
+    private var weekFilter = 0
+    private var monthFilter = 0
 
 
     override fun onStart() {
@@ -125,6 +133,8 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
         if (isAdded)
             navController = NavHostFragment.findNavController(this)
+
+        correctFilters()
     }
 
 
@@ -149,7 +159,10 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
         askForPermissionsDialog()
         sharedPref =
-            requireContext().getSharedPreferences(R.string.app_name.toString(), Context.MODE_PRIVATE)!!
+            requireContext().getSharedPreferences(
+                R.string.app_name.toString(),
+                Context.MODE_PRIVATE
+            )!!
         with(sharedPref.edit()) {
             this?.putInt("storeId", taskId)
         }?.commit()
@@ -162,16 +175,20 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             responseData = viewModel.getVisites(userId.toString(), dateTime, dateTime)
 
             if (responseData.responseCode == 200) {
-
                 listaTasks = responseData.data!!.data as ArrayList<Visite>
-               /* listaTasks[0].store.lat = 22.3
-                listaTasks[0].store.lng = 22.3*/
+                /* listaTasks[0].store.lat = 22.3
+                 listaTasks[0].store.lng = 22.3*/
+
+                listaTasks =
+                    listaTasks.filter { list -> compareDates(list.day) } as ArrayList<Visite>
+
                 listaTasks.sortBy { list ->
                     list.store.calculateDistance(
                         LocationValueListener.myLocation.latitude.toFloat(),
                         LocationValueListener.myLocation.longitude.toFloat()
                     )
                 }
+
                 setupRecycleViewPredictionDetail()
                 binding.progressIndicator.visibility = View.GONE
 
@@ -339,8 +356,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
                 override fun onLocationResult(locationResult: LocationResult) {
                     super.onLocationResult(locationResult)
 
-                    if(!LocationValueListener.locationOn)
-                    {
+                    if (!LocationValueListener.locationOn) {
                         fusedLocationClient.removeLocationUpdates(this)
                     }
 
@@ -400,6 +416,51 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         val distance = earthRadius * c
         val meterConversion = 1609
         return (distance * meterConversion.toFloat()).toFloat()
+    }
+
+
+    private fun compareDates(simpleDate: String): Boolean {
+
+
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        val date: Date = format.parse(simpleDate)
+        format.applyPattern("dd-MM-yyyy")
+        val dateformat = format.format(date)
+
+        val sdf = SimpleDateFormat("dd-MM-yyyy")
+        val currentDate = sdf.format(Date())
+
+        if (dateformat == currentDate)
+            return true
+
+        return false
+
+    }
+
+
+
+    private fun correctFilters()
+    {
+        setFilters(binding.dayfiltercard,binding.dayfiltertext,dayFilter)
+        setFilters(binding.weekfilterward,binding.weektextfilter,weekFilter)
+        setFilters(binding.montherfiltercard,binding.monthfiltertext,monthFilter)
+    }
+
+
+    @SuppressLint("ResourceAsColor")
+    private fun setFilters(cardview : CardView,textView: TextView,filter : Int) {
+        if (filter == 1) {
+            cardview.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.purpleLogin)
+
+            textView.setTextColor(R.color.white)
+        } /*else {
+            cardview.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.purpleLogin)
+
+            textView.setTextColor(R.color.white)
+
+        } */
     }
 
 

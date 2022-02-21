@@ -8,6 +8,7 @@ import kotlin.math.sqrt
 data class Store(
     val address: String,
     val createdAt: String,
+    val date: String,
     val email: String,
     val enabled: Boolean,
     val governorate: String,
