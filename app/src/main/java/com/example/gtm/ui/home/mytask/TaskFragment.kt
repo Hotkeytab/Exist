@@ -35,7 +35,6 @@ import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.data.entities.response.VisiteResponse
 import com.example.gtm.databinding.FragmentTaskBinding
 import com.example.gtm.ui.drawer.DrawerActivity
-import com.example.gtm.ui.home.HomeActivity
 import com.example.gtm.ui.home.mytask.survey.SurveyCheckDialog
 import com.example.gtm.utils.resources.Resource
 import com.google.android.gms.location.*
@@ -47,7 +46,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.atan2
@@ -67,7 +65,8 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     private lateinit var responseData: Resource<VisiteResponse>
     private val viewModel: MyTaskViewModel by viewModels()
     private var userId = 0
-    private lateinit var dateTime: String
+    private lateinit var dateTimeBegin: String
+    private lateinit var dateTimeEnd: String
     private lateinit var fm: FragmentManager
     private lateinit var locationManager: LocationManager
     private val REQUEST_CODE = 2
@@ -77,12 +76,14 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     private var dayFilter = 1
     private var weekFilter = 0
     private var monthFilter = 0
+    private lateinit var d: Date
 
 
     override fun onStart() {
         super.onStart()
 
-        if (isAdded) {
+
+        if (isAdded && activity != null) {
 
             LocationValueListener.locationOn = true
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
@@ -99,21 +100,23 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     ): View {
         binding = FragmentTaskBinding.inflate(inflater, container, false)
 
+        if (isAdded && activity != null) {
+            d = Date()
+
+            fm = requireActivity().supportFragmentManager
+
+            sharedPref = requireContext().getSharedPreferences(
+                R.string.app_name.toString(),
+                Context.MODE_PRIVATE
+            )
+            userId = sharedPref.getInt("id", 0)
 
 
+            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+            dateTimeBegin = simpleDateFormat.format(d.time).toString()
+            dateTimeEnd = simpleDateFormat.format(d.time).toString()
 
-        fm = requireActivity().supportFragmentManager
-
-        sharedPref = requireContext().getSharedPreferences(
-            R.string.app_name.toString(),
-            Context.MODE_PRIVATE
-        )
-        userId = sharedPref.getInt("id", 0)
-
-        val calendar = Calendar.getInstance()
-        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
-        dateTime = simpleDateFormat.format(calendar.time).toString()
-
+        }
 
 
         return binding.root
@@ -123,25 +126,70 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         super.onViewCreated(view, savedInstanceState)
 
 
-        val mDrawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
-        //Top Bar
-        topAppBar.setNavigationOnClickListener {
-            mDrawerLayout.openDrawer(Gravity.LEFT)
-        }
+        if (isAdded && activity != null) {
+            val mDrawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
+            //Top Bar
+            topAppBar.setNavigationOnClickListener {
+                mDrawerLayout.openDrawer(Gravity.LEFT)
+            }
 
-        requireActivity().bottom_nav.visibility = View.VISIBLE
+            requireActivity().bottom_nav.visibility = View.VISIBLE
 
-        if (isAdded)
+
             navController = NavHostFragment.findNavController(this)
 
-        correctFilters()
+            correctFilters()
+
+
+            setTopDate()
+
+            binding.dayfiltercard.setOnClickListener {
+                dayFilter = 1
+                weekFilter = 0
+                monthFilter = 0
+                correctFilters()
+                setTopDate()
+                binding.progressIndicator.visibility = View.VISIBLE
+                getVisites()
+            }
+
+            binding.montherfiltercard.setOnClickListener {
+                dayFilter = 0
+                weekFilter = 0
+                monthFilter = 1
+                correctFilters()
+            }
+
+            binding.weekfilterward.setOnClickListener {
+                dayFilter = 0
+                weekFilter = 1
+                monthFilter = 0
+                correctFilters()
+                binding.progressIndicator.visibility = View.VISIBLE
+                setTopDate()
+            }
+
+
+            binding.nextDate.setOnClickListener {
+                nextDate()
+            }
+            binding.previousDate.setOnClickListener {
+                previousDate()
+            }
+
+            binding.today.setOnClickListener {
+                setToday()
+            }
+        }
+
     }
 
 
     private fun setupRecycleViewPredictionDetail() {
 
 
-        adapterTask = TaskAdapter(this, requireActivity())
+        Log.i("repeat","1")
+        adapterTask = TaskAdapter(this, requireActivity(),activity as DrawerActivity)
         binding.taskRecycleview.isMotionEventSplittingEnabled = false
         binding.taskRecycleview.layoutManager = LinearLayoutManager(requireContext())
         binding.taskRecycleview.layoutManager = LinearLayoutManager(
@@ -150,6 +198,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             false
         )
         binding.taskRecycleview.adapter = adapterTask
+       // (activity as DrawerActivity).listOfTriDates = ArrayList<String>()
         adapterTask.setItems(listaTasks)
 
 
@@ -172,24 +221,41 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     private fun getVisites() {
         GlobalScope.launch(Dispatchers.Main) {
 
-            responseData = viewModel.getVisites(userId.toString(), dateTime, dateTime)
+
+            Log.i("repeat","1")
+
+            responseData = viewModel.getVisites(userId.toString(), dateTimeBegin, dateTimeEnd)
+
 
             if (responseData.responseCode == 200) {
                 listaTasks = responseData.data!!.data as ArrayList<Visite>
                 /* listaTasks[0].store.lat = 22.3
                  listaTasks[0].store.lng = 22.3*/
 
-                listaTasks =
-                    listaTasks.filter { list -> compareDates(list.day) } as ArrayList<Visite>
+                if (dayFilter == 1)
+                    listaTasks =
+                        listaTasks.filter { list -> compareDatesDay(list.day) } as ArrayList<Visite>
+                else if (weekFilter == 1)
+                    listaTasks =
+                        listaTasks.filter { list -> compareDatesMonth(list.day) } as ArrayList<Visite>
 
-                listaTasks.sortBy { list ->
-                    list.store.calculateDistance(
-                        LocationValueListener.myLocation.latitude.toFloat(),
-                        LocationValueListener.myLocation.longitude.toFloat()
-                    )
-                }
 
-                setupRecycleViewPredictionDetail()
+                if (listaTasks.size == 0)
+                    binding.novisit.visibility = View.VISIBLE
+                else
+                    binding.novisit.visibility = View.GONE
+
+                if (dayFilter == 1)
+                    listaTasks.sortBy { list ->
+                        list.store.calculateDistance(
+                            LocationValueListener.myLocation.latitude.toFloat(),
+                            LocationValueListener.myLocation.longitude.toFloat()
+                        )
+                    }
+
+
+                if (isAdded && activity != null)
+                    setupRecycleViewPredictionDetail()
                 binding.progressIndicator.visibility = View.GONE
 
             }
@@ -419,7 +485,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     }
 
 
-    private fun compareDates(simpleDate: String): Boolean {
+    private fun compareDatesDay(simpleDate: String): Boolean {
 
 
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -428,39 +494,178 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         val dateformat = format.format(date)
 
         val sdf = SimpleDateFormat("dd-MM-yyyy")
-        val currentDate = sdf.format(Date())
+        val currentDate = sdf.format(d)
 
-        if (dateformat == currentDate)
+        if (dateformat == currentDate) {
+
             return true
+        }
 
         return false
 
     }
 
 
+    private fun compareDatesMonth(simpleDate: String): Boolean {
 
-    private fun correctFilters()
-    {
-        setFilters(binding.dayfiltercard,binding.dayfiltertext,dayFilter)
-        setFilters(binding.weekfilterward,binding.weektextfilter,weekFilter)
-        setFilters(binding.montherfiltercard,binding.monthfiltertext,monthFilter)
+
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        val date: Date = format.parse(simpleDate)
+
+        format.applyPattern("yyyy-MM-dd")
+        val dateformat = format.format(date)
+
+        val sdf = SimpleDateFormat("yyyy-MM-dd")
+        val currentDate1 = sdf.parse(dateTimeBegin)
+        val currentDate2 = sdf.parse(dateTimeEnd)
+
+        if (sdf.parse(dateformat) < currentDate1 || sdf.parse(dateformat) > currentDate2) {
+
+            return false
+        }
+
+        return true
+
+    }
+
+
+    private fun correctFilters() {
+        setFilters(binding.dayfiltercard, binding.dayfiltertext, dayFilter)
+        setFilters(binding.weekfilterward, binding.weektextfilter, weekFilter)
+        setFilters(binding.montherfiltercard, binding.monthfiltertext, monthFilter)
     }
 
 
     @SuppressLint("ResourceAsColor")
-    private fun setFilters(cardview : CardView,textView: TextView,filter : Int) {
+    private fun setFilters(cardview: CardView, textView: TextView, filter: Int) {
         if (filter == 1) {
             cardview.backgroundTintList =
-                ContextCompat.getColorStateList(requireContext(), R.color.purpleLogin)
+                ContextCompat.getColorStateList(requireContext(), R.color.white)
 
-            textView.setTextColor(R.color.white)
-        } /*else {
+            textView.setTextColor(resources.getColor(R.color.purpleLogin))
+        } else {
             cardview.backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.purpleLogin)
 
-            textView.setTextColor(R.color.white)
+            textView.setTextColor(resources.getColor(R.color.white))
 
-        } */
+        }
+    }
+
+
+    private fun setTopDate() {
+
+        if (dayFilter == 1) {
+            val sdf = SimpleDateFormat("EEEE")
+            val sdf2 = SimpleDateFormat("dd MMM")
+            val dayOfTheWeek = sdf.format(d)
+            val dayOfTheWeek2 = sdf2.format(d)
+            binding.topAppBar.title = "$dayOfTheWeek $dayOfTheWeek2"
+        } else if (weekFilter == 1) {
+
+            val sdf = SimpleDateFormat("yyyy-MM-dd")
+            //For DateTimeBegin
+            val cal = Calendar.getInstance()
+            cal.time = d
+            cal.add(Calendar.DATE, -dayOfWeek())
+            val d2 = cal.time
+            dateTimeBegin = sdf.format(d2.time).toString()
+            //For DateTimeEnd
+            val cal2 = Calendar.getInstance()
+            cal2.time = d
+            cal2.add(Calendar.DATE, 5 - dayOfWeek() + 1)
+            val d3 = cal2.time
+            dateTimeEnd = sdf.format(d3.time).toString()
+
+
+            //change title for week
+            val sdf3 = SimpleDateFormat("dd MMM")
+
+
+            val dayOfTheWeek = sdf3.format(sdf.parse(dateTimeBegin))
+            val dayOfTheWeek2 = sdf3.format(sdf.parse(dateTimeEnd))
+
+            binding.topAppBar.title = "$dayOfTheWeek - $dayOfTheWeek2"
+
+            getVisites()
+
+
+        }
+    }
+
+
+    private fun nextDate() {
+        if (dayFilter == 1) {
+            val cal = Calendar.getInstance()
+            cal.time = d
+            cal.add(Calendar.DATE, 1)
+            d = cal.time
+            setTopDate()
+            binding.progressIndicator.visibility = View.VISIBLE
+            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+            dateTimeBegin = simpleDateFormat.format(d.time).toString()
+            dateTimeEnd = simpleDateFormat.format(d.time).toString()
+            getVisites()
+        } else if (weekFilter == 1) {
+            val cal = Calendar.getInstance()
+            cal.time = d
+            cal.add(Calendar.DATE, 7)
+            d = cal.time
+            Log.i("timecalcul", "${d}")
+            setTopDate()
+            binding.progressIndicator.visibility = View.VISIBLE
+        }
+    }
+
+    private fun previousDate() {
+        if (dayFilter == 1) {
+            val cal = Calendar.getInstance()
+            cal.time = d
+            cal.add(Calendar.DATE, -1)
+            d = cal.time
+            setTopDate()
+            binding.progressIndicator.visibility = View.VISIBLE
+            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+            dateTimeBegin = simpleDateFormat.format(d.time).toString()
+            dateTimeEnd = simpleDateFormat.format(d.time).toString()
+            getVisites()
+        } else if (weekFilter == 1) {
+            val cal = Calendar.getInstance()
+            cal.time = d
+            cal.add(Calendar.DATE, -7)
+            d = cal.time
+            setTopDate()
+            binding.progressIndicator.visibility = View.VISIBLE
+        }
+
+    }
+
+
+    private fun setToday() {
+        dayFilter = 1
+        weekFilter = 0
+        monthFilter = 0
+        correctFilters()
+        val cal = Calendar.getInstance()
+        d = cal.time
+        setTopDate()
+        binding.progressIndicator.visibility = View.VISIBLE
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+        dateTimeBegin = simpleDateFormat.format(d.time).toString()
+        dateTimeEnd = simpleDateFormat.format(d.time).toString()
+        getVisites()
+    }
+
+
+    private fun dayOfWeek(): Int {
+        val calendar = Calendar.getInstance()
+        calendar.time = d
+        val day = calendar[Calendar.DAY_OF_WEEK]
+
+        return if (day in 2..7)
+            day - 2
+        else
+            6
     }
 
 

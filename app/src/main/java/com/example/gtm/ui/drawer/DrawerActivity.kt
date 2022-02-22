@@ -55,6 +55,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     var listOfQuestionsPerSc = HashMap<Int,HashMap<Int,Survey?>>()
     var envoyerTest = true
     var loading = false
+    var listOfTriDates : ArrayList<String> = ArrayList<String>()
 
 
 

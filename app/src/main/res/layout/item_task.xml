@@ -7,14 +7,31 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/_5sdp">
 
+
+        <TextView
+            android:id="@+id/date_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:text="mardi 25 février 2023"
+            android:textColor="@color/purpleLogin"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.cardview.widget.CardView
             android:id="@+id/cardview_color_enable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_10sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
             app:cardCornerRadius="@dimen/_4sdp"
             app:cardUseCompatPadding="true"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/date_text">
 
 
             <LinearLayout
@@ -25,9 +42,9 @@
                 android:padding="@dimen/_10sdp">
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/store_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/store_icon"
                     android:backgroundTint="@color/purpleMain"
                     app:cardCornerRadius="@dimen/_5sdp">
 
@@ -52,8 +69,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/_15sdp"
-                    android:orientation="vertical"
-                    android:layout_weight="5">
+                    android:layout_weight="5"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/name"
