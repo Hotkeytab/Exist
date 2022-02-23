@@ -1,26 +1,12 @@
 package com.example.gtm.ui.home.mytask
 
-import android.Manifest
-import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.graphics.Color
-import android.location.GpsStatus
-import android.location.LocationManager
-import android.net.Uri
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat.requestPermissions
-import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
-import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gtm.R
@@ -224,22 +210,24 @@ class TaskViewHolder(
 
        // checkForDay(dateformat)
 
-        if (checkForDay(dateformat)) {
-            //Formidable Date Format
-            val sdf = SimpleDateFormat("EEEE")
-            val sdf2 = SimpleDateFormat("dd MMMM yyyy")
-            val sdf3 = SimpleDateFormat("dd-MM-yyyy")
-            val dayOfTheWeek = sdf.format(sdf3.parse(dateformat))
-            val dayOfTheWeek2 = sdf2.format(sdf3.parse(dateformat))
+        if(daysFilter.weekFilter == 1 || daysFilter.monthFilter == 1) {
+           // activityDrawer.HashMaplistaTasksDate.forEach { (k, v) ->
 
-            val finalDay = "$dayOfTheWeek $dayOfTheWeek2"
-            itemBinding.dateText.visibility = View.VISIBLE
-            itemBinding.dateText.text = finalDay
+                // if(visiteResponse.day == k && (v.size == 1 || visiteResponse == v[0])) {
 
+                //Formidable Date Format
+                val sdf = SimpleDateFormat("EEEE")
+                val sdf2 = SimpleDateFormat("dd MMMM yyyy")
+                val sdf3 = SimpleDateFormat("dd-MM-yyyy")
+                val dayOfTheWeek = sdf.format(sdf3.parse(dateformat))
+                val dayOfTheWeek2 = sdf2.format(sdf3.parse(dateformat))
 
-            Log.i("showaray", "${activityDrawer.listOfTriDates}")
-        } else {
-            itemBinding.dateText.visibility = View.GONE
+                val finalDay = "$dayOfTheWeek $dayOfTheWeek2"
+                itemBinding.dateText.visibility = View.VISIBLE
+                itemBinding.dateText.text = finalDay
+                //}
+
+           // }
         }
 
     }

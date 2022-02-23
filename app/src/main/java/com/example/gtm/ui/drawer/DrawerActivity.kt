@@ -18,6 +18,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.gtm.R
 import com.example.gtm.data.entities.remote.QuestionPost
 import com.example.gtm.data.entities.response.UserResponse
+import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.data.entities.ui.User
 import com.example.gtm.ui.auth.AuthActivity
@@ -56,7 +57,8 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     var envoyerTest = true
     var loading = false
     var listOfTriDates : ArrayList<String> = ArrayList<String>()
-
+    var HashMaplistaTasksDate : HashMap<String,ArrayList<Visite>> = HashMap<String,ArrayList<Visite>>()
+    var SetlistaTasksDate : Set<Map.Entry<String, ArrayList<Visite>>>?  = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -149,6 +151,10 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 this.startActivity(intent)
                 this.finish()
             }
+
+
+
+
         }
         return true
     }

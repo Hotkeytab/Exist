@@ -15,11 +15,7 @@ import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
-import android.view.Gravity
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
@@ -30,7 +26,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.gtm.R
 import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.data.entities.response.VisiteResponse
 import com.example.gtm.databinding.FragmentTaskBinding
@@ -52,6 +47,12 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
+import android.view.*
+import com.example.gtm.R
+import android.view.MenuInflater
+
+
+
 
 
 @AndroidEntryPoint
@@ -73,9 +74,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     private var GpsStatus = false
     private lateinit var navController: NavController
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var dayFilter = 1
-    private var weekFilter = 0
-    private var monthFilter = 0
     private lateinit var d: Date
 
 
@@ -89,7 +87,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
             askForPermissions()
         }
-
 
     }
 
@@ -144,30 +141,34 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             setTopDate()
 
             binding.dayfiltercard.setOnClickListener {
-                dayFilter = 1
-                weekFilter = 0
-                monthFilter = 0
+                daysFilter.dayFilter = 1
+                daysFilter.weekFilter = 0
+                daysFilter.monthFilter = 0
                 correctFilters()
                 setTopDate()
                 binding.progressIndicator.visibility = View.VISIBLE
                 getVisites()
             }
-
-            binding.montherfiltercard.setOnClickListener {
-                dayFilter = 0
-                weekFilter = 0
-                monthFilter = 1
+            binding.weekfilterward.setOnClickListener {
+                daysFilter.dayFilter = 0
+                daysFilter.weekFilter = 1
+                daysFilter.monthFilter = 0
                 correctFilters()
+                binding.progressIndicator.visibility = View.VISIBLE
+                setTopDate()
+
             }
 
-            binding.weekfilterward.setOnClickListener {
-                dayFilter = 0
-                weekFilter = 1
-                monthFilter = 0
+            binding.montherfiltercard.setOnClickListener {
+                daysFilter.dayFilter = 0
+                daysFilter.weekFilter = 0
+                daysFilter.monthFilter = 1
                 correctFilters()
                 binding.progressIndicator.visibility = View.VISIBLE
                 setTopDate()
             }
+
+
 
 
             binding.nextDate.setOnClickListener {
@@ -180,16 +181,29 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             binding.today.setOnClickListener {
                 setToday()
             }
+
+
         }
 
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.top_app_bar, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        return super.onOptionsItemSelected(item)
     }
 
 
     private fun setupRecycleViewPredictionDetail() {
 
 
-        Log.i("repeat","1")
-        adapterTask = TaskAdapter(this, requireActivity(),activity as DrawerActivity)
+        Log.i("repeat", "1")
+        adapterTask = TaskAdapter(this, requireActivity(), activity as DrawerActivity)
         binding.taskRecycleview.isMotionEventSplittingEnabled = false
         binding.taskRecycleview.layoutManager = LinearLayoutManager(requireContext())
         binding.taskRecycleview.layoutManager = LinearLayoutManager(
@@ -198,7 +212,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             false
         )
         binding.taskRecycleview.adapter = adapterTask
-       // (activity as DrawerActivity).listOfTriDates = ArrayList<String>()
+        // (activity as DrawerActivity).listOfTriDates = ArrayList<String>()
         adapterTask.setItems(listaTasks)
 
 
@@ -222,7 +236,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         GlobalScope.launch(Dispatchers.Main) {
 
 
-            Log.i("repeat","1")
+            Log.i("repeat", "1")
 
             responseData = viewModel.getVisites(userId.toString(), dateTimeBegin, dateTimeEnd)
 
@@ -232,20 +246,22 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
                 /* listaTasks[0].store.lat = 22.3
                  listaTasks[0].store.lng = 22.3*/
 
-                if (dayFilter == 1)
+                if (daysFilter.dayFilter == 1)
                     listaTasks =
                         listaTasks.filter { list -> compareDatesDay(list.day) } as ArrayList<Visite>
-                else if (weekFilter == 1)
+                else if (daysFilter.weekFilter == 1)
                     listaTasks =
                         listaTasks.filter { list -> compareDatesMonth(list.day) } as ArrayList<Visite>
-
+                else if (daysFilter.monthFilter == 1)
+                    listaTasks =
+                        listaTasks.filter { list -> compareDatesMonth(list.day) } as ArrayList<Visite>
 
                 if (listaTasks.size == 0)
                     binding.novisit.visibility = View.VISIBLE
                 else
                     binding.novisit.visibility = View.GONE
 
-                if (dayFilter == 1)
+                if (daysFilter.dayFilter == 1)
                     listaTasks.sortBy { list ->
                         list.store.calculateDistance(
                             LocationValueListener.myLocation.latitude.toFloat(),
@@ -253,6 +269,10 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
                         )
                     }
 
+                if (daysFilter.weekFilter == 1 || daysFilter.monthFilter == 1) {
+                    Collections.sort(listaTasks, SortByDate())
+                    //  transformListToHashMapDate()
+                }
 
                 if (isAdded && activity != null)
                     setupRecycleViewPredictionDetail()
@@ -396,6 +416,12 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     }
 
 
+    internal class SortByDate : Comparator<Visite?> {
+        override fun compare(p0: Visite?, p1: Visite?): Int {
+            return p0!!.day.compareTo(p1!!.day)
+        }
+    }
+
     private fun setUpLocationListener() {
 
 
@@ -435,7 +461,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
                             } else {
                                 LocationValueListener.myLocation = location
-                                adapterTask.setItems(listaTasks)
+                                //   adapterTask.setItems(listaTasks)
                             }
                         } else
                             askForPermissions()
@@ -530,9 +556,9 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
 
     private fun correctFilters() {
-        setFilters(binding.dayfiltercard, binding.dayfiltertext, dayFilter)
-        setFilters(binding.weekfilterward, binding.weektextfilter, weekFilter)
-        setFilters(binding.montherfiltercard, binding.monthfiltertext, monthFilter)
+        setFilters(binding.dayfiltercard, binding.dayfiltertext, daysFilter.dayFilter)
+        setFilters(binding.weekfilterward, binding.weektextfilter, daysFilter.weekFilter)
+        setFilters(binding.montherfiltercard, binding.monthfiltertext, daysFilter.monthFilter)
     }
 
 
@@ -555,13 +581,13 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
     private fun setTopDate() {
 
-        if (dayFilter == 1) {
+        if (daysFilter.dayFilter == 1) {
             val sdf = SimpleDateFormat("EEEE")
             val sdf2 = SimpleDateFormat("dd MMM")
             val dayOfTheWeek = sdf.format(d)
             val dayOfTheWeek2 = sdf2.format(d)
             binding.topAppBar.title = "$dayOfTheWeek $dayOfTheWeek2"
-        } else if (weekFilter == 1) {
+        } else if (daysFilter.weekFilter == 1) {
 
             val sdf = SimpleDateFormat("yyyy-MM-dd")
             //For DateTimeBegin
@@ -590,12 +616,41 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             getVisites()
 
 
+        } else if (daysFilter.monthFilter == 1) {
+
+            val sdf = SimpleDateFormat("MMMM")
+            val sdf1 = SimpleDateFormat("yyyy")
+            val dayOfTheWeek = sdf.format(d)
+            val dayOfTheWeek2 = sdf1.format(d)
+            binding.topAppBar.title = "$dayOfTheWeek $dayOfTheWeek2"
+
+            val cal = Calendar.getInstance()
+            cal.time = d
+            var daysMin = cal.getActualMinimum(Calendar.DAY_OF_MONTH).toString()
+            var daysMax = cal.getActualMaximum(Calendar.DAY_OF_MONTH).toString()
+
+            if (daysMin.length == 1)
+                daysMin = "0$daysMin"
+
+            if (daysMax.length == 1)
+                daysMax = "0$daysMax"
+
+
+            val sdfMonth = SimpleDateFormat("MM")
+            val month = sdfMonth.format(d)
+            val sdfYear = SimpleDateFormat("yyyy")
+            val year = sdfYear.format(d)
+
+            dateTimeBegin = "$year-$month-$daysMin"
+            dateTimeEnd = "$year-$month-$daysMax"
+
+            getVisites()
         }
     }
 
 
     private fun nextDate() {
-        if (dayFilter == 1) {
+        if (daysFilter.dayFilter == 1) {
             val cal = Calendar.getInstance()
             cal.time = d
             cal.add(Calendar.DATE, 1)
@@ -606,19 +661,25 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             dateTimeBegin = simpleDateFormat.format(d.time).toString()
             dateTimeEnd = simpleDateFormat.format(d.time).toString()
             getVisites()
-        } else if (weekFilter == 1) {
+        } else if (daysFilter.weekFilter == 1) {
             val cal = Calendar.getInstance()
             cal.time = d
             cal.add(Calendar.DATE, 7)
             d = cal.time
-            Log.i("timecalcul", "${d}")
+            setTopDate()
+            binding.progressIndicator.visibility = View.VISIBLE
+        } else if (daysFilter.monthFilter == 1) {
+            val cal = Calendar.getInstance()
+            cal.time = d
+            cal.add(Calendar.MONTH, 1)
+            d = cal.time
             setTopDate()
             binding.progressIndicator.visibility = View.VISIBLE
         }
     }
 
     private fun previousDate() {
-        if (dayFilter == 1) {
+        if (daysFilter.dayFilter == 1) {
             val cal = Calendar.getInstance()
             cal.time = d
             cal.add(Calendar.DATE, -1)
@@ -629,10 +690,17 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             dateTimeBegin = simpleDateFormat.format(d.time).toString()
             dateTimeEnd = simpleDateFormat.format(d.time).toString()
             getVisites()
-        } else if (weekFilter == 1) {
+        } else if (daysFilter.weekFilter == 1) {
             val cal = Calendar.getInstance()
             cal.time = d
             cal.add(Calendar.DATE, -7)
+            d = cal.time
+            setTopDate()
+            binding.progressIndicator.visibility = View.VISIBLE
+        } else if (daysFilter.monthFilter == 1) {
+            val cal = Calendar.getInstance()
+            cal.time = d
+            cal.add(Calendar.MONTH, -1)
             d = cal.time
             setTopDate()
             binding.progressIndicator.visibility = View.VISIBLE
@@ -642,9 +710,9 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
 
     private fun setToday() {
-        dayFilter = 1
-        weekFilter = 0
-        monthFilter = 0
+        daysFilter.dayFilter = 1
+        daysFilter.weekFilter = 0
+        daysFilter.monthFilter = 0
         correctFilters()
         val cal = Calendar.getInstance()
         d = cal.time
@@ -669,6 +737,70 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     }
 
 
+    private fun transformListToHashMapDate() {
+        Log.i("myhashmap", "${(listaTasks.size)}")
+        var exist = false
+
+        if (listaTasks.size != 0) {
+
+
+            for (i in listaTasks) {
+
+                exist = false
+
+                if ((activity as DrawerActivity).HashMaplistaTasksDate.size == 0) {
+                    val tempAray = ArrayList<Visite>()
+                    tempAray.add(i)
+                    (activity as DrawerActivity).HashMaplistaTasksDate.put(
+                        i.day,
+                        tempAray
+                    )
+                } else {
+
+                    (activity as DrawerActivity).HashMaplistaTasksDate.forEach { (v, k) ->
+                        if (i.day == v) {
+                            k.add(i)
+                            exist = true
+                        }
+                    }
+
+                    if (!exist) {
+                        val tempAray = ArrayList<Visite>()
+                        tempAray.add(i)
+                        (activity as DrawerActivity).HashMaplistaTasksDate.put(i.day, tempAray)
+                    }
+                }
+            }
+
+        }
+
+        sortHashMapVisite()
+        /* (activity as DrawerActivity).HashMaplistaTasksDate.forEach { (v,k) ->
+             Log.i("myhashmap","$v")
+             Log.i("myhashmap","$k")
+         }*/
+        //  Log.i("myhashmap", "${(activity as DrawerActivity).HashMaplistaTasksDate}")
+    }
+
+
+    private fun sortHashMapVisite() {
+        val entries: Set<Map.Entry<String, ArrayList<Visite>>> =
+            (activity as DrawerActivity).HashMaplistaTasksDate.entries
+
+        val sorted: TreeMap<String, ArrayList<Visite>> =
+            TreeMap((activity as DrawerActivity).HashMaplistaTasksDate)
+
+        val mappings: Set<Map.Entry<String, ArrayList<Visite>>> = sorted.entries
+
+        mappings.forEach { (k, v) ->
+            Log.i("myhashmap", "$k")
+            Log.i("myhashmap", "$v")
+        }
+
+
+    }
+
+
 }
 
 object StaticMapClicked {
@@ -678,4 +810,11 @@ object StaticMapClicked {
 object LocationValueListener {
     lateinit var myLocation: Location
     var locationOn = true
+}
+
+
+object daysFilter {
+    var dayFilter = 1
+    var weekFilter = 0
+    var monthFilter = 0
 }
