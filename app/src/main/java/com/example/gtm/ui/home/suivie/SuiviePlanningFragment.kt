@@ -1,4 +1,5 @@
-package com.example.gtm.ui.home.mytask
+package com.example.gtm.ui.home.suivie
+
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -8,28 +9,34 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
-import androidx.fragment.app.Fragment
+import android.view.*
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.gtm.R
+import com.example.gtm.data.entities.response.DataX
+import com.example.gtm.data.entities.response.SurveyResponse
 import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.data.entities.response.VisiteResponse
+import com.example.gtm.databinding.FragmentSuiviePlanningBinding
 import com.example.gtm.databinding.FragmentTaskBinding
 import com.example.gtm.ui.drawer.DrawerActivity
+import com.example.gtm.ui.home.mytask.*
+import com.example.gtm.ui.home.mytask.TaskFragment
 import com.example.gtm.ui.home.mytask.survey.SurveyCheckDialog
 import com.example.gtm.utils.resources.Resource
 import com.google.android.gms.location.*
@@ -47,23 +54,18 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
-import android.view.*
-import com.example.gtm.R
-import android.view.MenuInflater
-
-
-
-
 
 @AndroidEntryPoint
-class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
+class SuiviePlanningFragment : Fragment(), SuiviePlanningAdapter.TaskItemListener {
 
 
-    private lateinit var binding: FragmentTaskBinding
-    private lateinit var adapterTask: TaskAdapter
+    private lateinit var binding: FragmentSuiviePlanningBinding
+    private lateinit var adapterTask: SuiviePlanningAdapter
     private var listaTasks = ArrayList<Visite>()
+    private var listaSurveyResponse = ArrayList<DataX>()
     lateinit var sharedPref: SharedPreferences
     private lateinit var responseData: Resource<VisiteResponse>
+    private lateinit var responseData2 : Resource<SurveyResponse>
     private val viewModel: MyTaskViewModel by viewModels()
     private var userId = 0
     private lateinit var dateTimeBegin: String
@@ -73,7 +75,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     private val REQUEST_CODE = 2
     private var GpsStatus = false
     private lateinit var navController: NavController
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var d: Date
 
 
@@ -82,9 +83,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
 
         if (isAdded && activity != null) {
-
-            LocationValueListener.locationOn = true
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
             askForPermissions()
         }
 
@@ -95,7 +93,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentTaskBinding.inflate(inflater, container, false)
+        binding = FragmentSuiviePlanningBinding.inflate(inflater, container, false)
 
 
 
@@ -138,7 +136,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             requireActivity().bottom_nav.visibility = View.VISIBLE
 
 
-            navController = NavHostFragment.findNavController(this)
+        //    navController = NavHostFragment.findNavController(this)
 
             correctFilters()
 
@@ -195,30 +193,19 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.top_app_bar, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        return super.onOptionsItemSelected(item)
-    }
-
-
     private fun setupRecycleViewPredictionDetail() {
 
 
         Log.i("repeat", "1")
-        adapterTask = TaskAdapter(this, requireActivity(), activity as DrawerActivity)
-        binding.taskRecycleview.isMotionEventSplittingEnabled = false
-        binding.taskRecycleview.layoutManager = LinearLayoutManager(requireContext())
-        binding.taskRecycleview.layoutManager = LinearLayoutManager(
+        adapterTask = SuiviePlanningAdapter(this, requireActivity(), activity as DrawerActivity,listaSurveyResponse)
+        binding.suivieRecycleview.isMotionEventSplittingEnabled = false
+        binding.suivieRecycleview.layoutManager = LinearLayoutManager(requireContext())
+        binding.suivieRecycleview.layoutManager = LinearLayoutManager(
             context,
             LinearLayoutManager.VERTICAL,
             false
         )
-        binding.taskRecycleview.adapter = adapterTask
+        binding.suivieRecycleview.adapter = adapterTask
         // (activity as DrawerActivity).listOfTriDates = ArrayList<String>()
         adapterTask.setItems(listaTasks)
 
@@ -227,7 +214,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
     override fun onClickedTask(taskId: Int, distance: String) {
 
-        askForPermissionsDialog()
+     //   askForPermissionsDialog()
         sharedPref =
             requireContext().getSharedPreferences(
                 R.string.app_name.toString(),
@@ -237,6 +224,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             this?.putInt("storeId", taskId)
         }?.commit()
     }
+
 
     @DelicateCoroutinesApi
     private fun getVisites() {
@@ -249,6 +237,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
 
             if (responseData.responseCode == 200) {
+
                 listaTasks = responseData.data!!.data as ArrayList<Visite>
                 /* listaTasks[0].store.lat = 22.3
                  listaTasks[0].store.lng = 22.3*/
@@ -268,13 +257,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
                 else
                     binding.novisit.visibility = View.GONE
 
-                if (daysFilter.dayFilter == 1)
-                    listaTasks.sortBy { list ->
-                        list.store.calculateDistance(
-                            LocationValueListener.myLocation.latitude.toFloat(),
-                            LocationValueListener.myLocation.longitude.toFloat()
-                        )
-                    }
 
                 if (daysFilter.weekFilter == 1 || daysFilter.monthFilter == 1) {
                     Collections.sort(listaTasks, SortByDate())
@@ -282,14 +264,66 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
                 }
 
                 if (isAdded && activity != null)
-                    setupRecycleViewPredictionDetail()
-                binding.progressIndicator.visibility = View.GONE
+                    getSurveyResponses()
+
+
+
+
+
+
 
             }
 
         }
     }
 
+
+    @DelicateCoroutinesApi
+    private fun getSurveyResponses() {
+        GlobalScope.launch(Dispatchers.Main) {
+
+
+            responseData2 = viewModel.getSurveyResponse(userId.toString(), dateTimeBegin, dateTimeEnd)
+
+
+            if (responseData2.responseCode == 200) {
+                Log.i("newaray","$responseData2")
+              listaSurveyResponse = responseData2.data!!.data as ArrayList<DataX>
+                setupRecycleViewPredictionDetail()
+                /*    if (daysFilter.dayFilter == 1)
+                      listaTasks =
+                          listaTasks.filter { list -> compareDatesDay(list.day) } as ArrayList<Visite>
+                  else if (daysFilter.weekFilter == 1)
+                      listaTasks =
+                          listaTasks.filter { list -> compareDatesMonth(list.day) } as ArrayList<Visite>
+                  else if (daysFilter.monthFilter == 1)
+                      listaTasks =
+                          listaTasks.filter { list -> compareDatesMonth(list.day) } as ArrayList<Visite>
+
+                  if (listaTasks.size == 0)
+                      binding.novisit.visibility = View.VISIBLE
+                  else
+                      binding.novisit.visibility = View.GONE
+
+
+                  if (daysFilter.weekFilter == 1 || daysFilter.monthFilter == 1) {
+                      Collections.sort(listaTasks, SortByDate())
+                      //  transformListToHashMapDate()
+                  }
+
+                  if (isAdded && activity != null)
+                      setupRecycleViewPredictionDetail()
+
+
+                  */
+
+
+                binding.progressIndicator.visibility = View.GONE
+
+            }
+
+        }
+    }
 
     fun isPermissionsAllowed(): Boolean {
         return ContextCompat.checkSelfPermission(
@@ -309,9 +343,9 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         } else {
             Log.i("PERMISSIONBITCH", "4")
             if (CheckGpsStatus())
-            // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
             {
-                setUpLocationListener()
+                binding.progressIndicator.visibility = View.VISIBLE
+                getVisites()
 
             } else {
                 showPermissionDeniedGPS()
@@ -398,7 +432,8 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
                     if (CheckGpsStatus())
                     // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
                     {
-                        setUpLocationListener()
+                        binding.progressIndicator.visibility = View.VISIBLE
+                        getVisites()
 
                     } else {
                         showPermissionDeniedGPS()
@@ -429,90 +464,8 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         }
     }
 
-    private fun setUpLocationListener() {
 
 
-        if (listaTasks.size == 0)
-            binding.progressIndicator.visibility = View.VISIBLE
-        // for getting the current location update after every 2 seconds with high accuracy
-        val locationRequest = LocationRequest().setInterval(2000).setFastestInterval(2000)
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            Log.i("entrance", "Bad")
-            return
-        }
-
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult) {
-                    super.onLocationResult(locationResult)
-
-                    if (!LocationValueListener.locationOn) {
-                        fusedLocationClient.removeLocationUpdates(this)
-                    }
-
-                    for (location in locationResult.locations) {
-
-                        if (location != null) {
-                            if (listaTasks.size == 0) {
-                                LocationValueListener.myLocation = location
-                                getVisites()
-
-                            } else {
-                                LocationValueListener.myLocation = location
-                                  adapterTask.setItems(listaTasks)
-                            }
-                        } else
-                            askForPermissions()
-                        /*  if (location != null) {
-                              val distanceTest = distance(
-                                  location.latitude.toFloat(),
-                                  location.longitude.toFloat(),
-                                  latIn.toFloat(),
-                                  longIn.toFloat()
-                              )
-                              Log.i("HAHAH", "$distanceTest")
-                              if (distanceTest > 1 && distanceTest < 150) {
-                                  fusedLocationClient.removeLocationUpdates(this)
-                                  dismiss()
-                                  //    SurveyListDialog().show(requireActivity().supportFragmentManager,"survey list dialog")
-                                  navControllerIn.navigate(R.id.action_taskFragment_to_quizFragment)
-                              } else {
-                                  dismiss()
-                              }
-                          }*/
-
-
-                    }
-
-                }
-            },
-
-            Looper.myLooper()!!
-        )
-    }
-
-
-    fun distance(lat_a: Float, lng_a: Float, lat_b: Float, lng_b: Float): Float {
-        val earthRadius = 3958.75
-        val latDiff = Math.toRadians((lat_b - lat_a).toDouble())
-        val lngDiff = Math.toRadians((lng_b - lng_a).toDouble())
-        val a = sin(latDiff / 2) * sin(latDiff / 2) +
-                cos(Math.toRadians(lat_a.toDouble())) * cos(Math.toRadians(lat_b.toDouble())) *
-                sin(lngDiff / 2) * sin(lngDiff / 2)
-        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-        val distance = earthRadius * c
-        val meterConversion = 1609
-        return (distance * meterConversion.toFloat()).toFloat()
-    }
 
 
     private fun compareDatesDay(simpleDate: String): Boolean {
@@ -619,6 +572,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
             binding.topAppBar.title = "$dayOfTheWeek - $dayOfTheWeek2"
 
+            binding.progressIndicator.visibility = View.VISIBLE
             getVisites()
 
 
@@ -650,6 +604,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             dateTimeBegin = "$year-$month-$daysMin"
             dateTimeEnd = "$year-$month-$daysMax"
 
+            binding.progressIndicator.visibility = View.VISIBLE
             getVisites()
         }
     }
@@ -807,25 +762,4 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     }
 
 
-    override fun onDestroy() {
-        super.onDestroy()
-        LocationValueListener.locationOn = false
-    }
-
-}
-
-object StaticMapClicked {
-    var mapIsRunning = false
-}
-
-object LocationValueListener {
-    lateinit var myLocation: Location
-    var locationOn = true
-}
-
-
-object daysFilter {
-    var dayFilter = 1
-    var weekFilter = 0
-    var monthFilter = 0
 }

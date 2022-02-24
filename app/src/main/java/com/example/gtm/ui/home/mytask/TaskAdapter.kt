@@ -112,7 +112,7 @@ class TaskViewHolder(
 
             finalDistance = theDistance.toInt().toString() + " m"
             itemBinding.cardviewColorEnable.setCardBackgroundColor(Color.rgb(255, 255, 255))
-            itemBinding.storeIcon.setOnClickListener {
+            itemBinding.storeIconBlue.setOnClickListener {
                 putStoreName(item.store.name)
                 listener.onClickedTask(
                     visiteResponse.id,
@@ -156,7 +156,7 @@ class TaskViewHolder(
 
         }
 
-        itemBinding.storeIcon.setOnClickListener {
+        itemBinding.storeIconBlue.setOnClickListener {
             putStoreName(item.store.name)
             listener.onClickedTask(
                 visiteResponse.storeId,

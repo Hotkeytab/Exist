@@ -11,4 +11,8 @@ class VisiteRemoteDataSource @Inject constructor(
     suspend fun getVisites(user_id: String, date_begin: String, date_end: String) =
         getResult { visiteService.getVisites(user_id, date_begin, date_end) }
 
+
+    suspend fun getSurveyResponse(user_id: String, date_begin: String, date_end: String) =
+        getResult { visiteService.getSurveyResponse(user_id, date_begin, date_end) }
+
 }

@@ -1,0 +1,231 @@
+package com.example.gtm.ui.home.suivie
+
+import android.content.Context
+import android.content.SharedPreferences
+import android.graphics.Color
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.RecyclerView
+import com.example.gtm.R
+import com.example.gtm.data.entities.response.DataX
+import com.example.gtm.data.entities.response.Visite
+import com.example.gtm.databinding.ItemTaskBinding
+import com.example.gtm.ui.drawer.DrawerActivity
+import com.example.gtm.ui.home.mytask.LocationValueListener
+import com.example.gtm.ui.home.mytask.StaticMapClicked
+import com.example.gtm.ui.home.mytask.daysFilter
+import com.example.gtm.ui.home.mytask.positionmap.PositionMapDialog
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
+
+class SuiviePlanningAdapter(
+    private val listener: SuiviePlanningFragment,
+    activity: FragmentActivity,
+    activityDrawer2: DrawerActivity,
+    listaSurveyResponse2: ArrayList<DataX>
+) :
+    RecyclerView.Adapter<TaskViewHolder>() {
+
+
+    private val activityIns = activity
+    private val activityDrawer = activityDrawer2
+    private val listaSurveyResponse = listaSurveyResponse2
+
+
+    interface TaskItemListener {
+        fun onClickedTask(taskId: Int, distance: String)
+
+    }
+
+    private val items = ArrayList<Visite>()
+
+
+    fun setItems(items: ArrayList<Visite>) {
+        this.items.clear()
+        this.items.addAll(items)
+        notifyDataSetChanged()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
+        val binding: ItemTaskBinding =
+            ItemTaskBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return TaskViewHolder(
+            binding,
+            listener as TaskItemListener,
+            activityIns,
+            parent,
+            activityDrawer,
+            listaSurveyResponse,
+
+            )
+
+    }
+
+    override fun getItemCount(): Int = items.size
+
+    override fun onBindViewHolder(holder: TaskViewHolder, position: Int) =
+        holder.bind(items[position])
+}
+
+class TaskViewHolder(
+    private val itemBinding: ItemTaskBinding,
+    private val listener: SuiviePlanningAdapter.TaskItemListener,
+    private val activityIns: FragmentActivity,
+    private val parent: ViewGroup,
+    private val activityDrawer: DrawerActivity,
+    private val listaSurveyResponse: ArrayList<DataX>
+) : RecyclerView.ViewHolder(itemBinding.root),
+    View.OnClickListener {
+
+
+    private lateinit var visiteResponse: Visite
+    private lateinit var dialog: PositionMapDialog
+    lateinit var sharedPref: SharedPreferences
+    private val REQUEST_CODE = 2
+    private var finalDistance = ""
+
+    init {
+        itemBinding.root.setOnClickListener(this)
+    }
+
+    fun bind(item: Visite) {
+        this.visiteResponse = item
+        var suivie = false
+        showDate()
+
+
+        itemBinding.name.text = item.store.name
+        itemBinding.place.text = item.store.governorate + ", " + item.store.address
+
+
+
+        itemBinding.showMap.setOnClickListener {
+
+            if (!StaticMapClicked.mapIsRunning) {
+                StaticMapClicked.mapIsRunning = true
+
+                PositionMapDialog(
+                    item.store.lat,
+                    item.store.lng,
+                    item.store.name
+                ).show(activityIns.supportFragmentManager, "PositionMapDialog")
+            }
+
+        }
+
+
+        Log.i("newar", "${listaSurveyResponse.size}")
+
+        for (i in listaSurveyResponse) {
+            if (item.storeId == i.storeId && extractDate(item.day) == extractDate(i.createdAt)) {
+                suivie = true
+            }
+        }
+
+
+
+        if (suivie) {
+            itemBinding.storeIconBlue.visibility = View.GONE
+            itemBinding.storeIconRed.visibility = View.GONE
+            itemBinding.storeIconGreen.visibility = View.VISIBLE
+        } else {
+            itemBinding.storeIconBlue.visibility = View.GONE
+            itemBinding.storeIconRed.visibility = View.VISIBLE
+            itemBinding.storeIconGreen.visibility = View.GONE
+        }
+
+        /* itemBinding.storeIcon.setOnClickListener {
+             putStoreName(item.store.name)
+             listener.onClickedTask(
+                 visiteResponse.storeId,
+                 finalDistance
+             )
+         } */
+
+
+        /* itemBinding.storeText.setOnClickListener {
+             putStoreName(item.store.name)
+             listener.onClickedTask(
+                 visiteResponse.storeId,
+                 finalDistance
+             )
+         } */
+
+
+    }
+
+
+    override fun onClick(v: View?) {
+        Log.i("Clicked", "${visiteResponse.storeId}")
+        putStoreName(visiteResponse.store.name)
+        listener.onClickedTask(
+            visiteResponse.storeId,
+            finalDistance
+        )
+    }
+
+
+    private fun extractDate(simpleDate: String) {
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        val date: Date = format.parse(simpleDate)
+        format.applyPattern("yyyy-MM-dd")
+        val dateformat = format.format(date)
+        Log.i("newar", dateformat)
+    }
+
+
+    private fun showDate() {
+        //Normal Date Format
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        val date: Date = format.parse(visiteResponse.day)
+        format.applyPattern("dd-MM-yyyy")
+        val dateformat = format.format(date)
+
+        // checkForDay(dateformat)
+
+        if (daysFilter.weekFilter == 1 || daysFilter.monthFilter == 1) {
+            // activityDrawer.HashMaplistaTasksDate.forEach { (k, v) ->
+
+            // if(visiteResponse.day == k && (v.size == 1 || visiteResponse == v[0])) {
+
+            //Formidable Date Format
+            val sdf = SimpleDateFormat("EEEE")
+            val sdf2 = SimpleDateFormat("dd MMMM yyyy")
+            val sdf3 = SimpleDateFormat("dd-MM-yyyy")
+            val dayOfTheWeek = sdf.format(sdf3.parse(dateformat))
+            val dayOfTheWeek2 = sdf2.format(sdf3.parse(dateformat))
+
+            val finalDay = "$dayOfTheWeek $dayOfTheWeek2"
+            itemBinding.dateText.visibility = View.VISIBLE
+            itemBinding.dateText.text = finalDay
+            //}
+
+            // }
+        }
+
+    }
+
+
+    private fun putStoreName(storeName: String) {
+        Log.i("storename", storeName)
+        sharedPref =
+            parent.context.getSharedPreferences(
+                R.string.app_name.toString(),
+                Context.MODE_PRIVATE
+            )!!
+        with(sharedPref.edit()) {
+            this?.putString("storeName", storeName)
+        }?.commit()
+    }
+
+
+}

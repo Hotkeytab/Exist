@@ -25,6 +25,7 @@ import com.example.gtm.ui.auth.AuthActivity
 import com.example.gtm.ui.drawer.profile.EditProfileDialog
 import com.example.gtm.ui.home.mytask.BeforeHomeFragment
 import com.example.gtm.ui.home.mytask.TaskFragment
+import com.example.gtm.ui.home.suivie.SuiviePlanningFragment
 import com.example.gtm.utils.animations.UiAnimations
 import com.example.gtm.utils.resources.Resource
 import com.example.gtm.utils.token.SessionManager
@@ -50,15 +51,16 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     lateinit var responseData: Resource<UserResponse>
     private lateinit var sessionManager: SessionManager
     private lateinit var user: User
-    private  var picture: String? = null
+    private var picture: String? = null
     private var defaultInterval: Int = 500
     private var lastTimeClicked: Long = 0
-    var listOfQuestionsPerSc = HashMap<Int,HashMap<Int,Survey?>>()
+    var listOfQuestionsPerSc = HashMap<Int, HashMap<Int, Survey?>>()
     var envoyerTest = true
     var loading = false
-    var listOfTriDates : ArrayList<String> = ArrayList<String>()
-    var HashMaplistaTasksDate : HashMap<String,ArrayList<Visite>> = HashMap<String,ArrayList<Visite>>()
-    var SetlistaTasksDate : Set<Map.Entry<String, ArrayList<Visite>>>?  = null
+    var listOfTriDates: ArrayList<String> = ArrayList<String>()
+    var HashMaplistaTasksDate: HashMap<String, ArrayList<Visite>> =
+        HashMap<String, ArrayList<Visite>>()
+    var SetlistaTasksDate: Set<Map.Entry<String, ArrayList<Visite>>>? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,7 +84,6 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         // uiAnimations.hideNavBar()
 
 
-
         supportFragmentManager.beginTransaction().replace(
             R.id.nav_acceuil_fragment,
             BeforeHomeFragment()
@@ -99,10 +100,14 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                         selectedFragment = BeforeHomeFragment()
 
                     }
-                    Log.i("difference", "${SystemClock.elapsedRealtime() - lastTimeClicked}")
                     lastTimeClicked = SystemClock.elapsedRealtime()
+                }
+                R.id.suivie -> {
+                    if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
+                        selectedFragment = SuiviePlanningFragment()
 
-
+                    }
+                    lastTimeClicked = SystemClock.elapsedRealtime()
                 }
 
 
@@ -130,8 +135,8 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 user.email = email_profile.text.toString()
                 user.phone_number = number_profile.text.toString()
 
-                if(picture == null)
-                    picture =""
+                if (picture == null)
+                    picture = ""
 
                 EditProfileDialog(
                     user,
@@ -151,8 +156,6 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 this.startActivity(intent)
                 this.finish()
             }
-
-
 
 
         }
@@ -252,8 +255,6 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         super.onDestroy()
         sharedPref.edit().clear().apply()
     }
-
-
 
 
 }

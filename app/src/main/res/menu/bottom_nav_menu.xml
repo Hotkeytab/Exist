@@ -7,6 +7,11 @@
         android:icon="@drawable/outline_receipt_long_black_24"
         android:title="Planning du jour"/>
 
+    <item
+        android:id="@+id/suivie"
+        android:icon="@drawable/outline_calendar_month_24"
+        android:title="Suivie planning"/>
+
 
 
 
