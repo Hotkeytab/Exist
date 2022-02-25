@@ -366,13 +366,14 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
             survey =
                 Survey(
                     idQuestion,
-                    binding.ratingBar.rating,
+                    questionList[i].coef,
+                    binding.ratingBar.rating *2,
                     binding.editText.text.toString(),
                     listaImage[i]!!
                 )
         else
             survey =
-                Survey(idQuestion, binding.ratingBar.rating, binding.editText.text.toString(), null)
+                Survey(idQuestion, questionList[i].coef,binding.ratingBar.rating*2, binding.editText.text.toString(), null)
 
 
         listaSurvey[i] = survey
@@ -521,7 +522,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
 
         }
 
-        val qp2 = SurveyPost(userId.toLong(), storeId.toLong(), surveyId.toLong(), listBody)
+        val qp2 = SurveyPost(userId.toLong(), storeId.toLong(), surveyId.toLong(),0.0,listBody)
         Log.i("kamehameha", "$qp2")
 
         val userNewJson = jacksonObjectMapper().writeValueAsString(qp2)

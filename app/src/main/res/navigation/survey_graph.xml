@@ -24,6 +24,9 @@
         <action
             android:id="@+id/action_taskFragment_to_quizFragment"
             app:destination="@id/quizFragment" />
+        <action
+            android:id="@+id/action_taskFragment_to_suiviePlanningFragment"
+            app:destination="@id/suiviePlanningFragment" />
     </fragment>
     <fragment
         android:id="@+id/categoryFragment"
@@ -50,4 +53,9 @@
             android:id="@+id/action_questionFragment_to_categoryFragment"
             app:destination="@id/categoryFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/suiviePlanningFragment"
+        android:name="com.example.gtm.ui.home.suivie.SuiviePlanningFragment"
+        android:label="fragment_suivie_planning"
+        tools:layout="@layout/fragment_suivie_planning" />
 </navigation>

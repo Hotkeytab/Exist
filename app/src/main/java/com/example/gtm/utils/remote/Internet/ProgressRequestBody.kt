@@ -39,6 +39,7 @@ class ProgressRequestBody(file: File, content_type: String?, listener: UploadCal
 
     @Throws(IOException::class)
     override fun writeTo(sink: BufferedSink) {
+        Log.i("percent","percent")
         val fileLength = mFile!!.length()
         val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
         val `in` = FileInputStream(mFile)
@@ -57,6 +58,7 @@ class ProgressRequestBody(file: File, content_type: String?, listener: UploadCal
             `in`.close()
         }
     }
+
 
     interface UploadCallbacks {
         fun onProgressUpdate(percentage: Int)

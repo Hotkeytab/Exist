@@ -100,9 +100,12 @@ class TaskViewHolder(
     fun bind(item: Visite) {
         this.visiteResponse = item
         var suivie = false
+        val afterSuiviArray = ArrayList<DataX>()
         showDate()
 
 
+
+        Log.i("notresuivie","$suivie")
         itemBinding.name.text = item.store.name
         itemBinding.place.text = item.store.governorate + ", " + item.store.address
 
@@ -125,13 +128,15 @@ class TaskViewHolder(
 
         Log.i("newar", "${listaSurveyResponse.size}")
 
+
         for (i in listaSurveyResponse) {
             if (item.storeId == i.storeId && extractDate(item.day) == extractDate(i.createdAt)) {
                 suivie = true
+                afterSuiviArray.add(i)
             }
         }
 
-
+        Log.i("notresuivie","$suivie")
 
         if (suivie) {
             itemBinding.storeIconBlue.visibility = View.GONE
@@ -139,8 +144,8 @@ class TaskViewHolder(
             itemBinding.storeIconGreen.visibility = View.VISIBLE
         } else {
             itemBinding.storeIconBlue.visibility = View.GONE
-            itemBinding.storeIconRed.visibility = View.VISIBLE
             itemBinding.storeIconGreen.visibility = View.GONE
+            itemBinding.storeIconRed.visibility = View.VISIBLE
         }
 
         /* itemBinding.storeIcon.setOnClickListener {
@@ -174,12 +179,14 @@ class TaskViewHolder(
     }
 
 
-    private fun extractDate(simpleDate: String) {
+    private fun extractDate(simpleDate: String) : String{
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         val date: Date = format.parse(simpleDate)
         format.applyPattern("yyyy-MM-dd")
         val dateformat = format.format(date)
         Log.i("newar", dateformat)
+        return dateformat
+
     }
 
 

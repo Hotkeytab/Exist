@@ -5,7 +5,7 @@ package com.example.gtm.data.entities.response
 
 
 data class Question(
-    val coef: Int,
+    val coef: Double,
     val createdAt: String,
     val id: Int,
     val images: Boolean,

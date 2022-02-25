@@ -76,6 +76,8 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
     private var percent = 0
     private var filesNumber = 0
 
+    var recentPercent = 0
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -129,6 +131,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
         binding.envoyerQuestionnaireButton.setOnClickListener {
 
             if (binding.envoyerQuestionnaireButton.tag != "bad") {
+
                 (activity as DrawerActivity).loading = true
                 binding.progressBarUpload.visibility = View.VISIBLE
                 Timer().schedule(1000) {
@@ -165,6 +168,9 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
     private fun envoyerQuestionnaire() {
 
 
+
+        var coefTotal = 0.0
+        var average = 0.0
         val bigList: HashMap<Int, HashMap<Int, Survey?>> =
             (activity as DrawerActivity).listOfQuestionsPerSc
         // Log.i("mamaafrica","${(activity as DrawerActivity).listOfQuestionsPerSc}")
@@ -175,8 +181,12 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
         bigList.forEach { (v, k) ->
 
+
             k.forEach { (l, m) ->
 
+
+                coefTotal += m!!.coef
+                average += m.coef * m.rate
 
                 val images = ArrayList<ImagePath?>()
 
@@ -190,12 +200,15 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
                     QuestionPost(m!!.id.toLong(), m.rate.toLong(), m.description, images)
 
 
+
                 listBody.add(questionPost)
             }
 
         }
 
-        val qp2 = SurveyPost(userId.toLong(), storeId.toLong(), surveyId.toLong(), listBody)
+        val finalAverage = (average / coefTotal)
+
+        val qp2 = SurveyPost(userId.toLong(), storeId.toLong(), surveyId.toLong(),finalAverage, listBody)
 
 
         val userNewJson = jacksonObjectMapper().writeValueAsString(qp2)
@@ -307,14 +320,22 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
     override fun onProgressUpdate(percentage: Int) {
 
 
-        if (percentage == 99) {
+
+        if (percentage < recentPercent) {
             percent++
-            if ((((percent.toFloat() / (filesNumber * 2)) * 100).toInt()) <= 100) {
+           // if ((((percent.toFloat() / (filesNumber * 2)) * 100).toInt()) <= 100) {
                 binding.textPercentage.text =
                     (((percent.toFloat() / (filesNumber * 2)) * 100).toInt()).toString() + "%"
-            }
+          //  }
             binding.progressUpload.setProgress(percent, true)
+             recentPercent = 0
         }
+        else
+        {
+            recentPercent = percentage
+        }
+
+
 
     }
 
