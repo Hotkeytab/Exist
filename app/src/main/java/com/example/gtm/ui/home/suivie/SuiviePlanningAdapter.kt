@@ -1,13 +1,12 @@
 package com.example.gtm.ui.home.suivie
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gtm.R
@@ -15,17 +14,14 @@ import com.example.gtm.data.entities.response.DataX
 import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.databinding.ItemTaskBinding
 import com.example.gtm.ui.drawer.DrawerActivity
-import com.example.gtm.ui.home.mytask.LocationValueListener
 import com.example.gtm.ui.home.mytask.StaticMapClicked
 import com.example.gtm.ui.home.mytask.daysFilter
 import com.example.gtm.ui.home.mytask.positionmap.PositionMapDialog
+import com.example.gtm.ui.home.suivie.detail.SuiviDetailActivity
+import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
 
 class SuiviePlanningAdapter(
     private val listener: SuiviePlanningFragment,
@@ -148,13 +144,25 @@ class TaskViewHolder(
             itemBinding.storeIconRed.visibility = View.VISIBLE
         }
 
-        /* itemBinding.storeIcon.setOnClickListener {
-             putStoreName(item.store.name)
-             listener.onClickedTask(
-                 visiteResponse.storeId,
-                 finalDistance
-             )
-         } */
+        if(itemBinding.storeIconGreen.visibility == View.VISIBLE) {
+            itemBinding.storeIconGreen.setOnClickListener {
+                val bundle  = transformArray(afterSuiviArray)
+                putStoreName(item.store.name)
+                val intent = Intent(activityIns, SuiviDetailActivity::class.java)
+                intent.putExtra("mainobject",bundle)
+                activityIns.startActivity(intent)
+                activityIns.overridePendingTransition(R.anim.right_to_left_activity,R.anim.left_to_right_activity)
+            }
+
+            itemBinding.storeText.setOnClickListener {
+                val bundle  = transformArray(afterSuiviArray)
+                putStoreName(item.store.name)
+                val intent = Intent(activityIns, SuiviDetailActivity::class.java)
+                intent.putExtra("mainobject",bundle)
+                activityIns.startActivity(intent)
+                activityIns.overridePendingTransition(R.anim.right_to_left_activity,R.anim.left_to_right_activity)
+            }
+        }
 
 
         /* itemBinding.storeText.setOnClickListener {
@@ -176,6 +184,11 @@ class TaskViewHolder(
             visiteResponse.storeId,
             finalDistance
         )
+    }
+
+
+    private fun transformArray(afterSuiviArray: ArrayList<DataX>): String {
+        return Gson().toJson(afterSuiviArray)
     }
 
 

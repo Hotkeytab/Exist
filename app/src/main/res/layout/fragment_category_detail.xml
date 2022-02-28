@@ -2,19 +2,18 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.home.suivie.detail.SuivieDetailFragment">
+    tools:context=".ui.home.suivie.detail.survey.CategoryDetailFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <androidx.cardview.widget.CardView
             android:id="@+id/cutom_bar_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginRight="@dimen/_5sdp"
-            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_margin="@dimen/_5sdp"
             app:cardCornerRadius="@dimen/_4sdp"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -28,7 +27,7 @@
 
 
                 <ImageView
-                    android:id="@+id/back_from_detail"
+                    android:id="@+id/back_from_quiz"
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="@dimen/_25sdp"
                     android:layout_gravity="center"
@@ -46,7 +45,7 @@
                     android:layout_gravity="center"
                     android:layout_marginRight="@dimen/_15sdp"
                     android:gravity="center"
-                    android:text="first store"
+                    android:text="Questionnaire Examplaire"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
 
@@ -58,47 +57,46 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/progress_indicator"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/_5sdp"
-            android:layout_marginLeft="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:indeterminate="true"
-            android:visibility="invisible"
-            app:layout_constraintTop_toBottomOf="@+id/cutom_bar_top" />
-
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/recycleview_questionnaire"
+            android:id="@+id/cardview_recycle_category"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
             android:layout_marginBottom="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_10sdp"
             app:cardCornerRadius="@dimen/_4sdp"
-            app:layout_constraintBottom_toTopOf="@id/surveyimage"
-            app:layout_constraintTop_toBottomOf="@id/progress_indicator"
+            app:layout_constraintBottom_toTopOf="@+id/envoyer_questionnaire_button"
+            app:layout_constraintTop_toBottomOf="@id/cutom_bar_top"
             app:layout_constraintVertical_bias="0">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/quiz_recycleview"
+                android:id="@+id/category_recycleview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
 
         </androidx.cardview.widget.CardView>
 
-        <ImageView
-            android:id="@+id/surveyimage"
-            android:layout_width="@dimen/_200sdp"
-            android:layout_height="@dimen/_300sdp"
-            android:src="@drawable/surveyimage"
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/envoyer_questionnaire_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_80sdp"
+            android:layout_marginRight="@dimen/_80sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:elevation="@dimen/_10sdp"
+            app:cardCornerRadius="@dimen/_4sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardview_recycle_category">
+
+
+        </androidx.cardview.widget.CardView>
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

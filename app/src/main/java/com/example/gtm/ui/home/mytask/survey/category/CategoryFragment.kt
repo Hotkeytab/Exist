@@ -323,10 +323,10 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
         if (percentage < recentPercent) {
             percent++
-           // if ((((percent.toFloat() / (filesNumber * 2)) * 100).toInt()) <= 100) {
+            if ((((percent.toFloat() / (filesNumber * 2)) * 100).toInt()) <= 100) {
                 binding.textPercentage.text =
                     (((percent.toFloat() / (filesNumber * 2)) * 100).toInt()).toString() + "%"
-          //  }
+            }
             binding.progressUpload.setProgress(percent, true)
              recentPercent = 0
         }

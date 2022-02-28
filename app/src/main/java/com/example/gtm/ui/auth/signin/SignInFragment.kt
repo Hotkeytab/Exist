@@ -25,7 +25,6 @@ import com.example.gtm.utils.remote.Internet.InternetCheckDialog
 import com.example.gtm.utils.resources.Resource
 import com.example.gtm.utils.token.SessionManager
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.dialog_internet_connection.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

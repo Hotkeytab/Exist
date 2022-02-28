@@ -2,4 +2,36 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/suivie_graph" />
+    android:id="@+id/suivie_graph"
+    app:startDestination="@id/suivieDetailFragment">
+    <fragment
+        android:id="@+id/suivieDetailFragment"
+        android:name="com.example.gtm.ui.home.suivie.detail.SuivieDetailFragment"
+        android:label="fragment_suivie_detail"
+        tools:layout="@layout/fragment_suivie_detail" >
+        <action
+            android:id="@+id/action_suivieDetailFragment_to_categoryDetailFragment"
+            app:destination="@id/categoryDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoryDetailFragment"
+        android:name="com.example.gtm.ui.home.suivie.detail.survey.CategoryDetailFragment"
+        android:label="fragment_category_detail"
+        tools:layout="@layout/fragment_category_detail" >
+        <action
+            android:id="@+id/action_categoryDetailFragment_to_suivieDetailFragment"
+            app:destination="@id/suivieDetailFragment" />
+        <action
+            android:id="@+id/action_categoryDetailFragment_to_afficherReponsesFragment"
+            app:destination="@id/afficherReponsesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/afficherReponsesFragment"
+        android:name="com.example.gtm.ui.home.suivie.detail.survey.reponse.AfficherReponsesFragment"
+        android:label="fragment_afficher_reponses"
+        tools:layout="@layout/fragment_afficher_reponses" >
+        <action
+            android:id="@+id/action_afficherReponsesFragment_to_categoryDetailFragment"
+            app:destination="@id/categoryDetailFragment" />
+    </fragment>
+</navigation>

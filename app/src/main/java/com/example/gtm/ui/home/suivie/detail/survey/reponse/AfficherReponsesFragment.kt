@@ -1,13 +1,11 @@
-package com.example.gtm.ui.home.suivie.detail.survey
+package com.example.gtm.ui.home.suivie.detail.survey.reponse
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.gtm.R
 import com.example.gtm.databinding.FragmentAfficherReponsesBinding
-import com.example.gtm.databinding.FragmentSuivieDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 
