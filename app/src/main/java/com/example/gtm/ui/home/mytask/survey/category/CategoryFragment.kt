@@ -56,6 +56,7 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.concurrent.schedule
 import android.widget.FrameLayout
+import androidx.activity.OnBackPressedCallback
 
 
 @AndroidEntryPoint
@@ -107,6 +108,15 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
         binding.title.text = questionName
 
+
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true /* enabled by default */) {
+                override fun handleOnBackPressed() {
+                    if (!((activity as DrawerActivity).loading))
+                        findNavController().navigate(R.id.action_categoryFragment_to_quizFragment)
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
 
         binding.backFromQuiz.setOnClickListener {
@@ -168,7 +178,6 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
     private fun envoyerQuestionnaire() {
 
 
-
         var coefTotal = 0.0
         var average = 0.0
         val bigList: HashMap<Int, HashMap<Int, Survey?>> =
@@ -208,7 +217,8 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
         val finalAverage = (average / coefTotal)
 
-        val qp2 = SurveyPost(userId.toLong(), storeId.toLong(), surveyId.toLong(),finalAverage, listBody)
+        val qp2 =
+            SurveyPost(userId.toLong(), storeId.toLong(), surveyId.toLong(), finalAverage, listBody)
 
 
         val userNewJson = jacksonObjectMapper().writeValueAsString(qp2)
@@ -320,7 +330,6 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
     override fun onProgressUpdate(percentage: Int) {
 
 
-
         if (percentage < recentPercent) {
             percent++
             if ((((percent.toFloat() / (filesNumber * 2)) * 100).toInt()) <= 100) {
@@ -328,13 +337,10 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
                     (((percent.toFloat() / (filesNumber * 2)) * 100).toInt()).toString() + "%"
             }
             binding.progressUpload.setProgress(percent, true)
-             recentPercent = 0
-        }
-        else
-        {
+            recentPercent = 0
+        } else {
             recentPercent = percentage
         }
-
 
 
     }

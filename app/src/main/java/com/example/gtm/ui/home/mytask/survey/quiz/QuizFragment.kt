@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -47,6 +48,8 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
     ): View {
         binding = FragmentQuizBinding.inflate(inflater, container, false)
 
+        DrawerActivity.trackState.currentOne = "quiz fragment"
+
         (activity as DrawerActivity).listOfQuestionsPerSc =  HashMap<Int,HashMap<Int, Survey?>>()
         sharedPref = requireContext().getSharedPreferences(
             R.string.app_name.toString(),
@@ -63,6 +66,17 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
         super.onViewCreated(view, savedInstanceState)
 
 
+        // This callback will only be called when MyFragment is at least Started.
+        // This callback will only be called when MyFragment is at least Started.
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true /* enabled by default */) {
+                override fun handleOnBackPressed() {
+                    findNavController().navigate(R.id.action_quizFragment_to_taskFragment)
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
+
         binding.backFromQuiz.setOnClickListener {
             findNavController().navigate(R.id.action_quizFragment_to_taskFragment)
         }
@@ -70,6 +84,8 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
         binding.title.text = storeName
 
         getVisites()
+
+
 
     }
 

@@ -23,7 +23,11 @@ import kotlinx.android.synthetic.main.fragment_category.*
 import kotlinx.android.synthetic.main.item_sous_category.view.*
 
 
-class CategoryDetailAdapter(private val listener: CategoryDetailFragment, activity: FragmentActivity,myVal : String) :
+class CategoryDetailAdapter(
+    private val listener: CategoryDetailFragment,
+    activity: FragmentActivity,
+    myVal: String
+) :
     RecyclerView.Adapter<CategoryDetailViewHolder>() {
 
 
@@ -46,7 +50,13 @@ class CategoryDetailAdapter(private val listener: CategoryDetailFragment, activi
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryDetailViewHolder {
         val binding: ItemCategoryBinding =
             ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CategoryDetailViewHolder(binding, listener as CategoryDetailItemListener, activityIns, parent,myValIns)
+        return CategoryDetailViewHolder(
+            binding,
+            listener as CategoryDetailItemListener,
+            activityIns,
+            parent,
+            myValIns
+        )
 
     }
 
@@ -120,16 +130,29 @@ class CategoryDetailViewHolder(
                 for (j in categoryResponse.questionSubCategories) {
                     i++
 
-                        val inflater =
-                            LayoutInflater.from(parent.context)
-                                .inflate(R.layout.item_sous_category_good, null)
+                    val inflater =
+                        LayoutInflater.from(parent.context)
+                            .inflate(R.layout.item_sous_category_good, null)
 
 
-                        inflater.id = j.id
+                    inflater.id = j.id
 
-                        inflater.title_subcateg.text = j.name
+                    inflater.title_subcateg.text = j.name
 
                     layout.addView(inflater)
+
+                    inflater.setOnClickListener {
+                        val responsJson: String = Gson().toJson(j)
+
+                        val bundle = bundleOf(
+                            "questionObject" to responsJson,
+                            "quizObject" to myVal,
+                            "scName" to j.name
+                        )
+
+                        parent.findNavController()
+                            .navigate(R.id.action_categoryDetailFragment_to_afficherReponsesFragment,bundle)
+                    }
                 }
             }
             addedValues = true

@@ -17,15 +17,18 @@ import android.provider.Settings
 import android.util.Log
 import android.view.*
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gtm.R
 import com.example.gtm.data.entities.response.DataX
@@ -81,6 +84,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningAdapter.TaskItemListene
     override fun onStart() {
         super.onStart()
 
+        DrawerActivity.trackState.currentOne = "suivie planning"
 
         if (isAdded && activity != null) {
             askForPermissions()
@@ -124,6 +128,13 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningAdapter.TaskItemListene
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true /* enabled by default */) {
+                override fun handleOnBackPressed() {
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
         if (isAdded && activity != null) {
             Log.i("repeat", "1")
@@ -197,17 +208,24 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningAdapter.TaskItemListene
 
 
         Log.i("repeat", "1")
-        adapterTask = SuiviePlanningAdapter(this, requireActivity(), activity as DrawerActivity,listaSurveyResponse)
-        binding.suivieRecycleview.isMotionEventSplittingEnabled = false
-        binding.suivieRecycleview.layoutManager = LinearLayoutManager(requireContext())
-        binding.suivieRecycleview.layoutManager = LinearLayoutManager(
-            context,
-            LinearLayoutManager.VERTICAL,
-            false
-        )
-        binding.suivieRecycleview.adapter = adapterTask
-        // (activity as DrawerActivity).listOfTriDates = ArrayList<String>()
-        adapterTask.setItems(listaTasks)
+        if(isAdded) {
+            adapterTask = SuiviePlanningAdapter(
+                this,
+                requireActivity(),
+                activity as DrawerActivity,
+                listaSurveyResponse
+            )
+            binding.suivieRecycleview.isMotionEventSplittingEnabled = false
+            binding.suivieRecycleview.layoutManager = LinearLayoutManager(requireContext())
+            binding.suivieRecycleview.layoutManager = LinearLayoutManager(
+                context,
+                LinearLayoutManager.VERTICAL,
+                false
+            )
+            binding.suivieRecycleview.adapter = adapterTask
+            // (activity as DrawerActivity).listOfTriDates = ArrayList<String>()
+            adapterTask.setItems(listaTasks)
+        }
 
 
     }

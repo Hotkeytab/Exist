@@ -50,6 +50,10 @@ import kotlin.math.sqrt
 import android.view.*
 import com.example.gtm.R
 import android.view.MenuInflater
+import androidx.activity.OnBackPressedCallback
+
+
+
 
 
 
@@ -80,13 +84,15 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     override fun onStart() {
         super.onStart()
 
-
+        DrawerActivity.trackState.currentOne = "planning du jour"
+        
         if (isAdded && activity != null) {
 
             LocationValueListener.locationOn = true
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
             askForPermissions()
         }
+
 
     }
 
@@ -127,6 +133,17 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         super.onViewCreated(view, savedInstanceState)
 
 
+        // This callback will only be called when MyFragment is at least Started.
+        // This callback will only be called when MyFragment is at least Started.
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true /* enabled by default */) {
+                override fun handleOnBackPressed() {
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
+
+
         if (isAdded && activity != null) {
             Log.i("repeat", "1")
             val mDrawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
@@ -143,6 +160,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             correctFilters()
 
 
+            setTodayLight()
             setTopDate()
 
             binding.dayfiltercard.setOnClickListener {
@@ -729,6 +747,21 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         dateTimeEnd = simpleDateFormat.format(d.time).toString()
         getVisites()
     }
+
+    private fun setTodayLight() {
+        daysFilter.dayFilter = 1
+        daysFilter.weekFilter = 0
+        daysFilter.monthFilter = 0
+        correctFilters()
+        val cal = Calendar.getInstance()
+        d = cal.time
+        setTopDate()
+        binding.progressIndicator.visibility = View.VISIBLE
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+        dateTimeBegin = simpleDateFormat.format(d.time).toString()
+        dateTimeEnd = simpleDateFormat.format(d.time).toString()
+    }
+
 
 
     private fun dayOfWeek(): Int {

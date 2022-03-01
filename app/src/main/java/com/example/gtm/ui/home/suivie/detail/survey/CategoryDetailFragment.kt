@@ -3,6 +3,7 @@ package com.example.gtm.ui.home.suivie.detail.survey
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -39,7 +40,14 @@ class CategoryDetailFragment : Fragment(), CategoryDetailAdapter.CategoryDetailI
         binding = FragmentCategoryDetailBinding.inflate(inflater, container, false)
 
 
+
         myVal = arguments?.getString("quizObject")
+
+
+
+        if (myVal == null)
+            myVal = ""
+
 
 
         val gson = Gson()
@@ -59,6 +67,7 @@ class CategoryDetailFragment : Fragment(), CategoryDetailAdapter.CategoryDetailI
         binding.backFromQuiz.setOnClickListener {
             findNavController().navigate(R.id.action_categoryDetailFragment_to_suivieDetailFragment)
         }
+
         setupRecycleViewCategory()
     }
 
@@ -80,5 +89,7 @@ class CategoryDetailFragment : Fragment(), CategoryDetailAdapter.CategoryDetailI
         binding.categoryRecycleview.adapter = adapterDetailCategory
         adapterDetailCategory.setItems(listaCategory)
     }
+
+
 
 }

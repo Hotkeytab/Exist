@@ -9,12 +9,15 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.viewModels
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.gtm.R
@@ -27,7 +30,6 @@ import com.example.gtm.ui.auth.AuthActivity
 import com.example.gtm.ui.drawer.profile.EditProfileDialog
 import com.example.gtm.ui.home.HomeActivity
 import com.example.gtm.ui.home.mytask.BeforeHomeFragment
-import com.example.gtm.ui.home.mytask.TaskFragment
 import com.example.gtm.ui.home.suivie.SuiviePlanningFragment
 import com.example.gtm.utils.animations.UiAnimations
 import com.example.gtm.utils.resources.Resource
@@ -35,13 +37,14 @@ import com.example.gtm.utils.token.SessionManager
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.fragment_suivie_detail.*
 import kotlinx.android.synthetic.main.fragment_task.*
+import kotlinx.android.synthetic.main.fragment_task.progress_indicator
 import kotlinx.android.synthetic.main.nav_header_main.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
 
 
 @AndroidEntryPoint
@@ -55,7 +58,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     private lateinit var sessionManager: SessionManager
     private lateinit var user: User
     private var picture: String? = null
-    private var defaultInterval: Int = 500
+    private var defaultInterval: Int = 1000
     private var lastTimeClicked: Long = 0
     var listOfQuestionsPerSc = HashMap<Int, HashMap<Int, Survey?>>()
     var envoyerTest = true
@@ -69,6 +72,8 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawer)
+
+
 
         sessionManager = SessionManager(this)
 
@@ -95,38 +100,44 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         //Bottom Nav Bar Listener
         bottom_nav.setOnItemSelectedListener {
             var selectedFragment: Fragment? = null
-            when (it.itemId) {
 
-                R.id.task -> {
 
-                    if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
-                        selectedFragment = BeforeHomeFragment()
+                when (it.itemId) {
 
+                    R.id.task -> {
+
+                        if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
+                            selectedFragment = BeforeHomeFragment()
+
+                        }
+                        lastTimeClicked = SystemClock.elapsedRealtime()
                     }
-                    lastTimeClicked = SystemClock.elapsedRealtime()
-                }
-                R.id.suivie -> {
-                    if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
-                       selectedFragment = SuiviePlanningFragment()
+                    R.id.suivie -> {
+                        if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
+                            selectedFragment = SuiviePlanningFragment()
+                        }
+                        lastTimeClicked = SystemClock.elapsedRealtime()
                     }
-                    lastTimeClicked = SystemClock.elapsedRealtime()
+
+
                 }
 
+                if (selectedFragment != null) {
+                    supportFragmentManager.beginTransaction().replace(
+                        R.id.nav_acceuil_fragment,
+                        selectedFragment
+                    ).commit()
+                }
 
-            }
-
-            if (selectedFragment != null) {
-                supportFragmentManager.beginTransaction().replace(
-                    R.id.nav_acceuil_fragment,
-                    selectedFragment
-                ).commit()
-            }
             true
         }
 
     }
 
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+
+
         when (item.itemId) {
             R.id.task -> {
                 print("1")
@@ -255,8 +266,14 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
     override fun onDestroy() {
         super.onDestroy()
-        sharedPref.edit().clear().apply()
+        //  sharedPref.edit().clear().apply()
     }
 
+
+    object trackState {
+        var lastOne = ""
+        var currentOne = ""
+
+    }
 
 }

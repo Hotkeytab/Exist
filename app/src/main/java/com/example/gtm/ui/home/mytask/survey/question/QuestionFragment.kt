@@ -28,6 +28,7 @@ import android.provider.MediaStore.Images
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import com.example.gtm.data.entities.remote.ImagePath
 import com.example.gtm.data.entities.remote.QuestionPost
@@ -147,6 +148,18 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
             findNavController().navigate(R.id.action_questionFragment_to_categoryFragment, bundle)
         }
 
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true /* enabled by default */) {
+                override fun handleOnBackPressed() {
+                    val bundle = bundleOf("quizObject" to myVar2)
+                    findNavController().navigate(
+                        R.id.action_questionFragment_to_categoryFragment,
+                        bundle
+                    )
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
 
         binding.addphoto.setOnClickListener {
             ChoixImageDialog(
@@ -189,18 +202,18 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
         }
 
         if ((activity as DrawerActivity).listOfQuestionsPerSc[questionList[0].questionSubCategoryId] != null) {
-            listaSurvey = (activity as DrawerActivity).listOfQuestionsPerSc[questionList[0].questionSubCategoryId]!!
+            listaSurvey =
+                (activity as DrawerActivity).listOfQuestionsPerSc[questionList[0].questionSubCategoryId]!!
 
-            (activity as DrawerActivity).listOfQuestionsPerSc[questionList[0].questionSubCategoryId]!!.forEach { (k,v) ->
+            (activity as DrawerActivity).listOfQuestionsPerSc[questionList[0].questionSubCategoryId]!!.forEach { (k, v) ->
                 listaImage[k] = v!!.urls!!
             }
 
             initQuestion()
             setQuestion()
+        } else {
+            setQuestion()
         }
-        else
-
-        {setQuestion()}
 
 
     }
@@ -367,13 +380,19 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
                 Survey(
                     idQuestion,
                     questionList[i].coef,
-                    binding.ratingBar.rating *2,
+                    binding.ratingBar.rating * 2,
                     binding.editText.text.toString(),
                     listaImage[i]!!
                 )
         else
             survey =
-                Survey(idQuestion, questionList[i].coef,binding.ratingBar.rating*2, binding.editText.text.toString(), null)
+                Survey(
+                    idQuestion,
+                    questionList[i].coef,
+                    binding.ratingBar.rating * 2,
+                    binding.editText.text.toString(),
+                    null
+                )
 
 
         listaSurvey[i] = survey
@@ -522,7 +541,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
 
         }
 
-        val qp2 = SurveyPost(userId.toLong(), storeId.toLong(), surveyId.toLong(),0.0,listBody)
+        val qp2 = SurveyPost(userId.toLong(), storeId.toLong(), surveyId.toLong(), 0.0, listBody)
         Log.i("kamehameha", "$qp2")
 
         val userNewJson = jacksonObjectMapper().writeValueAsString(qp2)
