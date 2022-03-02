@@ -7,8 +7,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.gtm.R
 import com.example.gtm.data.entities.ui.Image
 import com.example.gtm.databinding.ItemImageBinding
+import com.example.gtm.databinding.ItemImageSuiviBinding
 
 
 class ImageAfficherReponseAdapter(private val listener: AfficherReponsesFragment, activity: FragmentActivity) :
@@ -38,8 +40,8 @@ class ImageAfficherReponseAdapter(private val listener: AfficherReponsesFragment
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        val binding: ItemImageBinding =
-            ItemImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding: ItemImageSuiviBinding =
+            ItemImageSuiviBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ImageViewHolder(binding, listener as ImageItemListener, activityIns, parent)
 
     }
@@ -51,7 +53,7 @@ class ImageAfficherReponseAdapter(private val listener: AfficherReponsesFragment
 }
 
 class ImageViewHolder(
-    private val itemBinding: ItemImageBinding,
+    private val itemBinding: ItemImageSuiviBinding,
     private val listener: ImageAfficherReponseAdapter.ImageItemListener,
     private val activityIns: FragmentActivity,
     private var parent: ViewGroup
@@ -76,7 +78,9 @@ class ImageViewHolder(
             .load(item)
             .skipMemoryCache(false)
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .placeholder(R.drawable.chargement)
             .into(itemBinding.myimage)
+
 
     }
 

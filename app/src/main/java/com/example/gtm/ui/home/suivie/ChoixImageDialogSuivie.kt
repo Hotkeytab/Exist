@@ -1,4 +1,4 @@
-package com.example.gtm.ui.home.mytask.survey.question
+package com.example.gtm.ui.home.suivie
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
@@ -28,40 +28,32 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gtm.BuildConfig
+import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.data.entities.ui.Image
+import com.example.gtm.ui.home.mytask.survey.SurveyCheckDialog
 import kotlinx.android.synthetic.main.dialog_choix_image.*
+import kotlinx.android.synthetic.main.dialog_choix_visitee.*
 import java.io.File
 
 
 @AndroidEntryPoint
-class ChoixImageDialog(
-    imagehaha2: ImageView,
-    adapterImage2: ImageAdapter,
-    listaImage2: HashMap<Int, ArrayList<Image>>,
-    linearImage2: LinearLayout,
-    plus_image2: LinearLayout,
-    recycle_view2: RecyclerView,
-    i2: Int
+class ChoixImageDialogSuivie(
+    pe1: Int,
+    ps1: Int,
+    navController1: NavController,
+    visite1 : Visite,
+    view1 : View
 ) :
     DialogFragment() {
 
-    private val imagehaha = imagehaha2
-    private var adapterImage = adapterImage2
-    private val listaImage = listaImage2
-    private lateinit var imageBitmap: Image
-    private val linearImage = linearImage2
-    private val plus_image = plus_image2
-    private val recycle_view = recycle_view2
-    private val i = i2
-
-    private var uri: Uri? = null
-
-
-    //Our constants
-    private val CAPTURE_PHOTO = 1
-    private val CHOOSE_PHOTO = 2
+    val pe = pe1
+    val ps = ps1
+    val navController = navController1
+    var visite = visite1
+    var ourview = view1
 
 
     override fun onCreateView(
@@ -69,7 +61,7 @@ class ChoixImageDialog(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_choix_image, container, false)
+        return inflater.inflate(R.layout.dialog_choix_visitee, container, false)
     }
 
     override fun onStart() {
@@ -85,171 +77,55 @@ class ChoixImageDialog(
         super.onViewCreated(view, savedInstanceState)
 
 
-        camera_pick.setOnClickListener { capturePhoto() }
-        gallery_pick.setOnClickListener {
-            //check permission at runtime
-            val checkSelfPermission = ContextCompat.checkSelfPermission(
-                requireContext(),
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+        initImages()
+
+        questionnaire.setOnClickListener {
+            dismiss()
+            SurveyCheckDialog(navController,3,requireView()).show(
+                requireActivity().supportFragmentManager,
+                "SurveyDialog"
             )
-            if (checkSelfPermission != PackageManager.PERMISSION_GRANTED) {
-                //Requests permissions to be granted to this application at runtime
-                ActivityCompat.requestPermissions(
-                    requireActivity(),
-                    arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 1
-                )
-            } else {
-                openGallery()
-            }
         }
 
-    }
 
-
-    private fun show(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun capturePhoto() {
-        val capturedImage = File(requireActivity().externalCacheDir, "My_Captured_Photo.jpg")
-        if (capturedImage.exists()) {
-            capturedImage.delete()
-        }
-        capturedImage.createNewFile()
-        uri = if (Build.VERSION.SDK_INT >= 24) {
-            FileProvider.getUriForFile(
-                requireContext(), BuildConfig.APPLICATION_ID + ".provider",
-                capturedImage
+        p_entre.setOnClickListener {
+            dismiss()
+            SurveyCheckDialog(navController,1,ourview).show(
+                requireActivity().supportFragmentManager,
+                "SurveyDialog"
             )
+            visite.pe = 1
+        }
+
+        p_sortie.setOnClickListener {
+            dismiss()
+            SurveyCheckDialog(navController,2,ourview).show(
+                requireActivity().supportFragmentManager,
+                "SurveyDialog"
+            )
+            visite.ps = 1
+        }
+
+
+    }
+
+
+    private fun initImages() {
+
+        if (pe == 0) {
+            p_entre.visibility = View.VISIBLE
         } else {
-            Uri.fromFile(capturedImage)
+            p_entre.visibility = View.GONE
         }
 
-        val intent = Intent("android.media.action.IMAGE_CAPTURE")
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-        startActivityForResult(intent, CAPTURE_PHOTO)
-    }
-
-    private fun openGallery() {
-        val intent = Intent("android.intent.action.GET_CONTENT")
-        intent.type = "image/*"
-        startActivityForResult(intent, CHOOSE_PHOTO)
-    }
-
-    private fun renderImage(imagePath: String?) {
-        if (imagePath != null) {
-            val bitmap = BitmapFactory.decodeFile(imagePath)
-            imagehaha.setImageBitmap(bitmap)
-
-            imageBitmap = Image(1, bitmap)
-            linearImage.visibility = View.GONE
-            plus_image.visibility = View.VISIBLE
-            recycle_view.visibility = View.VISIBLE
-            if (listaImage[i] == null) {
-                val arrayNob = ArrayList<Image>()
-                arrayNob.add(imageBitmap)
-                listaImage[i] = arrayNob
-            } else {
-                listaImage[i]!!.add(imageBitmap)
-            }
-            adapterImage.setItems(listaImage[i]!!)
-
-
+        if (ps == 0) {
+            p_sortie.visibility = View.VISIBLE
         } else {
-            show("ImagePath is null")
-        }
-    }
-
-    @SuppressLint("Range")
-    private fun getImagePath(uri: Uri?, selection: String?): String {
-        var path: String? = null
-        val cursor = requireActivity().contentResolver.query(uri!!, null, selection, null, null)
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
-            }
-            cursor.close()
-        }
-        return path!!
-    }
-
-    @TargetApi(19)
-    private fun handleImageOnKitkat(data: Intent?) {
-        var imagePath: String? = null
-        val uri = data!!.data
-        //DocumentsContract defines the contract between a documents provider and the platform.
-        if (DocumentsContract.isDocumentUri(requireContext(), uri)) {
-            val docId = DocumentsContract.getDocumentId(uri)
-            if ("com.android.providers.media.documents" == uri!!.authority) {
-                val id = docId.split(":")[1]
-                val selsetion = MediaStore.Images.Media._ID + "=" + id
-                imagePath = getImagePath(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    selsetion
-                )
-            } else if ("com.android.providers.downloads.documents" == uri.authority) {
-                val contentUri = ContentUris.withAppendedId(
-                    Uri.parse(
-                        "content://downloads/public_downloads"
-                    ), java.lang.Long.valueOf(docId)
-                )
-                imagePath = getImagePath(contentUri, null)
-            }
-        } else if ("content".equals(uri!!.scheme, ignoreCase = true)) {
-            imagePath = getImagePath(uri, null)
-        } else if ("file".equals(uri.scheme, ignoreCase = true)) {
-            imagePath = uri.path
-        }
-        renderImage(imagePath)
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantedResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantedResults)
-        when (requestCode) {
-            1 ->
-                if (grantedResults.isNotEmpty() && grantedResults.get(0) ==
-                    PackageManager.PERMISSION_GRANTED
-                ) {
-                    openGallery()
-                } else {
-                    show("Unfortunately You are Denied Permission to Perform this Operataion.")
-                }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            CAPTURE_PHOTO ->
-                if (resultCode == Activity.RESULT_OK) {
-                    val bitmap = BitmapFactory.decodeStream(
-                        requireActivity().contentResolver.openInputStream(uri!!)
-                    )
-                    imagehaha.setImageBitmap(bitmap)
-                    imageBitmap = Image(1, bitmap)
-                    linearImage.visibility = View.GONE
-                    plus_image.visibility = View.VISIBLE
-                    recycle_view.visibility = View.VISIBLE
-                    if (listaImage[i] == null) {
-                        val arrayNob = ArrayList<Image>()
-                        arrayNob.add(imageBitmap)
-                        listaImage[i] = arrayNob
-                    } else {
-                        listaImage[i]!!.add(imageBitmap)
-                    }
-                    adapterImage.setItems(listaImage[i]!!)
-                }
-            CHOOSE_PHOTO ->
-                if (resultCode == Activity.RESULT_OK) {
-                    if (Build.VERSION.SDK_INT >= 19) {
-                        handleImageOnKitkat(data)
-                    }
-                }
+            p_sortie.visibility = View.GONE
         }
 
     }
+
 }
 
 

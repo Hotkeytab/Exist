@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
             <LinearLayout
@@ -17,47 +15,73 @@
 
 
                 <LinearLayout
+                    android:id="@+id/p_entre"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginRight="@dimen/_40sdp"
+                    android:layout_marginRight="@dimen/_30sdp"
                     android:gravity="center"
                     >
 
                     <ImageView
-                        android:id="@+id/camera_pick"
                         android:layout_width="@dimen/_50sdp"
                         android:layout_height="@dimen/_50sdp"
-                        android:src="@drawable/outline_camera_24"
+                        android:src="@drawable/outline_schedule_24"
                         app:tint="@color/white"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Camera"
+                        android:text="Pointage \nArrivée"
                         android:textStyle="bold"
+                        android:textAlignment="center"
                         android:textColor="@color/white"/>
 
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/p_sortie"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:gravity="center">
 
                     <ImageView
-                        android:id="@+id/gallery_pick"
                         android:layout_width="@dimen/_50sdp"
                         android:layout_height="@dimen/_50sdp"
-                        android:src="@drawable/outline_collections_24"
+                        android:src="@drawable/outline_schedule_24"
                         app:tint="@color/white"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Gallery"
+                        android:text="Pointage \nDépart"
                         android:textStyle="bold"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/questionnaire"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="@dimen/_30sdp"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="@dimen/_50sdp"
+                        android:layout_height="@dimen/_50sdp"
+                        android:src="@drawable/outline_receipt_long_black_24"
+                        app:tint="@color/white"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Commencer \nQuestionnaire"
+                        android:textStyle="bold"
+                        android:textAlignment="center"
                         android:textColor="@color/white"/>
 
                 </LinearLayout>

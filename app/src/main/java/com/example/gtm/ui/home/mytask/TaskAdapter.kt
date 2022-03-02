@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gtm.R
+import com.example.gtm.data.entities.response.Survey
 import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.databinding.ItemTaskBinding
 import com.example.gtm.ui.drawer.DrawerActivity
@@ -34,7 +35,7 @@ class TaskAdapter(
     private val activityDrawer = activityDrawer2
 
     interface TaskItemListener {
-        fun onClickedTask(taskId: Int, distance: String)
+        fun onClickedTask(taskId: Int, distance: String,visite : Visite)
 
     }
 
@@ -88,9 +89,8 @@ class TaskViewHolder(
 
     fun bind(item: Visite) {
         this.visiteResponse = item
-
         var clicked = false
-
+        itemBinding.pointage.visibility = View.VISIBLE
 
         showDate()
 
@@ -116,7 +116,8 @@ class TaskViewHolder(
                 putStoreName(item.store.name)
                 listener.onClickedTask(
                     visiteResponse.id,
-                    finalDistance
+                    finalDistance,
+                    item
                 )
                 /*  parent.findNavController()
                       .navigate(R.id.action_taskFragment_to_quizFragment)*/
@@ -126,7 +127,8 @@ class TaskViewHolder(
                 putStoreName(item.store.name)
                 listener.onClickedTask(
                     visiteResponse.id,
-                    finalDistance
+                    finalDistance,
+                    item
                 )
                 /* parent.findNavController()
                      .navigate(R.id.action_taskFragment_to_quizFragment)*/
@@ -160,7 +162,8 @@ class TaskViewHolder(
             putStoreName(item.store.name)
             listener.onClickedTask(
                 visiteResponse.storeId,
-                finalDistance
+                finalDistance,
+                item
             )
         }
 
@@ -169,7 +172,8 @@ class TaskViewHolder(
             putStoreName(item.store.name)
             listener.onClickedTask(
                 visiteResponse.storeId,
-                finalDistance
+                finalDistance,
+                item
             )
         }
 
@@ -182,7 +186,8 @@ class TaskViewHolder(
         putStoreName(visiteResponse.store.name)
         listener.onClickedTask(
             visiteResponse.storeId,
-            finalDistance
+            finalDistance,
+            visiteResponse
         )
     }
 

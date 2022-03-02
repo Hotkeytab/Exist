@@ -11,10 +11,6 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -35,10 +31,13 @@ import kotlinx.android.synthetic.main.item_task.*
 import android.location.GpsStatus
 import android.os.Looper
 import android.provider.Settings
+import android.view.*
+import android.widget.FrameLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.gtm.ui.home.mytask.LocationValueListener
 import com.google.android.gms.location.*
+import com.google.android.material.snackbar.Snackbar
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -47,7 +46,9 @@ import kotlin.math.sqrt
 
 @AndroidEntryPoint
 class SurveyCheckDialog(
-     navController: NavController
+    navController: NavController,
+    etat1: Int,
+    viewAct1 : View
 ) :
     DialogFragment() {
 
@@ -58,6 +59,8 @@ class SurveyCheckDialog(
     var veriftest = false
     val navControllerIn = navController
     var testGps = false
+    val etat = etat1
+    val viewAct = viewAct1
 
     // declare a global variable of FusedLocationProviderClient
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -88,12 +91,56 @@ class SurveyCheckDialog(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-       // getLocation()
+        // getLocation()
+
+        if (etat == 1) {
+            title1.text = "Pointage"
+            textcontext1.text = "Souhaitez vous confirmer le pointage d'arrivée ?"
+        } else if (etat == 2) {
+            title1.text = "Pointage"
+            textcontext1.text = "Souhaitez vous confirmer le pointage de départ ?"
+        } else if (etat == 3) {
+            title1.text = "Questionnaire"
+            textcontext1.text = "Souhaitez vous répondre au questionnaire ? "
+        }
 
         accept.setOnClickListener {
 
-            LocationValueListener.locationOn = false
-            navControllerIn.navigate(R.id.action_taskFragment_to_quizFragment)
+
+            if (etat == 1) {
+
+
+                val snack = Snackbar.make(
+                    viewAct,
+                    "Pointage d'Arrivée envoyé avec succès",
+                    Snackbar.LENGTH_LONG
+                ).setBackgroundTint(resources.getColor(R.color.purpleLogin))
+                val view: View = snack.view
+                val params = view.layoutParams as FrameLayout.LayoutParams
+                params.gravity = Gravity.CENTER
+                view.layoutParams = params
+                snack.show()
+
+
+            } else if (etat == 2) {
+
+                val snack = Snackbar.make(
+                    viewAct,
+                    "Pointage de Départ envoyé avec succès",
+                    Snackbar.LENGTH_LONG
+                ).setBackgroundTint(resources.getColor(R.color.purpleLogin))
+                val view: View = snack.view
+                val params = view.layoutParams as FrameLayout.LayoutParams
+                params.gravity = Gravity.CENTER
+                view.layoutParams = params
+                snack.show()
+
+            } else if (etat == 3) {
+                LocationValueListener.locationOn = false
+                navControllerIn.navigate(R.id.action_taskFragment_to_quizFragment)
+
+            }
+
             dismiss()
         }
 
@@ -104,8 +151,6 @@ class SurveyCheckDialog(
 
 
     }
-
-
 
 
 }

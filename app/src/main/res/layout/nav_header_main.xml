@@ -22,8 +22,7 @@
             android:layout_width="@dimen/_50sdp"
             android:layout_height="@dimen/_50sdp"
             android:layout_marginLeft="@dimen/_15sdp"
-            android:scaleType="fitXY"
-            app:srcCompat="@drawable/ic_random_profile" />
+            android:scaleType="fitXY" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -35,7 +34,6 @@
             android:id="@+id/name_lastname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Taha Chaouch"
             android:textSize="@dimen/_17sdp"
             android:textStyle="bold"
             android:textColor="@color/black"/>
@@ -58,7 +56,6 @@
                 android:id="@+id/email_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="tahachaouch@gmail.com"
                 android:textSize="@dimen/_12sdp"
                 android:textColor="@color/black"/>
 
@@ -66,7 +63,6 @@
                 android:id="@+id/number_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="+21652682355"
                 android:textSize="@dimen/_12sdp"
                 android:textColor="@color/black"/>
         </LinearLayout>

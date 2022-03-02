@@ -51,12 +51,8 @@ import android.view.*
 import com.example.gtm.R
 import android.view.MenuInflater
 import androidx.activity.OnBackPressedCallback
-
-
-
-
-
-
+import androidx.lifecycle.lifecycleScope
+import com.example.gtm.ui.home.suivie.ChoixImageDialogSuivie
 
 
 @AndroidEntryPoint
@@ -79,13 +75,14 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     private lateinit var navController: NavController
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var d: Date
+    private lateinit var visite: Visite
 
 
     override fun onStart() {
         super.onStart()
 
         DrawerActivity.trackState.currentOne = "planning du jour"
-        
+
         if (isAdded && activity != null) {
 
             LocationValueListener.locationOn = true
@@ -209,7 +206,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         }
 
 
-
     }
 
 
@@ -243,8 +239,9 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
     }
 
-    override fun onClickedTask(taskId: Int, distance: String) {
+    override fun onClickedTask(taskId: Int, distance: String, visite2: Visite) {
 
+        visite = visite2
         askForPermissionsDialog()
         sharedPref =
             requireContext().getSharedPreferences(
@@ -258,53 +255,58 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
     @DelicateCoroutinesApi
     private fun getVisites() {
-        GlobalScope.launch(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.Main) {
 
 
-            Log.i("repeat", "1")
+            if (!isDetached) {
+                Log.i("repeat", "1")
 
-            responseData = viewModel.getVisites(userId.toString(), dateTimeBegin, dateTimeEnd)
+                if (isAdded) {
+                    responseData =
+                        viewModel.getVisites(userId.toString(), dateTimeBegin, dateTimeEnd)
 
 
-            if (responseData.responseCode == 200) {
-                listaTasks = responseData.data!!.data as ArrayList<Visite>
-                /* listaTasks[0].store.lat = 22.3
-                 listaTasks[0].store.lng = 22.3*/
+                    if (responseData.responseCode == 200) {
+                        listaTasks = responseData.data!!.data as ArrayList<Visite>
+                        /* listaTasks[0].store.lat = 22.3
+                     listaTasks[0].store.lng = 22.3*/
 
-                if (daysFilter.dayFilter == 1)
-                    listaTasks =
-                        listaTasks.filter { list -> compareDatesDay(list.day) } as ArrayList<Visite>
-                else if (daysFilter.weekFilter == 1)
-                    listaTasks =
-                        listaTasks.filter { list -> compareDatesMonth(list.day) } as ArrayList<Visite>
-                else if (daysFilter.monthFilter == 1)
-                    listaTasks =
-                        listaTasks.filter { list -> compareDatesMonth(list.day) } as ArrayList<Visite>
+                        if (daysFilter.dayFilter == 1)
+                            listaTasks =
+                                listaTasks.filter { list -> compareDatesDay(list.day) } as ArrayList<Visite>
+                        else if (daysFilter.weekFilter == 1)
+                            listaTasks =
+                                listaTasks.filter { list -> compareDatesMonth(list.day) } as ArrayList<Visite>
+                        else if (daysFilter.monthFilter == 1)
+                            listaTasks =
+                                listaTasks.filter { list -> compareDatesMonth(list.day) } as ArrayList<Visite>
 
-                if (listaTasks.size == 0)
-                    binding.novisit.visibility = View.VISIBLE
-                else
-                    binding.novisit.visibility = View.GONE
+                        if (listaTasks.size == 0)
+                            binding.novisit.visibility = View.VISIBLE
+                        else
+                            binding.novisit.visibility = View.GONE
 
-                if (daysFilter.dayFilter == 1)
-                    listaTasks.sortBy { list ->
-                        list.store.calculateDistance(
-                            LocationValueListener.myLocation.latitude.toFloat(),
-                            LocationValueListener.myLocation.longitude.toFloat()
-                        )
+                        if (daysFilter.dayFilter == 1)
+                            listaTasks.sortBy { list ->
+                                list.store.calculateDistance(
+                                    LocationValueListener.myLocation.latitude.toFloat(),
+                                    LocationValueListener.myLocation.longitude.toFloat()
+                                )
+                            }
+
+                        if (daysFilter.weekFilter == 1 || daysFilter.monthFilter == 1) {
+                            Collections.sort(listaTasks, SortByDate())
+                            //  transformListToHashMapDate()
+                        }
+
+                        if (isAdded && activity != null)
+                            setupRecycleViewPredictionDetail()
+                        binding.progressIndicator.visibility = View.GONE
+
                     }
-
-                if (daysFilter.weekFilter == 1 || daysFilter.monthFilter == 1) {
-                    Collections.sort(listaTasks, SortByDate())
-                    //  transformListToHashMapDate()
                 }
 
-                if (isAdded && activity != null)
-                    setupRecycleViewPredictionDetail()
-                binding.progressIndicator.visibility = View.GONE
-
             }
-
         }
     }
 
@@ -352,7 +354,10 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
             {
 
-                SurveyCheckDialog(navController).show(fm, "SurveyDialog")
+                if (visite.pe == 1 && visite.ps == 1)
+                    SurveyCheckDialog(navController,3,requireView()).show(fm, "SurveyDialog")
+                else
+                    ChoixImageDialogSuivie(visite.pe,visite.ps,navController,visite,requireView()).show(fm, "ChoixImageSuivi")
 
             } else {
                 showPermissionDeniedGPS()
@@ -486,7 +491,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
                             } else {
                                 LocationValueListener.myLocation = location
-                                  adapterTask.setItems(listaTasks)
+                                adapterTask.setItems(listaTasks)
                             }
                         } else
                             askForPermissions()
@@ -761,7 +766,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         dateTimeBegin = simpleDateFormat.format(d.time).toString()
         dateTimeEnd = simpleDateFormat.format(d.time).toString()
     }
-
 
 
     private fun dayOfWeek(): Int {

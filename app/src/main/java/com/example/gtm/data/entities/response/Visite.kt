@@ -8,5 +8,7 @@ data class Visite(
     val store: Store,
     val storeId: Int,
     val updatedAt: String,
-    val userId: Int
+    val userId: Int,
+    var pe: Int = 0,
+    var ps: Int = 0
 )

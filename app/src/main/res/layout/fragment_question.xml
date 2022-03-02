@@ -55,7 +55,6 @@
                     android:layout_gravity="center"
                     android:layout_marginRight="@dimen/_15sdp"
                     android:gravity="center"
-                    android:text="Question 1"
                     android:textColor="@color/white"
                     android:textStyle="bold"/>
 

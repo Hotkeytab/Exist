@@ -38,7 +38,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Vêtements pour femme enceinte et enfant."
                     android:layout_marginTop="@dimen/_12sdp"
                     android:layout_marginBottom="@dimen/_12sdp"
                     android:layout_marginLeft="@dimen/_10sdp"

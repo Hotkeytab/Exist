@@ -26,6 +26,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -246,7 +247,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningAdapter.TaskItemListene
 
     @DelicateCoroutinesApi
     private fun getVisites() {
-        GlobalScope.launch(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.Main) {
 
 
             Log.i("repeat", "1")
@@ -385,9 +386,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningAdapter.TaskItemListene
             if (CheckGpsStatus())
             // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
             {
-
-                SurveyCheckDialog(navController).show(fm, "SurveyDialog")
-
+                SurveyCheckDialog(navController,3,requireView()).show(fm, "SurveyDialog")
             } else {
                 showPermissionDeniedGPS()
             }

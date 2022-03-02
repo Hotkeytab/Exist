@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/task"
-        android:icon="@drawable/outline_receipt_long_black_24"
+        android:icon="@drawable/outline_storefront_24"
         android:title="Planning du jour"/>
 
     <item

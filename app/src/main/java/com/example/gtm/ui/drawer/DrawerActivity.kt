@@ -58,7 +58,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     private lateinit var sessionManager: SessionManager
     private lateinit var user: User
     private var picture: String? = null
-    private var defaultInterval: Int = 1000
+    private var defaultInterval: Int = 500
     private var lastTimeClicked: Long = 0
     var listOfQuestionsPerSc = HashMap<Int, HashMap<Int, Survey?>>()
     var envoyerTest = true
@@ -102,7 +102,9 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             var selectedFragment: Fragment? = null
 
 
+            if (progress_indicator.visibility == View.GONE) {
                 when (it.itemId) {
+
 
                     R.id.task -> {
 
@@ -110,6 +112,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                             selectedFragment = BeforeHomeFragment()
 
                         }
+
                         lastTimeClicked = SystemClock.elapsedRealtime()
                     }
                     R.id.suivie -> {
@@ -128,9 +131,11 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                         selectedFragment
                     ).commit()
                 }
+            }
+                true
 
-            true
-        }
+            }
+
 
     }
 

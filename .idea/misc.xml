@@ -28,6 +28,7 @@
         <entry key="..\:/gtm/android/app/src/main/res/layout/default_day_calendar.xml" value="0.11296859169199595" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/dialog_afficher_image.xml" value="0.2151268115942029" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/dialog_choix_image.xml" value="0.2151268115942029" />
+        <entry key="..\:/gtm/android/app/src/main/res/layout/dialog_choix_visitee.xml" value="0.1933876811594203" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/dialog_edit_profile.xml" value="0.21666666666666667" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/dialog_internet_connection.xml" value="0.16510416666666666" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/dialog_progress_upload.xml" value="0.16197916666666667" />
@@ -39,7 +40,7 @@
         <entry key="..\:/gtm/android/app/src/main/res/layout/fragment_map.xml" value="0.16666666666666666" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/fragment_planning.xml" value="0.23229166666666667" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/fragment_position_map.xml" value="0.22146739130434784" />
-        <entry key="..\:/gtm/android/app/src/main/res/layout/fragment_question.xml" value="0.264" />
+        <entry key="..\:/gtm/android/app/src/main/res/layout/fragment_question.xml" value="0.176" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/fragment_quiz.xml" value="0.2" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/fragment_sign_in.xml" value="0.20885416666666667" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/fragment_sous_category.xml" value="0.2015625" />
@@ -48,6 +49,7 @@
         <entry key="..\:/gtm/android/app/src/main/res/layout/fragment_task.xml" value="0.176" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/item_category.xml" value="0.176" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/item_image.xml" value="0.2151268115942029" />
+        <entry key="..\:/gtm/android/app/src/main/res/layout/item_image_suivi.xml" value="0.17617753623188406" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/item_question.xml" value="0.2" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/item_quiz.xml" value="0.223731884057971" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/item_sous_category.xml" value="0.176" />

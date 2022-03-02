@@ -37,7 +37,6 @@
                     android:id="@+id/survey_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Questionnaire vêtement et joaillerie"
                     android:textStyle="bold"
                     app:autoSizeMaxTextSize="80sp"
                     app:autoSizeMinTextSize="8sp"

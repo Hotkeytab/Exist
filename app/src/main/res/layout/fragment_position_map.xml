@@ -15,7 +15,6 @@
             android:id="@+id/store_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Store Name"
             android:textColor="@color/black"
             app:layout_constraintLeft_toLeftOf="parent"
             android:textStyle="bold"

@@ -21,7 +21,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginBottom="@dimen/_10sdp"
-                android:text="Questionnaire"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_15sdp"
                 android:textStyle="bold" />
@@ -83,7 +82,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:hint="Souhaitez vous répondre au questionnaire ? "
                 android:textColor="@color/black"
                 android:textSize="@dimen/_12sdp" />
 
