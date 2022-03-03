@@ -52,6 +52,7 @@ import com.example.gtm.R
 import android.view.MenuInflater
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.lifecycleScope
+import com.example.gtm.data.entities.response.TimeClass
 import com.example.gtm.ui.home.suivie.ChoixImageDialogSuivie
 
 
@@ -64,6 +65,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     private var listaTasks = ArrayList<Visite>()
     lateinit var sharedPref: SharedPreferences
     private lateinit var responseData: Resource<VisiteResponse>
+    private lateinit var responseTime: Resource<TimeClass>
     private val viewModel: MyTaskViewModel by viewModels()
     private var userId = 0
     private lateinit var dateTimeBegin: String
@@ -138,6 +140,12 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
                 }
             }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
+
+
+
+
+
 
 
 
@@ -353,11 +361,10 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             if (CheckGpsStatus())
             // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
             {
-
                 if (visite.pe == 1 && visite.ps == 1)
-                    SurveyCheckDialog(navController,3,requireView()).show(fm, "SurveyDialog")
+                    SurveyCheckDialog(navController,3,requireView(),adapterTask,listaTasks,visite).show(fm, "SurveyDialog")
                 else
-                    ChoixImageDialogSuivie(visite.pe,visite.ps,navController,visite,requireView()).show(fm, "ChoixImageSuivi")
+                    ChoixImageDialogSuivie(visite.pe,visite.ps,navController,visite,requireView(),adapterTask,listaTasks).show(fm, "ChoixImageSuivi")
 
             } else {
                 showPermissionDeniedGPS()
@@ -842,6 +849,9 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
 
     }
+
+
+
 
 
     override fun onDestroy() {

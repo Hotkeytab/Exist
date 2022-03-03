@@ -10,5 +10,7 @@ data class Visite(
     val updatedAt: String,
     val userId: Int,
     var pe: Int = 0,
-    var ps: Int = 0
+    var ps: Int = 0,
+    var pe_time: String = "",
+    var ps_time: String = ""
 )

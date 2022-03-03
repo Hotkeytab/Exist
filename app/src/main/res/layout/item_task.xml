@@ -83,6 +83,7 @@
 
 
                         <ImageView
+                            android:id="@+id/pointage_entre_circle_red"
                             android:layout_width="@dimen/_15sdp"
                             android:layout_height="@dimen/_15sdp"
                             android:src="@drawable/black_viereg_circle"
@@ -90,12 +91,33 @@
                             android:layout_marginRight="@dimen/_3sdp"
                             android:layout_weight="1"/>
 
+                        <ImageView
+                            android:id="@+id/pointage_entre_circle_green"
+                            android:layout_width="@dimen/_15sdp"
+                            android:layout_height="@dimen/_15sdp"
+                            android:src="@drawable/black_viereg_circle"
+                            app:tint="@color/green"
+                            android:visibility="gone"
+                            android:layout_marginRight="@dimen/_3sdp"
+                            android:layout_weight="1"/>
+
 
                         <ImageView
+                            android:id="@+id/pointage_sortie_circle_red"
                             android:layout_width="@dimen/_15sdp"
                             android:layout_height="@dimen/_15sdp"
                             android:src="@drawable/black_viereg_circle"
                             app:tint="@color/red"
+                            android:layout_marginLeft="@dimen/_3sdp"
+                            android:layout_weight="1"/>
+
+                        <ImageView
+                            android:id="@+id/pointage_sortie_circle_green"
+                            android:layout_width="@dimen/_15sdp"
+                            android:layout_height="@dimen/_15sdp"
+                            android:src="@drawable/black_viereg_circle"
+                            app:tint="@color/green"
+                            android:visibility="gone"
                             android:layout_marginLeft="@dimen/_3sdp"
                             android:layout_weight="1"/>
 
@@ -180,7 +202,20 @@
                         android:id="@+id/distance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:text="" />
+
+                    <TextView
+                        android:id="@+id/arrive"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/depart"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
 
                 </LinearLayout>
 

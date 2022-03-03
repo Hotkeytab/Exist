@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import com.example.gtm.BuildConfig
 import com.example.gtm.data.remote.auth.AuthService
 import com.example.gtm.data.remote.survey.SurveyService
+import com.example.gtm.data.remote.time.TimeService
 import com.example.gtm.data.remote.user.UserService
 import com.example.gtm.data.remote.visite.VisiteService
 import com.example.gtm.utils.animations.UiAnimations
@@ -24,6 +25,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
 
 
@@ -51,9 +53,21 @@ object AppModule {
 
     @Singleton
     @Provides
+    @Named("Normal")
     fun provideRetrofit(gson: Gson, okHttpClient: OkHttpClient):
             Retrofit = Retrofit.Builder()
         .baseUrl(Urls.baseUrl)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .client(okHttpClient)
+        .build()
+
+
+    @Singleton
+    @Provides
+    @Named("Time")
+    fun provideRetrofitTime(gson: Gson, okHttpClient: OkHttpClient):
+            Retrofit = Retrofit.Builder()
+        .baseUrl(Urls.timeTunisUrl)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .client(okHttpClient)
         .build()
@@ -87,19 +101,26 @@ object AppModule {
     }
 
     @Provides
-    fun provideAuthService(retrofit: Retrofit): AuthService =
+    fun provideAuthService(@Named("Normal") retrofit: Retrofit): AuthService =
         retrofit.create(AuthService::class.java)
 
 
     @Provides
-    fun provideUserService(retrofit: Retrofit): UserService =
+    fun provideUserService(@Named("Normal") retrofit: Retrofit): UserService =
         retrofit.create(UserService::class.java)
 
 
     @Provides
-    fun provideVisiteService(retrofit: Retrofit): VisiteService =
+    fun provideVisiteService(@Named("Normal") retrofit: Retrofit): VisiteService =
         retrofit.create(VisiteService::class.java)
+
+
     @Provides
-    fun provideSurveyService(retrofit: Retrofit): SurveyService =
+    fun provideSurveyService(@Named("Normal") retrofit: Retrofit): SurveyService =
         retrofit.create(SurveyService::class.java)
+
+    @Provides
+    fun provideTimeService(@Named("Time") retrofit: Retrofit): TimeService =
+        retrofit.create(TimeService::class.java)
+
 }

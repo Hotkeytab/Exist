@@ -92,6 +92,37 @@ class TaskViewHolder(
         var clicked = false
         itemBinding.pointage.visibility = View.VISIBLE
 
+
+
+
+
+        if(item.pe == 1 )
+        {
+            itemBinding.pointageEntreCircleGreen.visibility = View.VISIBLE
+            itemBinding.arrive.visibility = View.VISIBLE
+            itemBinding.arrive.text = "Arrivée : ${item.pe_time}"
+            itemBinding.pointageEntreCircleRed.visibility = View.GONE
+        }
+        else
+        {
+            itemBinding.pointageEntreCircleGreen.visibility = View.GONE
+            itemBinding.arrive.visibility = View.GONE
+            itemBinding.pointageEntreCircleRed.visibility = View.VISIBLE
+        }
+
+        if(item.ps == 1)
+        {
+            itemBinding.pointageSortieCircleRed.visibility = View.GONE
+            itemBinding.depart.visibility = View.VISIBLE
+            itemBinding.depart.text = "Départ : ${item.ps_time}"
+            itemBinding.pointageSortieCircleGreen.visibility = View.VISIBLE
+        }
+        else
+        {
+            itemBinding.pointageSortieCircleRed.visibility = View.VISIBLE
+            itemBinding.depart.visibility = View.GONE
+            itemBinding.pointageSortieCircleGreen.visibility = View.GONE
+        }
         showDate()
 
 
@@ -139,6 +170,7 @@ class TaskViewHolder(
             itemBinding.cardviewColorEnable.setCardBackgroundColor(Color.rgb(220, 220, 220))
         }
 
+        itemBinding.distance.visibility = View.VISIBLE
         itemBinding.distance.text = finalDistance
 
 

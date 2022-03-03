@@ -386,7 +386,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningAdapter.TaskItemListene
             if (CheckGpsStatus())
             // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
             {
-                SurveyCheckDialog(navController,3,requireView()).show(fm, "SurveyDialog")
+              //  SurveyCheckDialog(navController,3,requireView(),adapterTask,listaTasks).show(fm, "SurveyDialog")
             } else {
                 showPermissionDeniedGPS()
             }

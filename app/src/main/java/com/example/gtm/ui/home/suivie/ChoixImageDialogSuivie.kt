@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gtm.BuildConfig
 import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.data.entities.ui.Image
+import com.example.gtm.ui.home.mytask.TaskAdapter
 import com.example.gtm.ui.home.mytask.survey.SurveyCheckDialog
 import kotlinx.android.synthetic.main.dialog_choix_image.*
 import kotlinx.android.synthetic.main.dialog_choix_visitee.*
@@ -45,7 +46,9 @@ class ChoixImageDialogSuivie(
     ps1: Int,
     navController1: NavController,
     visite1 : Visite,
-    view1 : View
+    view1 : View,
+    adapterTask1: TaskAdapter,
+    listatasks1: ArrayList<Visite>
 ) :
     DialogFragment() {
 
@@ -54,6 +57,8 @@ class ChoixImageDialogSuivie(
     val navController = navController1
     var visite = visite1
     var ourview = view1
+    val adapterTask = adapterTask1
+    val listaTasks = listatasks1
 
 
     override fun onCreateView(
@@ -81,7 +86,7 @@ class ChoixImageDialogSuivie(
 
         questionnaire.setOnClickListener {
             dismiss()
-            SurveyCheckDialog(navController,3,requireView()).show(
+            SurveyCheckDialog(navController,3,requireView(),adapterTask,listaTasks,visite).show(
                 requireActivity().supportFragmentManager,
                 "SurveyDialog"
             )
@@ -90,20 +95,19 @@ class ChoixImageDialogSuivie(
 
         p_entre.setOnClickListener {
             dismiss()
-            SurveyCheckDialog(navController,1,ourview).show(
+            SurveyCheckDialog(navController,1,ourview,adapterTask,listaTasks,visite).show(
                 requireActivity().supportFragmentManager,
                 "SurveyDialog"
             )
-            visite.pe = 1
         }
 
         p_sortie.setOnClickListener {
             dismiss()
-            SurveyCheckDialog(navController,2,ourview).show(
+            SurveyCheckDialog(navController,2,ourview,adapterTask,listaTasks,visite).show(
                 requireActivity().supportFragmentManager,
                 "SurveyDialog"
             )
-            visite.ps = 1
+
         }
 
 
@@ -122,6 +126,12 @@ class ChoixImageDialogSuivie(
             p_sortie.visibility = View.VISIBLE
         } else {
             p_sortie.visibility = View.GONE
+        }
+
+
+        if(pe == 0)
+        {
+            questionnaire.visibility = View.GONE
         }
 
     }

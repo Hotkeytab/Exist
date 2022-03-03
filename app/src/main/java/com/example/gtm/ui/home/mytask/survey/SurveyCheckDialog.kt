@@ -1,54 +1,43 @@
 package com.example.gtm.ui.home.mytask.survey
 
 
-import android.Manifest
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.example.gtm.R
-import com.example.gtm.ui.home.mytask.StaticMapClicked
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
-import com.google.android.gms.maps.CameraUpdate
 import kotlinx.android.synthetic.main.dialog_quiz_confirmation.*
-import kotlinx.android.synthetic.main.fragment_position_map.*
-import kotlinx.android.synthetic.main.item_task.*
-import android.location.GpsStatus
-import android.os.Looper
-import android.provider.Settings
 import android.view.*
 import android.widget.FrameLayout
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
+import com.example.gtm.data.entities.response.TimeClass
+import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.ui.home.mytask.LocationValueListener
+import com.example.gtm.ui.home.mytask.MyTaskViewModel
+import com.example.gtm.ui.home.mytask.TaskAdapter
+import com.example.gtm.utils.resources.Resource
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 @AndroidEntryPoint
 class SurveyCheckDialog(
     navController: NavController,
     etat1: Int,
-    viewAct1 : View
+    viewAct1: View,
+    adapterTask1: TaskAdapter,
+    listatasks1: ArrayList<Visite>,
+    visite1: Visite,
+
 ) :
     DialogFragment() {
 
@@ -61,6 +50,11 @@ class SurveyCheckDialog(
     var testGps = false
     val etat = etat1
     val viewAct = viewAct1
+    val adapterTask = adapterTask1
+    val listaTasks = listatasks1
+    var visite = visite1
+    private lateinit var responseTime: Resource<TimeClass>
+    private val viewModel: MyTaskViewModel by viewModels()
 
     // declare a global variable of FusedLocationProviderClient
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -109,31 +103,88 @@ class SurveyCheckDialog(
 
             if (etat == 1) {
 
+                lifecycleScope.launch(Dispatchers.Main) {
 
-                val snack = Snackbar.make(
-                    viewAct,
-                    "Pointage d'Arrivée envoyé avec succès",
-                    Snackbar.LENGTH_LONG
-                ).setBackgroundTint(resources.getColor(R.color.purpleLogin))
-                val view: View = snack.view
-                val params = view.layoutParams as FrameLayout.LayoutParams
-                params.gravity = Gravity.CENTER
-                view.layoutParams = params
-                snack.show()
+                    responseTime = viewModel.getTime() as Resource<TimeClass>
+                    Log.i("timetime","$responseTime")
+
+                    if(responseTime.responseCode == 200)
+                    {
+                        visite.pe = 1
+                        visite.pe_time =  compareDatesDay2(responseTime.data!!.datetime)
+                        val snack = Snackbar.make(
+                            viewAct,
+                            "Pointage d'Arrivée envoyé avec succès",
+                            Snackbar.LENGTH_LONG
+                        ).setBackgroundTint(resources.getColor(R.color.purpleLogin))
+                        val view: View = snack.view
+                        val params = view.layoutParams as FrameLayout.LayoutParams
+                        params.gravity = Gravity.CENTER
+                        view.layoutParams = params
+                        snack.show()
+                    }
+
+                    else
+                    {
+                        val snack = Snackbar.make(
+                            viewAct,
+                            "Erreur envoie pointage",
+                            Snackbar.LENGTH_LONG
+                        ).setBackgroundTint(resources.getColor(R.color.red))
+                        val view: View = snack.view
+                        val params = view.layoutParams as FrameLayout.LayoutParams
+                        params.gravity = Gravity.CENTER
+                        view.layoutParams = params
+                        snack.show()
+                    }
+
+
+                }
+
 
 
             } else if (etat == 2) {
 
-                val snack = Snackbar.make(
-                    viewAct,
-                    "Pointage de Départ envoyé avec succès",
-                    Snackbar.LENGTH_LONG
-                ).setBackgroundTint(resources.getColor(R.color.purpleLogin))
-                val view: View = snack.view
-                val params = view.layoutParams as FrameLayout.LayoutParams
-                params.gravity = Gravity.CENTER
-                view.layoutParams = params
-                snack.show()
+
+
+                lifecycleScope.launch(Dispatchers.Main) {
+
+                    responseTime = viewModel.getTime() as Resource<TimeClass>
+                    Log.i("timetime", "$responseTime")
+
+                    if(responseTime.responseCode == 200)
+                    {
+                        visite.ps = 1
+                        visite.ps_time =  compareDatesDay2(responseTime.data!!.datetime)
+                        val snack = Snackbar.make(
+                            viewAct,
+                            "Pointage de Départ envoyé avec succès",
+                            Snackbar.LENGTH_LONG
+                        ).setBackgroundTint(resources.getColor(R.color.purpleLogin))
+                        val view: View = snack.view
+                        val params = view.layoutParams as FrameLayout.LayoutParams
+                        params.gravity = Gravity.CENTER
+                        view.layoutParams = params
+                        snack.show()
+                    }
+
+                    else
+                    {
+                        val snack = Snackbar.make(
+                            viewAct,
+                            "Erreur envoie pointage",
+                            Snackbar.LENGTH_LONG
+                        ).setBackgroundTint(resources.getColor(R.color.red))
+                        val view: View = snack.view
+                        val params = view.layoutParams as FrameLayout.LayoutParams
+                        params.gravity = Gravity.CENTER
+                        view.layoutParams = params
+                        snack.show()
+                    }
+
+                }
+
+
 
             } else if (etat == 3) {
                 LocationValueListener.locationOn = false
@@ -142,6 +193,7 @@ class SurveyCheckDialog(
             }
 
             dismiss()
+            adapterTask.setItems(listaTasks)
         }
 
         cancel_button.setOnClickListener {
@@ -150,6 +202,15 @@ class SurveyCheckDialog(
         }
 
 
+    }
+
+
+    private fun compareDatesDay2(simpleDate: String): String {
+
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
+        val date: Date = format.parse(simpleDate)
+        format.applyPattern("HH:MM")
+        return format.format(date)
     }
 
 
