@@ -53,6 +53,7 @@ import android.view.MenuInflater
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.lifecycleScope
 import com.example.gtm.data.entities.response.TimeClass
+import com.example.gtm.ui.home.mytask.addvisite.AddVisteDialog
 import com.example.gtm.ui.home.suivie.ChoixImageDialogSuivie
 
 
@@ -130,6 +131,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
 
         // This callback will only be called when MyFragment is at least Started.
@@ -210,6 +212,10 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
                 setToday()
             }
 
+
+            binding.fab.setOnClickListener {
+                AddVisteDialog().show(fm, "AddVisteDialog")
+            }
 
         }
 

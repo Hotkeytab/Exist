@@ -100,7 +100,7 @@ class TaskViewHolder(
         {
             itemBinding.pointageEntreCircleGreen.visibility = View.VISIBLE
             itemBinding.arrive.visibility = View.VISIBLE
-            itemBinding.arrive.text = "Arrivée : ${item.pe_time}"
+            itemBinding.arrive.text = "Début : ${item.pe_time}"
             itemBinding.pointageEntreCircleRed.visibility = View.GONE
         }
         else
@@ -114,7 +114,7 @@ class TaskViewHolder(
         {
             itemBinding.pointageSortieCircleRed.visibility = View.GONE
             itemBinding.depart.visibility = View.VISIBLE
-            itemBinding.depart.text = "Départ : ${item.ps_time}"
+            itemBinding.depart.text = "Fin      : ${item.ps_time}"
             itemBinding.pointageSortieCircleGreen.visibility = View.VISIBLE
         }
         else

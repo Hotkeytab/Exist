@@ -169,13 +169,11 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 ).show(fm, "EditProfileFRagment")
             }
             R.id.nav_logout -> {
-                sharedPref.edit().clear().apply()
+              //  sharedPref.edit().clear().apply()
                 val intent = Intent(this, AuthActivity::class.java)
                 this.startActivity(intent)
                 this.finish()
             }
-
-
         }
         return true
     }

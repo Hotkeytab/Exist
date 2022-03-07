@@ -23,6 +23,7 @@ import com.example.gtm.utils.resources.Resource
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -89,10 +90,10 @@ class SurveyCheckDialog(
 
         if (etat == 1) {
             title1.text = "Pointage"
-            textcontext1.text = "Souhaitez vous confirmer le pointage d'arrivée ?"
+            textcontext1.text = "Souhaitez vous confirmer le pointage de Début ?"
         } else if (etat == 2) {
             title1.text = "Pointage"
-            textcontext1.text = "Souhaitez vous confirmer le pointage de départ ?"
+            textcontext1.text = "Souhaitez vous confirmer le pointage de Fin ?"
         } else if (etat == 3) {
             title1.text = "Questionnaire"
             textcontext1.text = "Souhaitez vous répondre au questionnaire ? "
@@ -100,32 +101,37 @@ class SurveyCheckDialog(
 
         accept.setOnClickListener {
 
+            progress_indicator.visibility = View.VISIBLE
 
             if (etat == 1) {
 
-                lifecycleScope.launch(Dispatchers.Main) {
+                GlobalScope.launch(Dispatchers.Main) {
 
                     responseTime = viewModel.getTime() as Resource<TimeClass>
                     Log.i("timetime","$responseTime")
 
                     if(responseTime.responseCode == 200)
                     {
+                        progress_indicator.visibility = View.GONE
                         visite.pe = 1
                         visite.pe_time =  compareDatesDay2(responseTime.data!!.datetime)
                         val snack = Snackbar.make(
                             viewAct,
-                            "Pointage d'Arrivée envoyé avec succès",
+                            "Pointage de Début envoyé avec succès",
                             Snackbar.LENGTH_LONG
                         ).setBackgroundTint(resources.getColor(R.color.purpleLogin))
                         val view: View = snack.view
                         val params = view.layoutParams as FrameLayout.LayoutParams
                         params.gravity = Gravity.CENTER
+                        dismiss()
+                        adapterTask.setItems(listaTasks)
                         view.layoutParams = params
                         snack.show()
                     }
 
                     else
                     {
+                        progress_indicator.visibility = View.GONE
                         val snack = Snackbar.make(
                             viewAct,
                             "Erreur envoie pointage",
@@ -134,6 +140,8 @@ class SurveyCheckDialog(
                         val view: View = snack.view
                         val params = view.layoutParams as FrameLayout.LayoutParams
                         params.gravity = Gravity.CENTER
+                        dismiss()
+                        adapterTask.setItems(listaTasks)
                         view.layoutParams = params
                         snack.show()
                     }
@@ -147,18 +155,23 @@ class SurveyCheckDialog(
 
 
 
-                lifecycleScope.launch(Dispatchers.Main) {
+                GlobalScope.launch(Dispatchers.Main) {
 
+                    progress_indicator.visibility = View.VISIBLE
                     responseTime = viewModel.getTime() as Resource<TimeClass>
                     Log.i("timetime", "$responseTime")
 
                     if(responseTime.responseCode == 200)
                     {
+                        progress_indicator.visibility = View.GONE
                         visite.ps = 1
                         visite.ps_time =  compareDatesDay2(responseTime.data!!.datetime)
+
+                        dismiss()
+                        adapterTask.setItems(listaTasks)
                         val snack = Snackbar.make(
                             viewAct,
-                            "Pointage de Départ envoyé avec succès",
+                            "Pointage de Fin envoyé avec succès",
                             Snackbar.LENGTH_LONG
                         ).setBackgroundTint(resources.getColor(R.color.purpleLogin))
                         val view: View = snack.view
@@ -166,10 +179,12 @@ class SurveyCheckDialog(
                         params.gravity = Gravity.CENTER
                         view.layoutParams = params
                         snack.show()
+
                     }
 
                     else
                     {
+                        progress_indicator.visibility = View.GONE
                         val snack = Snackbar.make(
                             viewAct,
                             "Erreur envoie pointage",
@@ -178,6 +193,8 @@ class SurveyCheckDialog(
                         val view: View = snack.view
                         val params = view.layoutParams as FrameLayout.LayoutParams
                         params.gravity = Gravity.CENTER
+                        dismiss()
+                        adapterTask.setItems(listaTasks)
                         view.layoutParams = params
                         snack.show()
                     }
@@ -187,16 +204,18 @@ class SurveyCheckDialog(
 
 
             } else if (etat == 3) {
+                progress_indicator.visibility = View.GONE
+                dismiss()
                 LocationValueListener.locationOn = false
                 navControllerIn.navigate(R.id.action_taskFragment_to_quizFragment)
 
             }
 
-            dismiss()
-            adapterTask.setItems(listaTasks)
+
         }
 
         cancel_button.setOnClickListener {
+            progress_indicator.visibility = View.GONE
             LocationValueListener.locationOn = true
             dismiss()
         }
@@ -209,7 +228,7 @@ class SurveyCheckDialog(
 
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
         val date: Date = format.parse(simpleDate)
-        format.applyPattern("HH:MM")
+        format.applyPattern("HH:mm")
         return format.format(date)
     }
 

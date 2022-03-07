@@ -8,11 +8,20 @@
         app:cardCornerRadius="@dimen/_4sdp"
         app:layout_constraintTop_toTopOf="parent">
 
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progress_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="invisible" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="@dimen/_10sdp">
+
+
 
 
             <TextView
