@@ -148,11 +148,19 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
                                 activity?.finish()
                             }
 
-                        } else {
+                        } else if(responseDataUser.responseCode == 401) {
                             binding.signinButton.isEnabled = true
                             binding.progressIndicator.visibility = View.INVISIBLE
                             clearError()
-                            binding.password.error = "Username or Password is Incorrect"
+                            binding.password.error = "Mot de passe ou nom d'utilisateur Erroné "
+                        }
+
+                        else
+                        {
+                            binding.signinButton.isEnabled = true
+                            binding.progressIndicator.visibility = View.INVISIBLE
+                            clearError()
+                            binding.password.error = "Erreur Connexion"
                         }
                     }
                 }

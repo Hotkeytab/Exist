@@ -1,6 +1,7 @@
 package com.example.gtm.data.repository
 
 import com.example.gtm.data.entities.remote.SignInPost
+import com.example.gtm.data.entities.remote.VisitPost
 import com.example.gtm.data.entities.ui.User
 import com.example.gtm.data.remote.BaseRemoteDataSource
 import com.example.gtm.data.remote.auth.AuthRemoteDataSource
@@ -16,6 +17,7 @@ class SurveyRepository @Inject constructor(
 ) {
 
     suspend fun getSurvey() = surveyDataSource.getSurvey()
+    suspend fun addVisite(visitPost: VisitPost) = surveyDataSource.addVisit(visitPost)
     suspend fun postSurveyResponse(files: ArrayList<MultipartBody.Part?>,surveyResponse: RequestBody) =
         surveyDataSource.postSurveyResponse(files,surveyResponse)
 }

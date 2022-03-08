@@ -34,6 +34,7 @@
 
 
             <LinearLayout
+                android:id="@+id/big_linear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_10sdp"
@@ -57,116 +58,16 @@
 
                             <ImageView
                                 android:id="@+id/storeimageblackwhite"
-                                android:layout_width="@dimen/_40sdp"
-                                android:layout_height="@dimen/_40sdp"
-                                android:src="@drawable/outline_storefront_24"
-                                app:tint="@color/black" />
+                                android:layout_width="@dimen/_60sdp"
+                                android:layout_height="@dimen/_60sdp"
+                                android:scaleType="fitXY"/>
 
 
                     </androidx.cardview.widget.CardView>
 
-                    <LinearLayout
-                        android:id="@+id/pointage"
-                        android:visibility="gone"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_margin="@dimen/_5sdp">
-
-
-                        <ImageView
-                            android:id="@+id/pointage_entre_circle_red"
-                            android:layout_width="@dimen/_15sdp"
-                            android:layout_height="@dimen/_15sdp"
-                            android:src="@drawable/black_viereg_circle"
-                            app:tint="@color/red"
-                            android:layout_marginRight="@dimen/_3sdp"
-                            android:layout_weight="1"/>
-
-                        <ImageView
-                            android:id="@+id/pointage_entre_circle_green"
-                            android:layout_width="@dimen/_15sdp"
-                            android:layout_height="@dimen/_15sdp"
-                            android:src="@drawable/black_viereg_circle"
-                            app:tint="@color/green"
-                            android:visibility="gone"
-                            android:layout_marginRight="@dimen/_3sdp"
-                            android:layout_weight="1"/>
-
-
-                        <ImageView
-                            android:id="@+id/pointage_sortie_circle_red"
-                            android:layout_width="@dimen/_15sdp"
-                            android:layout_height="@dimen/_15sdp"
-                            android:src="@drawable/black_viereg_circle"
-                            app:tint="@color/red"
-                            android:layout_marginLeft="@dimen/_3sdp"
-                            android:layout_weight="1"/>
-
-                        <ImageView
-                            android:id="@+id/pointage_sortie_circle_green"
-                            android:layout_width="@dimen/_15sdp"
-                            android:layout_height="@dimen/_15sdp"
-                            android:src="@drawable/black_viereg_circle"
-                            app:tint="@color/green"
-                            android:visibility="gone"
-                            android:layout_marginLeft="@dimen/_3sdp"
-                            android:layout_weight="1"/>
-
-
-                    </LinearLayout>
                 </LinearLayout>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/store_icon_green"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/green"
-                    android:visibility="gone"
-                    app:cardCornerRadius="@dimen/_5sdp">
 
-                    <LinearLayout
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_40sdp"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="@dimen/_5sdp">
-
-                        <ImageView
-                            android:id="@+id/storeimagewhitegreen"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/outline_storefront_24"
-                            app:tint="@color/white" />
-
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/store_icon_red"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/red"
-                    android:visibility="gone"
-                    app:cardCornerRadius="@dimen/_5sdp">
-
-                    <LinearLayout
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_40sdp"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="@dimen/_5sdp">
-
-                        <ImageView
-                            android:id="@+id/storeimagewhitered"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/outline_storefront_24"
-                            app:tint="@color/white" />
-
-
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
 
                 <LinearLayout
                     android:id="@+id/store_text"
@@ -194,7 +95,7 @@
                         android:id="@+id/distance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         android:text="" />
 
                     <TextView
@@ -226,4 +127,7 @@
         </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 </layout>
