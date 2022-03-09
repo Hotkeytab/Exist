@@ -92,6 +92,7 @@ class TaskViewHolder(
 
         Glide.with(itemBinding.root)
             .load(item.storePictures[0].path)
+            .placeholder(R.drawable.outline_storefront_24)
             .skipMemoryCache(false)
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .into(itemBinding.storeimageblackwhite)

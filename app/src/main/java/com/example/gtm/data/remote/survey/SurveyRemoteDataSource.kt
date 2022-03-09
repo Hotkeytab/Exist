@@ -15,5 +15,5 @@ class SurveyRemoteDataSource  @Inject constructor(
 
     suspend fun postSurveyResponse(files: ArrayList<MultipartBody.Part?>, surveyResponse: RequestBody) = getResult { surveyService.postSurveyResponse(files,surveyResponse) }
 
-    suspend fun addVisit(visitPost: VisitPost) = getResult { surveyService.addVisit(visitPost) }
+    suspend fun addVisit(visitPost: ArrayList<VisitPost>) = getResult { surveyService.addVisit(visitPost) }
 }

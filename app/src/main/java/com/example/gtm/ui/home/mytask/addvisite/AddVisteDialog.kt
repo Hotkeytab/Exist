@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.ContentUris
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import androidx.fragment.app.DialogFragment
 import com.example.gtm.R
 import dagger.hilt.android.AndroidEntryPoint
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -34,22 +36,27 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gtm.BuildConfig
-import com.example.gtm.data.entities.response.DataXX
-import com.example.gtm.data.entities.response.GetStore
-import com.example.gtm.data.entities.response.Visite
-import com.example.gtm.data.entities.response.VisiteResponse
+import com.example.gtm.data.entities.remote.VisitPost
+import com.example.gtm.data.entities.response.*
 import com.example.gtm.data.entities.ui.Image
 import com.example.gtm.ui.drawer.DrawerActivity
 import com.example.gtm.ui.home.mytask.MyTaskViewModel
 import com.example.gtm.ui.home.mytask.TaskAdapter
 import com.example.gtm.ui.home.mytask.survey.SurveyCheckDialog
+import com.example.gtm.ui.home.mytask.survey.quiz.MyQuizViewModel
 import com.example.gtm.utils.resources.Resource
 import kotlinx.android.synthetic.main.dialog_add_visite.*
 import kotlinx.android.synthetic.main.dialog_choix_image.*
 import kotlinx.android.synthetic.main.dialog_choix_visitee.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import android.content.DialogInterface
+import androidx.fragment.app.Fragment
 
 
 @AndroidEntryPoint
@@ -60,9 +67,13 @@ class AddVisteDialog(
     DialogFragment(), AddVisiteAdapter.TaskItemListener {
 
     private val viewModel: AddVisiteDialogViewModel by viewModels()
+    private val viewModelQuiz: MyQuizViewModel by viewModels()
     private lateinit var responseDataStores: Resource<GetStore>
+    private lateinit var responseAdd: Resource<SuccessResponse>
     private lateinit var adapterAddVisite: AddVisiteAdapter
     private var listaDataXX = ArrayList<DataXX>()
+    private var userId = 0
+    lateinit var sharedPref: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,12 +85,17 @@ class AddVisteDialog(
 
     override fun onStart() {
         super.onStart()
-
         val width = (resources.displayMetrics.widthPixels * 0.85).toInt()
         val height = (resources.displayMetrics.heightPixels * 0.65).toInt()
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-      //  dialog!!.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        //  dialog!!.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         dialog!!.window?.setLayout(width, height)
+
+        sharedPref = requireContext().getSharedPreferences(
+            R.string.app_name.toString(),
+            Context.MODE_PRIVATE
+        )
+        userId = sharedPref.getInt("id", 0)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -88,13 +104,45 @@ class AddVisteDialog(
         getStores()
 
 
+
         cancel.setOnClickListener {
-            dismiss()
+            dialog!!.dismiss()
         }
 
     }
 
     override fun onClickedTask(taskId: Int) {
+
+        dialog!!.setCancelable(false)
+        cancel.isEnabled = false
+        progress_indicator.visibility = View.VISIBLE
+
+        GlobalScope.launch(Dispatchers.Main) {
+            val visitePost = VisitPost(getDateNow(), 0, taskId, userId)
+            val arayListViste = ArrayList<VisitPost>()
+            arayListViste.add(visitePost)
+            responseAdd = viewModelQuiz.addVisite(arayListViste) as Resource<SuccessResponse>
+
+
+            if (responseAdd.responseCode == 201) {
+                dialog!!.setCancelable(true)
+                cancel.isEnabled = true
+                dialog!!.dismiss()
+
+            } else {
+                dialog!!.setCancelable(true)
+                cancel.isEnabled = true
+                progress_indicator.visibility = View.GONE
+            }
+            Log.i("ourresponse", "$responseAdd")
+        }
+    }
+
+    private fun getDateNow(): String {
+
+        val sdf = SimpleDateFormat("yyyy-MM-dd")
+        val d = Date()
+        return sdf.format(d)
 
     }
 
@@ -116,11 +164,9 @@ class AddVisteDialog(
                 listaDataXX.add(responseDataStores.data!!.data[0])
 
                 setupRecycleViewPredictionDetail()
-            }
-
-            else
-            {
-                progress_indicator.visibility = View.GONE
+            } else {
+                if (progress_indicator != null)
+                    progress_indicator.visibility = View.GONE
             }
 
         }
@@ -129,7 +175,6 @@ class AddVisteDialog(
 
     private fun setupRecycleViewPredictionDetail() {
 
-        Log.i("repeat", "1")
         adapterAddVisite = AddVisiteAdapter(this)
         getstorerecycle.isMotionEventSplittingEnabled = false
         getstorerecycle.layoutManager = LinearLayoutManager(requireContext())
@@ -140,7 +185,13 @@ class AddVisteDialog(
         )
         getstorerecycle.adapter = adapterAddVisite
         adapterAddVisite.setItems(listaDataXX)
+        checkForResearch()
 
+    }
+
+    private fun checkForResearch() {
+        if(listaDataXX.size > 3)
+            search_bar.visibility = View.VISIBLE
     }
 
 

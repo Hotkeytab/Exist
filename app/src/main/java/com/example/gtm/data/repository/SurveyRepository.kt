@@ -17,7 +17,7 @@ class SurveyRepository @Inject constructor(
 ) {
 
     suspend fun getSurvey() = surveyDataSource.getSurvey()
-    suspend fun addVisite(visitPost: VisitPost) = surveyDataSource.addVisit(visitPost)
+    suspend fun addVisite(visitPost: ArrayList<VisitPost>) = surveyDataSource.addVisit(visitPost)
     suspend fun postSurveyResponse(files: ArrayList<MultipartBody.Part?>,surveyResponse: RequestBody) =
         surveyDataSource.postSurveyResponse(files,surveyResponse)
 }

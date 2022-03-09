@@ -79,6 +79,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var d: Date
     private lateinit var visite: Visite
+    private lateinit var addVisiteDialog: AddVisteDialog
 
 
     override fun onStart() {
@@ -107,7 +108,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
         if (isAdded && activity != null) {
 
-            Log.i("repeat", "0")
+
             d = Date()
 
             fm = requireActivity().supportFragmentManager
@@ -142,12 +143,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
                 }
             }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-
-
-
-
-
-
 
 
 
@@ -214,8 +209,19 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
 
             binding.fab.setOnClickListener {
-                AddVisteDialog().show(fm, "AddVisteDialog")
+
+                addVisiteDialog = AddVisteDialog()
+                addVisiteDialog.show(fm, "AddVisteDialog")
+
+                fm.executePendingTransactions()
+                addVisiteDialog.dialog!!.setOnDismissListener {
+                    Log.i("dismissed","dismissed")
+                    getVisites()
+                }
+
             }
+
+
 
         }
 

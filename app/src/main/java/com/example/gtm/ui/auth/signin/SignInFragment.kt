@@ -37,7 +37,7 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
     private lateinit var binding: FragmentSignInBinding
     private val viewModel: SignInFragmentViewModel by viewModels()
     private lateinit var responseData: Resource<SignInResponse>
-    lateinit var responseDataUser: Resource<UserResponse>
+    private  var responseDataUser: Resource<UserResponse>? = null
     lateinit var sharedPref: SharedPreferences
     private lateinit var sessionManager: SessionManager
     private lateinit var dialog: InternetCheckDialog
@@ -49,6 +49,7 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSignInBinding.inflate(inflater, container, false)
+
 
         if (isAdded) {
 
@@ -134,25 +135,28 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
                             sessionManager.saveToken(responseData.data!!.token)
                             responseDataUser =
                                 viewModel.getUser(binding.username.editText!!.trimStringEditText())
-                            if (responseDataUser.responseCode == 200) {
+                            if (responseDataUser!!.responseCode == 200) {
                                 sharedPref =
                                     requireActivity().getSharedPreferences(
                                         R.string.app_name.toString(),
                                         Context.MODE_PRIVATE
                                     )!!
                                 with(sharedPref.edit()) {
-                                    this?.putInt("id", responseDataUser.data!!.data.id)
+                                    this?.putInt("id", responseDataUser!!.data!!.data.id)
                                 }?.commit()
                                 val intent = Intent(activity, DrawerActivity::class.java)
                                 activity?.startActivity(intent)
                                 activity?.finish()
                             }
 
-                        } else if(responseDataUser.responseCode == 401) {
-                            binding.signinButton.isEnabled = true
-                            binding.progressIndicator.visibility = View.INVISIBLE
-                            clearError()
-                            binding.password.error = "Mot de passe ou nom d'utilisateur Erroné "
+                        } else if(responseDataUser != null) {
+
+                            if(responseDataUser!!.responseCode == 401) {
+                                binding.signinButton.isEnabled = true
+                                binding.progressIndicator.visibility = View.INVISIBLE
+                                clearError()
+                                binding.password.error = "Mot de passe ou nom d'utilisateur Erroné "
+                            }
                         }
 
                         else
