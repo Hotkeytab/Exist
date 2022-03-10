@@ -4,5 +4,6 @@ data class VisitPost(
     var day : String,
     var order : Int,
     var storeId: Int,
-    var userId: Int
+    var userId: Int,
+    var planned: Boolean
 )

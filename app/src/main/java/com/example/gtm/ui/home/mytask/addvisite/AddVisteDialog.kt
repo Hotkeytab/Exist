@@ -118,7 +118,7 @@ class AddVisteDialog(
         progress_indicator.visibility = View.VISIBLE
 
         GlobalScope.launch(Dispatchers.Main) {
-            val visitePost = VisitPost(getDateNow(), 0, taskId, userId)
+            val visitePost = VisitPost(getDateNow(), 0, taskId, userId,false)
             val arayListViste = ArrayList<VisitPost>()
             arayListViste.add(visitePost)
             responseAdd = viewModelQuiz.addVisite(arayListViste) as Resource<SuccessResponse>

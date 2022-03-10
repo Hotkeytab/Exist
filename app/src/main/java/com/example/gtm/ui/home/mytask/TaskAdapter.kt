@@ -26,16 +26,18 @@ import kotlin.math.sqrt
 class TaskAdapter(
     private val listener: TaskFragment,
     activity: FragmentActivity,
-    activityDrawer2: DrawerActivity
+    activityDrawer2: DrawerActivity,
+    listaTasks2 : ArrayList<Visite>
 ) :
     RecyclerView.Adapter<TaskViewHolder>() {
 
 
     private val activityIns = activity
     private val activityDrawer = activityDrawer2
+    private val listaTask = listaTasks2
 
     interface TaskItemListener {
-        fun onClickedTask(taskId: Int, distance: String,visite : Visite)
+        fun onClickedTask(taskId: Int, distance: String, visite: Visite)
 
     }
 
@@ -46,6 +48,7 @@ class TaskAdapter(
         this.items.clear()
         this.items.addAll(items)
         notifyDataSetChanged()
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -56,7 +59,9 @@ class TaskAdapter(
             listener as TaskItemListener,
             activityIns,
             parent,
-            activityDrawer
+            activityDrawer,
+            this,
+            listaTask,items
         )
 
     }
@@ -72,7 +77,11 @@ class TaskViewHolder(
     private val listener: TaskAdapter.TaskItemListener,
     private val activityIns: FragmentActivity,
     private val parent: ViewGroup,
-    private val activityDrawer: DrawerActivity
+    private val activityDrawer: DrawerActivity,
+    private val taskAdapter: TaskAdapter,
+    private val items : ArrayList<Visite>,
+    private val items2: ArrayList<Visite>
+
 ) : RecyclerView.ViewHolder(itemBinding.root),
     View.OnClickListener {
 
@@ -94,35 +103,31 @@ class TaskViewHolder(
 
 
 
+        if (!item.planned)
+            itemBinding.deleteVisite.visibility = View.VISIBLE
 
 
-        if(item.pe == 1 )
-        {
+       /* if (item.pe == 1) {
             itemBinding.pointageEntreCircleGreen.visibility = View.VISIBLE
             itemBinding.arrive.visibility = View.VISIBLE
             itemBinding.arrive.text = "Début : ${item.pe_time}"
             itemBinding.pointageEntreCircleRed.visibility = View.GONE
-        }
-        else
-        {
+        } else {
             itemBinding.pointageEntreCircleGreen.visibility = View.GONE
             itemBinding.arrive.visibility = View.GONE
             itemBinding.pointageEntreCircleRed.visibility = View.VISIBLE
         }
 
-        if(item.ps == 1)
-        {
+        if (item.ps == 1) {
             itemBinding.pointageSortieCircleRed.visibility = View.GONE
             itemBinding.depart.visibility = View.VISIBLE
             itemBinding.depart.text = "Fin      : ${item.ps_time}"
             itemBinding.pointageSortieCircleGreen.visibility = View.VISIBLE
-        }
-        else
-        {
+        } else {
             itemBinding.pointageSortieCircleRed.visibility = View.VISIBLE
             itemBinding.depart.visibility = View.GONE
             itemBinding.pointageSortieCircleGreen.visibility = View.GONE
-        }
+        } */
         showDate()
 
 
@@ -190,6 +195,13 @@ class TaskViewHolder(
 
         }
 
+        itemBinding.deleteVisite.setOnClickListener {
+
+            SupprimerVisiteDialog(item.id, adapterPosition,taskAdapter,items,items2)
+                .show(activityIns.supportFragmentManager, "SupprimerVisiteDialog")
+        }
+
+
         itemBinding.storeIconBlue.setOnClickListener {
             putStoreName(item.store.name)
             listener.onClickedTask(
@@ -245,26 +257,26 @@ class TaskViewHolder(
         format.applyPattern("dd-MM-yyyy")
         val dateformat = format.format(date)
 
-       // checkForDay(dateformat)
+        // checkForDay(dateformat)
 
-        if(daysFilter.weekFilter == 1 || daysFilter.monthFilter == 1) {
-           // activityDrawer.HashMaplistaTasksDate.forEach { (k, v) ->
+        if (daysFilter.weekFilter == 1 || daysFilter.monthFilter == 1) {
+            // activityDrawer.HashMaplistaTasksDate.forEach { (k, v) ->
 
-                // if(visiteResponse.day == k && (v.size == 1 || visiteResponse == v[0])) {
+            // if(visiteResponse.day == k && (v.size == 1 || visiteResponse == v[0])) {
 
-                //Formidable Date Format
-                val sdf = SimpleDateFormat("EEEE")
-                val sdf2 = SimpleDateFormat("dd MMMM yyyy")
-                val sdf3 = SimpleDateFormat("dd-MM-yyyy")
-                val dayOfTheWeek = sdf.format(sdf3.parse(dateformat))
-                val dayOfTheWeek2 = sdf2.format(sdf3.parse(dateformat))
+            //Formidable Date Format
+            val sdf = SimpleDateFormat("EEEE")
+            val sdf2 = SimpleDateFormat("dd MMMM yyyy")
+            val sdf3 = SimpleDateFormat("dd-MM-yyyy")
+            val dayOfTheWeek = sdf.format(sdf3.parse(dateformat))
+            val dayOfTheWeek2 = sdf2.format(sdf3.parse(dateformat))
 
-                val finalDay = "$dayOfTheWeek $dayOfTheWeek2"
-                itemBinding.dateText.visibility = View.VISIBLE
-                itemBinding.dateText.text = finalDay
-                //}
+            val finalDay = "$dayOfTheWeek $dayOfTheWeek2"
+            itemBinding.dateText.visibility = View.VISIBLE
+            itemBinding.dateText.text = finalDay
+            //}
 
-           // }
+            // }
         }
 
     }
@@ -277,7 +289,7 @@ class TaskViewHolder(
         if (activityDrawer.listOfTriDates.size == 0) {
             activityDrawer.listOfTriDates.add(day)
             Log.i("showaray", "false1")
-            return  true
+            return true
         } else {
             for (i in activityDrawer.listOfTriDates) {
                 if (day == i) {

@@ -22,6 +22,12 @@
     </style>
 
 
+    <style name="AnimationsForMapDialogSwipe">
+        <item name="android:windowEnterAnimation">@anim/left_to_right_animation_forquestion</item>
+        <item name="android:windowExitAnimation">@anim/zoom_out_map</item>
+    </style>
+
+
     <style name="AnimationsForMapDialog">
         <item name="android:windowEnterAnimation">@anim/zoom_in_map</item>
         <item name="android:windowExitAnimation">@anim/zoom_out_map</item>

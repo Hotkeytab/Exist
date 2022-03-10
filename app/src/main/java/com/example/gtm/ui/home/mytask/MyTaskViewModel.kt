@@ -23,4 +23,6 @@ class MyTaskViewModel  @Inject constructor(
 
 
     suspend fun getTime() = timeRepository.getCurrentTime()
+
+    suspend fun deleteVisite(visiteId: Int) = visiteRepository.deleteVisite(visiteId)
 }

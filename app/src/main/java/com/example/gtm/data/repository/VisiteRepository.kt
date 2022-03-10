@@ -17,6 +17,7 @@ class VisiteRepository @Inject constructor(
     suspend fun getVisites(user_id: String, date_begin: String, date_end: String) =
         visiteDataSource.getVisites(user_id, date_begin, date_end)
 
+    suspend fun deleteVisite(visitId : Int) = visiteDataSource.deleteVisite(visitId)
 
     suspend fun getSurveyResponse(user_id: String, date_begin: String, date_end: String) =
         visiteDataSource.getSurveyResponse(user_id, date_begin, date_end)

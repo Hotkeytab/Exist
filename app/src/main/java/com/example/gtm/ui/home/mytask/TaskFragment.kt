@@ -215,7 +215,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
                 fm.executePendingTransactions()
                 addVisiteDialog.dialog!!.setOnDismissListener {
-                    Log.i("dismissed","dismissed")
                     getVisites()
                 }
 
@@ -244,7 +243,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
 
         Log.i("repeat", "1")
-        adapterTask = TaskAdapter(this, requireActivity(), activity as DrawerActivity)
+        adapterTask = TaskAdapter(this, requireActivity(), activity as DrawerActivity,listaTasks)
         binding.taskRecycleview.isMotionEventSplittingEnabled = false
         binding.taskRecycleview.layoutManager = LinearLayoutManager(requireContext())
         binding.taskRecycleview.layoutManager = LinearLayoutManager(
@@ -254,6 +253,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         )
         binding.taskRecycleview.adapter = adapterTask
         // (activity as DrawerActivity).listOfTriDates = ArrayList<String>()
+        Log.i("triggered","triggered")
         adapterTask.setItems(listaTasks)
 
 

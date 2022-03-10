@@ -7,6 +7,8 @@ data class Visite(
     val order: Int,
     val store: Store,
     val storeId: Int,
+    val planned: Boolean,
+    val type: String,
     val updatedAt: String,
     val userId: Int,
     var pe: Int = 0,

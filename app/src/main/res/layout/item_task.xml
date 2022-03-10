@@ -46,6 +46,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:orientation="vertical">
 
                     <androidx.cardview.widget.CardView
@@ -53,6 +54,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/purpleMain"
+                        android:layout_gravity="center"
                         app:cardCornerRadius="@dimen/_5sdp">
 
                         <LinearLayout
@@ -224,13 +226,37 @@
                     android:layout_weight="1" />
 
 
-                <ImageView
-                    android:id="@+id/show_map"
-                    android:layout_width="@dimen/_25sdp"
-                    android:layout_height="@dimen/_25sdp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/round_travel_explore_24"
-                    app:tint="@color/purpleLogin" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    >
+
+
+                    <ImageView
+                        android:visibility="gone"
+                        android:id="@+id/delete_visite"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_gravity="top|center"
+                        android:src="@drawable/ic_baseline_delete_forever_24" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+
+                    <ImageView
+                        android:id="@+id/show_map"
+                        android:layout_width="@dimen/_25sdp"
+                        android:layout_height="@dimen/_25sdp"
+                        android:layout_gravity="bottom|center"
+                        android:src="@drawable/round_travel_explore_24"
+                        app:tint="@color/purpleLogin" />
+
+                </LinearLayout>
+
+
 
                 <ImageView
                     android:id="@+id/type"
