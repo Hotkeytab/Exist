@@ -107,10 +107,12 @@ class TaskViewHolder(
             itemBinding.deleteVisite.visibility = View.VISIBLE
 
 
-       /* if (item.pe == 1) {
+
+        if (item.start != null) {
             itemBinding.pointageEntreCircleGreen.visibility = View.VISIBLE
             itemBinding.arrive.visibility = View.VISIBLE
-            itemBinding.arrive.text = "Début : ${item.pe_time}"
+            itemBinding.arrive.text = "Début : ${testDay(item.start)}"
+
             itemBinding.pointageEntreCircleRed.visibility = View.GONE
         } else {
             itemBinding.pointageEntreCircleGreen.visibility = View.GONE
@@ -118,16 +120,18 @@ class TaskViewHolder(
             itemBinding.pointageEntreCircleRed.visibility = View.VISIBLE
         }
 
-        if (item.ps == 1) {
+        if (item.end != null) {
             itemBinding.pointageSortieCircleRed.visibility = View.GONE
             itemBinding.depart.visibility = View.VISIBLE
-            itemBinding.depart.text = "Fin      : ${item.ps_time}"
+            itemBinding.depart.text = "Fin      : ${testDay(item.end)}"
             itemBinding.pointageSortieCircleGreen.visibility = View.VISIBLE
         } else {
             itemBinding.pointageSortieCircleRed.visibility = View.VISIBLE
             itemBinding.depart.visibility = View.GONE
             itemBinding.pointageSortieCircleGreen.visibility = View.GONE
-        } */
+        }
+
+
         showDate()
 
 
@@ -233,6 +237,9 @@ class TaskViewHolder(
             finalDistance,
             visiteResponse
         )
+
+
+
     }
 
 
@@ -250,6 +257,14 @@ class TaskViewHolder(
     }
 
 
+
+    private fun testDay(day : String) : String
+    { //Normal Date Format
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        val date: Date = format.parse(day)
+        format.applyPattern("HH:mm:ss")
+        return format.format(date)
+    }
     private fun showDate() {
         //Normal Date Format
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")

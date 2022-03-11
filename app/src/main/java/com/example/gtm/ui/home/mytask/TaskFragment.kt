@@ -58,7 +58,8 @@ import com.example.gtm.ui.home.suivie.ChoixImageDialogSuivie
 
 
 @AndroidEntryPoint
-class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
+class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
+    SurveyCheckDialog.CloseCheckDialogListener {
 
 
     private lateinit var binding: FragmentTaskBinding
@@ -132,7 +133,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
 
         // This callback will only be called when MyFragment is at least Started.
@@ -221,7 +221,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             }
 
 
-
         }
 
 
@@ -243,7 +242,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
 
 
         Log.i("repeat", "1")
-        adapterTask = TaskAdapter(this, requireActivity(), activity as DrawerActivity,listaTasks)
+        adapterTask = TaskAdapter(this, requireActivity(), activity as DrawerActivity, listaTasks)
         binding.taskRecycleview.isMotionEventSplittingEnabled = false
         binding.taskRecycleview.layoutManager = LinearLayoutManager(requireContext())
         binding.taskRecycleview.layoutManager = LinearLayoutManager(
@@ -253,7 +252,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
         )
         binding.taskRecycleview.adapter = adapterTask
         // (activity as DrawerActivity).listOfTriDates = ArrayList<String>()
-        Log.i("triggered","triggered")
+        Log.i("triggered", "triggered")
         adapterTask.setItems(listaTasks)
 
 
@@ -277,6 +276,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     private fun getVisites() {
         lifecycleScope.launch(Dispatchers.Main) {
 
+            progress_indicator.visibility = View.VISIBLE
 
             if (!isDetached) {
                 Log.i("repeat", "1")
@@ -374,9 +374,26 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
             // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
             {
                 if (visite.pe == 1 && visite.ps == 1)
-                    SurveyCheckDialog(navController,3,requireView(),adapterTask,listaTasks,visite).show(fm, "SurveyDialog")
+                    SurveyCheckDialog(
+                        this,
+                        navController,
+                        3,
+                        requireView(),
+                        adapterTask,
+                        listaTasks,
+                        visite
+                    ).show(fm, "SurveyDialog")
                 else
-                    ChoixImageDialogSuivie(visite.pe,visite.ps,navController,visite,requireView(),adapterTask,listaTasks).show(fm, "ChoixImageSuivi")
+                    ChoixImageDialogSuivie(
+                        this,
+                        visite.pe,
+                        visite.ps,
+                        navController,
+                        visite,
+                        requireView(),
+                        adapterTask,
+                        listaTasks
+                    ).show(fm, "ChoixImageSuivi")
 
             } else {
                 showPermissionDeniedGPS()
@@ -863,12 +880,13 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener {
     }
 
 
-
-
-
     override fun onDestroy() {
         super.onDestroy()
         LocationValueListener.locationOn = false
+    }
+
+    override fun onClosedCheckDialog() {
+        getVisites()
     }
 
 }

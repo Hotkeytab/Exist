@@ -97,9 +97,40 @@ class TaskViewHolder(
         this.visiteResponse = item
         var suivie = false
         val afterSuiviArray = ArrayList<DataX>()
+
+
+        if (!item.planned)
+            itemBinding.barHorsPlan.visibility = View.VISIBLE
+
+
+        itemBinding.pointage.visibility = View.VISIBLE
+
+
+        if (item.start != null) {
+            itemBinding.pointageEntreCircleGreen.visibility = View.VISIBLE
+            itemBinding.arrive.visibility = View.VISIBLE
+            itemBinding.arrive.text = "Début : ${testDay(item.start)}"
+
+            itemBinding.pointageEntreCircleRed.visibility = View.GONE
+        } else {
+            itemBinding.pointageEntreCircleGreen.visibility = View.GONE
+            itemBinding.arrive.visibility = View.GONE
+            itemBinding.pointageEntreCircleRed.visibility = View.VISIBLE
+        }
+
+        if (item.end != null) {
+            itemBinding.pointageSortieCircleRed.visibility = View.GONE
+            itemBinding.depart.visibility = View.VISIBLE
+            itemBinding.depart.text = "Fin      : ${testDay(item.end)}"
+            itemBinding.pointageSortieCircleGreen.visibility = View.VISIBLE
+        } else {
+            itemBinding.pointageSortieCircleRed.visibility = View.VISIBLE
+            itemBinding.depart.visibility = View.GONE
+            itemBinding.pointageSortieCircleGreen.visibility = View.GONE
+        }
+
+
         showDate()
-
-
 
         Log.i("notresuivie","$suivie")
         itemBinding.name.text = item.store.name
@@ -245,6 +276,15 @@ class TaskViewHolder(
         with(sharedPref.edit()) {
             this?.putString("storeName", storeName)
         }?.commit()
+    }
+
+
+    private fun testDay(day : String) : String
+    { //Normal Date Format
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        val date: Date = format.parse(day)
+        format.applyPattern("HH:mm:ss")
+        return format.format(date)
     }
 
 

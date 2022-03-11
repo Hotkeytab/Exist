@@ -1,10 +1,9 @@
 package com.example.gtm.data.entities.remote
 
-data class VisitPost(
-    var id: Int?,
+data class PointVisitPost(
     var day : String,
     var order : Int,
-    var storeId: Int,
+    var id: Int,
     var userId: Int,
     var planned: Boolean,
     var type: String?

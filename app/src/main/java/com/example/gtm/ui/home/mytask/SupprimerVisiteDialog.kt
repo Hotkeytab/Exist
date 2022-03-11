@@ -14,6 +14,8 @@ import com.example.gtm.data.entities.response.TimeClass
 import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.utils.resources.Resource
 import kotlinx.android.synthetic.main.dialog_delete_store.*
+import kotlinx.android.synthetic.main.dialog_delete_store.progress_indicator
+import kotlinx.android.synthetic.main.fragment_task.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

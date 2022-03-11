@@ -1,6 +1,8 @@
 package com.example.gtm.ui.home.mytask.survey
 
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
@@ -14,14 +16,19 @@ import android.widget.FrameLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import com.example.gtm.data.entities.remote.VisitPost
+import com.example.gtm.data.entities.response.SuccessResponse
 import com.example.gtm.data.entities.response.TimeClass
 import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.ui.home.mytask.LocationValueListener
 import com.example.gtm.ui.home.mytask.MyTaskViewModel
 import com.example.gtm.ui.home.mytask.TaskAdapter
+import com.example.gtm.ui.home.mytask.TaskFragment
+import com.example.gtm.ui.home.mytask.survey.quiz.MyQuizViewModel
 import com.example.gtm.utils.resources.Resource
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.dialog_choix_visitee.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -32,6 +39,7 @@ import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class SurveyCheckDialog(
+    listener2: TaskFragment,
     navController: NavController,
     etat1: Int,
     viewAct1: View,
@@ -39,7 +47,7 @@ class SurveyCheckDialog(
     listatasks1: ArrayList<Visite>,
     visite1: Visite,
 
-) :
+    ) :
     DialogFragment() {
 
     private lateinit var locationManager: LocationManager
@@ -54,11 +62,22 @@ class SurveyCheckDialog(
     val adapterTask = adapterTask1
     val listaTasks = listatasks1
     var visite = visite1
+    var listener = listener2
     private lateinit var responseTime: Resource<TimeClass>
     private val viewModel: MyTaskViewModel by viewModels()
+    private val viewModelQuiz: MyQuizViewModel by viewModels()
+    private lateinit var responseAdd: Resource<SuccessResponse>
 
     // declare a global variable of FusedLocationProviderClient
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    private var userId = 0
+    lateinit var sharedPref: SharedPreferences
+
+
+    interface CloseCheckDialogListener {
+        fun onClosedCheckDialog()
+    }
 
 
     override fun onCreateView(
@@ -86,6 +105,12 @@ class SurveyCheckDialog(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        sharedPref = requireContext().getSharedPreferences(
+            R.string.app_name.toString(),
+            Context.MODE_PRIVATE
+        )
+        userId = sharedPref.getInt("id", 0)
+
         // getLocation()
 
         if (etat == 1) {
@@ -105,16 +130,25 @@ class SurveyCheckDialog(
 
             if (etat == 1) {
 
+
                 GlobalScope.launch(Dispatchers.Main) {
+                    val visitePost = VisitPost(
+                        visite.id,
+                        getDateNow(),
+                        0,
+                        visite.storeId,
+                        userId,
+                        false,
+                        "entrée"
+                    )
+                    Log.i("mypostid", "$visitePost")
+                    val arayListVsitePost = ArrayList<VisitPost>()
+                    arayListVsitePost.add(visitePost)
+                    responseAdd = viewModelQuiz.addVisite(arayListVsitePost)
 
-                    responseTime = viewModel.getTime() as Resource<TimeClass>
-                    Log.i("timetime","$responseTime")
-
-                    if(responseTime.responseCode == 200)
-                    {
+                    if (responseAdd.responseCode == 201) {
                         progress_indicator.visibility = View.GONE
-                        visite.pe = 1
-                        visite.pe_time =  compareDatesDay2(responseTime.data!!.datetime)
+
                         val snack = Snackbar.make(
                             viewAct,
                             "Pointage de Début envoyé avec succès",
@@ -124,13 +158,11 @@ class SurveyCheckDialog(
                         val params = view.layoutParams as FrameLayout.LayoutParams
                         params.gravity = Gravity.CENTER
                         dismiss()
-                        adapterTask.setItems(listaTasks)
                         view.layoutParams = params
                         snack.show()
-                    }
-
-                    else
-                    {
+                        var targetNew = listener as CloseCheckDialogListener
+                        targetNew.onClosedCheckDialog()
+                    } else {
                         progress_indicator.visibility = View.GONE
                         val snack = Snackbar.make(
                             viewAct,
@@ -149,26 +181,26 @@ class SurveyCheckDialog(
 
                 }
 
-
-
             } else if (etat == 2) {
 
 
-
                 GlobalScope.launch(Dispatchers.Main) {
+                    val visitePost = VisitPost(
+                        visite.id,
+                        getDateNow(),
+                        0,
+                        visite.storeId,
+                        userId,
+                        false,
+                        "sortie"
+                    )
+                    val arayListVsitePost = ArrayList<VisitPost>()
+                    arayListVsitePost.add(visitePost)
+                    responseAdd = viewModelQuiz.addVisite(arayListVsitePost)
 
-                    progress_indicator.visibility = View.VISIBLE
-                    responseTime = viewModel.getTime() as Resource<TimeClass>
-                    Log.i("timetime", "$responseTime")
-
-                    if(responseTime.responseCode == 200)
-                    {
+                    if (responseAdd.responseCode == 201) {
                         progress_indicator.visibility = View.GONE
-                        visite.ps = 1
-                        visite.ps_time =  compareDatesDay2(responseTime.data!!.datetime)
 
-                        dismiss()
-                        adapterTask.setItems(listaTasks)
                         val snack = Snackbar.make(
                             viewAct,
                             "Pointage de Fin envoyé avec succès",
@@ -177,13 +209,12 @@ class SurveyCheckDialog(
                         val view: View = snack.view
                         val params = view.layoutParams as FrameLayout.LayoutParams
                         params.gravity = Gravity.CENTER
+                        dismiss()
                         view.layoutParams = params
                         snack.show()
-
-                    }
-
-                    else
-                    {
+                        var targetNew = listener as CloseCheckDialogListener
+                        targetNew.onClosedCheckDialog()
+                    } else {
                         progress_indicator.visibility = View.GONE
                         val snack = Snackbar.make(
                             viewAct,
@@ -199,8 +230,8 @@ class SurveyCheckDialog(
                         snack.show()
                     }
 
-                }
 
+                }
 
 
             } else if (etat == 3) {
@@ -230,6 +261,14 @@ class SurveyCheckDialog(
         val date: Date = format.parse(simpleDate)
         format.applyPattern("HH:mm")
         return format.format(date)
+    }
+
+    private fun getDateNow(): String {
+
+        val sdf = SimpleDateFormat("yyyy-MM-dd")
+        val d = Date()
+        return sdf.format(d)
+
     }
 
 

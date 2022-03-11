@@ -8,6 +8,8 @@ data class Visite(
     val store: Store,
     val storeId: Int,
     val planned: Boolean,
+    val start : String?,
+    val end : String?,
     val type: String,
     val updatedAt: String,
     val userId: Int,

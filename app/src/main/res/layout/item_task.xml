@@ -75,6 +75,58 @@
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/store_icon_green"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/green"
+                        android:visibility="gone"
+                        app:cardCornerRadius="@dimen/_5sdp">
+
+                        <LinearLayout
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_40sdp"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="@dimen/_5sdp">
+
+                            <ImageView
+                                android:id="@+id/storeimagewhitegreen"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/outline_storefront_24"
+                                app:tint="@color/white" />
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/store_icon_red"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/red"
+                        android:visibility="gone"
+                        app:cardCornerRadius="@dimen/_5sdp">
+
+                        <LinearLayout
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_40sdp"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="@dimen/_5sdp">
+
+                            <ImageView
+                                android:id="@+id/storeimagewhitered"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/outline_storefront_24"
+                                app:tint="@color/white" />
+
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
                     <LinearLayout
                         android:id="@+id/pointage"
                         android:visibility="gone"
@@ -127,56 +179,9 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/store_icon_green"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/green"
-                    android:visibility="gone"
-                    app:cardCornerRadius="@dimen/_5sdp">
-
-                    <LinearLayout
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_40sdp"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="@dimen/_5sdp">
-
-                        <ImageView
-                            android:id="@+id/storeimagewhitegreen"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/outline_storefront_24"
-                            app:tint="@color/white" />
-
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/store_icon_red"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/red"
-                    android:visibility="gone"
-                    app:cardCornerRadius="@dimen/_5sdp">
-
-                    <LinearLayout
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_40sdp"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="@dimen/_5sdp">
-
-                        <ImageView
-                            android:id="@+id/storeimagewhitered"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/outline_storefront_24"
-                            app:tint="@color/white" />
 
 
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
+
 
                 <LinearLayout
                     android:id="@+id/store_text"
@@ -254,9 +259,18 @@
                         android:src="@drawable/round_travel_explore_24"
                         app:tint="@color/purpleLogin" />
 
+
+
+
                 </LinearLayout>
 
-
+                <View
+                    android:visibility="gone"
+                    android:id="@+id/bar_hors_plan"
+                    android:layout_width="5sp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:background="@color/purpleLogin"/>
 
                 <ImageView
                     android:id="@+id/type"

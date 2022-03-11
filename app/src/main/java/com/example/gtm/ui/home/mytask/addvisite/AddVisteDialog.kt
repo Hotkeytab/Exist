@@ -89,7 +89,7 @@ class AddVisteDialog(
         val height = (resources.displayMetrics.heightPixels * 0.65).toInt()
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         //  dialog!!.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-        dialog!!.window?.setLayout(width, height)
+        dialog!!.window?.setLayout(width, WindowManager.LayoutParams.WRAP_CONTENT)
 
         sharedPref = requireContext().getSharedPreferences(
             R.string.app_name.toString(),
@@ -118,7 +118,7 @@ class AddVisteDialog(
         progress_indicator.visibility = View.VISIBLE
 
         GlobalScope.launch(Dispatchers.Main) {
-            val visitePost = VisitPost(getDateNow(), 0, taskId, userId,false)
+            val visitePost = VisitPost(null,getDateNow(), 0, taskId, userId,false,null)
             val arayListViste = ArrayList<VisitPost>()
             arayListViste.add(visitePost)
             responseAdd = viewModelQuiz.addVisite(arayListViste) as Resource<SuccessResponse>
@@ -158,10 +158,6 @@ class AddVisteDialog(
             if (responseDataStores.responseCode == 200) {
                 progress_indicator.visibility = View.GONE
                 listaDataXX = responseDataStores.data!!.data as ArrayList<DataXX>
-                listaDataXX.add(responseDataStores.data!!.data[0])
-                listaDataXX.add(responseDataStores.data!!.data[0])
-                listaDataXX.add(responseDataStores.data!!.data[0])
-                listaDataXX.add(responseDataStores.data!!.data[0])
 
                 setupRecycleViewPredictionDetail()
             } else {
