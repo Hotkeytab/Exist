@@ -51,6 +51,7 @@ import android.view.*
 import com.example.gtm.R
 import android.view.MenuInflater
 import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.commitNow
 import androidx.lifecycle.lifecycleScope
 import com.example.gtm.data.entities.response.TimeClass
 import com.example.gtm.ui.home.mytask.addvisite.AddVisteDialog
@@ -72,7 +73,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     private var userId = 0
     private lateinit var dateTimeBegin: String
     private lateinit var dateTimeEnd: String
-    private lateinit var fm: FragmentManager
+    private var fm: FragmentManager? = null
     private lateinit var locationManager: LocationManager
     private val REQUEST_CODE = 2
     private var GpsStatus = false
@@ -112,7 +113,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
 
             d = Date()
 
-            fm = requireActivity().supportFragmentManager
+            fm = childFragmentManager
 
             sharedPref = requireContext().getSharedPreferences(
                 R.string.app_name.toString(),
@@ -211,12 +212,14 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
             binding.fab.setOnClickListener {
 
                 addVisiteDialog = AddVisteDialog()
-                addVisiteDialog.show(fm, "AddVisteDialog")
+                addVisiteDialog.show(fm!!, "add")
 
-                fm.executePendingTransactions()
+
+                fm!!.executePendingTransactions()
                 addVisiteDialog.dialog!!.setOnDismissListener {
                     getVisites()
                 }
+
 
             }
 
@@ -276,7 +279,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     private fun getVisites() {
         lifecycleScope.launch(Dispatchers.Main) {
 
-            progress_indicator.visibility = View.VISIBLE
 
             if (!isDetached) {
                 Log.i("repeat", "1")
@@ -382,7 +384,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
                         adapterTask,
                         listaTasks,
                         visite
-                    ).show(fm, "SurveyDialog")
+                    ).show(fm!!, "SurveyDialog")
                 else
                     ChoixImageDialogSuivie(
                         this,
@@ -393,7 +395,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
                         requireView(),
                         adapterTask,
                         listaTasks
-                    ).show(fm, "ChoixImageSuivi")
+                    ).show(fm!!, "ChoixImageSuivi")
 
             } else {
                 showPermissionDeniedGPS()
@@ -883,6 +885,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     override fun onDestroy() {
         super.onDestroy()
         LocationValueListener.locationOn = false
+        fm = null
     }
 
     override fun onClosedCheckDialog() {

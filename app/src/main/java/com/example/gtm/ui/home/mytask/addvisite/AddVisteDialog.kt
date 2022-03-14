@@ -56,7 +56,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import android.content.DialogInterface
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import android.text.Editable
+
+import android.text.TextWatcher
 
 
 @AndroidEntryPoint
@@ -109,6 +113,28 @@ class AddVisteDialog(
             dialog!!.dismiss()
         }
 
+        search_text.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {
+
+                if (search_text.text.toString().isEmpty()) {
+                    adapterAddVisite.setItems(listaDataXX)
+                } else {
+                    val newArrayList = listaDataXX.filter { list ->
+                        filterResearch(
+                            list.name,
+                            search_text.text.toString()
+                        )
+                    }
+                    adapterAddVisite.setItems(newArrayList as ArrayList<DataXX>)
+                }
+
+
+            }
+
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+        })
+
     }
 
     override fun onClickedTask(taskId: Int) {
@@ -118,7 +144,7 @@ class AddVisteDialog(
         progress_indicator.visibility = View.VISIBLE
 
         GlobalScope.launch(Dispatchers.Main) {
-            val visitePost = VisitPost(null,getDateNow(), 0, taskId, userId,false,null)
+            val visitePost = VisitPost(null, getDateNow(), 0, taskId, userId, false, null)
             val arayListViste = ArrayList<VisitPost>()
             arayListViste.add(visitePost)
             responseAdd = viewModelQuiz.addVisite(arayListViste) as Resource<SuccessResponse>
@@ -158,6 +184,9 @@ class AddVisteDialog(
             if (responseDataStores.responseCode == 200) {
                 progress_indicator.visibility = View.GONE
                 listaDataXX = responseDataStores.data!!.data as ArrayList<DataXX>
+                listaDataXX.add(listaDataXX[0])
+                listaDataXX.add(listaDataXX[0])
+                listaDataXX.add(listaDataXX[0])
 
                 setupRecycleViewPredictionDetail()
             } else {
@@ -186,8 +215,44 @@ class AddVisteDialog(
     }
 
     private fun checkForResearch() {
-        if(listaDataXX.size > 3)
+        if (listaDataXX.size > 3)
             search_bar.visibility = View.VISIBLE
+    }
+
+
+    private fun filterResearch(name: String, editTextName: String): Boolean {
+        var patternRegex = ""
+        var patternRegex2 = ""
+        var count = 0
+        var count2 = 0
+        val chunks = editTextName.toUpperCase().split("\\s+".toRegex())
+
+        for (i in chunks) {
+            if (count == 0) {
+                patternRegex = "^($i.+)"
+            } else {
+                patternRegex += "\\s+($i.)"
+            }
+            count++
+        }
+
+        for (j in chunks) {
+            if (count2 == 0) {
+                patternRegex2 = "^($j+)"
+            } else {
+                patternRegex2 += "\\s+($j)"
+            }
+            count2++
+        }
+
+
+        /*  var patternRegex2 = "^(M.+)\\s+(G.)"
+          Log.i("chunks", "$patternRegex2")
+          Log.i("chunks", "$patternRegex")*/
+        val regexFilter = Regex(patternRegex)
+        val regexFilter2 = Regex(patternRegex2)
+
+        return regexFilter.containsMatchIn(name.toUpperCase()) || regexFilter2.containsMatchIn(name.toUpperCase())
     }
 
 
