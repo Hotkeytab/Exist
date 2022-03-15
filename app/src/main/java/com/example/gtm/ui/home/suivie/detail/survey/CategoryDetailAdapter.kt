@@ -18,6 +18,7 @@ import com.example.gtm.data.entities.response.QuestionCategory
 import com.example.gtm.data.entities.response.QuizData
 import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.ui.drawer.DrawerActivity
+import com.example.gtm.ui.home.suivie.detail.SuiviDetailActivity
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_category.*
 import kotlinx.android.synthetic.main.item_sous_category.view.*
@@ -45,6 +46,7 @@ class CategoryDetailAdapter(
         this.items.clear()
         this.items.addAll(items)
         notifyDataSetChanged()
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryDetailViewHolder {
@@ -90,6 +92,7 @@ class CategoryDetailViewHolder(
 
 
 
+
         itemBinding.title.text = item.name
 
         expandColapse()
@@ -130,9 +133,11 @@ class CategoryDetailViewHolder(
                 for (j in categoryResponse.questionSubCategories) {
                     i++
 
+
                     val inflater =
                         LayoutInflater.from(parent.context)
                             .inflate(R.layout.item_sous_category_good, null)
+
 
 
                     inflater.id = j.id
@@ -170,6 +175,9 @@ class CategoryDetailViewHolder(
             isOpenLinear = false
         }
     }
+
+
+
 
     /*    val btnTag = Button(parent.context)
     btnTag.layoutParams = LinearLayout.LayoutParams(

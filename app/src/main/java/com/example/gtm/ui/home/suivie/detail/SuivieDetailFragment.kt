@@ -92,6 +92,7 @@ class SuivieDetailFragment : Fragment(), SuivieDetailFragmentAdapter.SuivieDetai
         binding.quizRecycleview.adapter = adapterSurvey
         adapterSurvey.clear()
         adapterSurvey.setItems(afterSuiviArray)
+        Log.i("afterSuiviArray","$afterSuiviArray")
         binding.progressIndicator.visibility = View.GONE
 
     }
@@ -99,6 +100,7 @@ class SuivieDetailFragment : Fragment(), SuivieDetailFragmentAdapter.SuivieDetai
 
     private fun getListOfSurveys() {
         for (i in (activity as SuiviDetailActivity).afterSuiviArray) {
+            i.survey.average = i.average
             afterSuiviArray.add(i.survey)
         }
 

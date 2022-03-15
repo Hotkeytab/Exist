@@ -31,6 +31,8 @@ class CategoryDetailFragment : Fragment(), CategoryDetailAdapter.CategoryDetailI
     private lateinit var adapterDetailCategory: CategoryDetailAdapter
     private var listaCategory = ArrayList<QuestionCategory>()
     private var myVal: String? = ""
+    lateinit var sharedPref: SharedPreferences
+    private var questionName: String? = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,7 +45,11 @@ class CategoryDetailFragment : Fragment(), CategoryDetailAdapter.CategoryDetailI
 
         myVal = arguments?.getString("quizObject")
 
-
+        sharedPref = requireContext().getSharedPreferences(
+            R.string.app_name.toString(),
+            Context.MODE_PRIVATE
+        )
+        questionName = sharedPref.getString("questionName", "")
 
         if (myVal == null)
             myVal = ""
@@ -63,6 +69,7 @@ class CategoryDetailFragment : Fragment(), CategoryDetailAdapter.CategoryDetailI
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.title.text = questionName
 
         binding.backFromQuiz.setOnClickListener {
             findNavController().navigate(R.id.action_categoryDetailFragment_to_suivieDetailFragment)

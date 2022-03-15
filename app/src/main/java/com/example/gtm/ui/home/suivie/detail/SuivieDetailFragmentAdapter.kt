@@ -80,7 +80,7 @@ class SuivieDetailViewHolder(
         this.quizResponse = item
 
 
-        itemBinding.surveyName.text = item.name
+        itemBinding.surveyName.text = item.name + "\n" + "note:       " +item.average + "/10"
 
         for(i in (sdActivity).afterSuiviArray)
         {
