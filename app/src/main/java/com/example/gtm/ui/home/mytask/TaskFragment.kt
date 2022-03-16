@@ -506,7 +506,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            Log.i("entrance", "Bad")
             return
         }
 

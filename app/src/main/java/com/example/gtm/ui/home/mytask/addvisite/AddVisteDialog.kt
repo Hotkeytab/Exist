@@ -61,6 +61,9 @@ import androidx.fragment.app.Fragment
 import android.text.Editable
 
 import android.text.TextWatcher
+import com.example.gtm.ui.home.mytask.positionmap.AddPositionMapDialog
+import com.example.gtm.ui.home.mytask.positionmap.AjouterPositionDialog
+import com.example.gtm.ui.home.mytask.positionmap.PositionMapDialog
 
 
 @AndroidEntryPoint
@@ -104,10 +107,7 @@ class AddVisteDialog(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         getStores()
-
-
 
         cancel.setOnClickListener {
             dialog!!.dismiss()
@@ -137,30 +137,38 @@ class AddVisteDialog(
 
     }
 
-    override fun onClickedTask(taskId: Int) {
+    override fun onClickedTask(taskId: Int, lat: Double?, lng: Double?, name: String,store: DataXX) {
 
-        dialog!!.setCancelable(false)
-        cancel.isEnabled = false
-        progress_indicator.visibility = View.VISIBLE
+        if (lat == null || lng == null) {
 
-        GlobalScope.launch(Dispatchers.Main) {
-            val visitePost = VisitPost(null, getDateNow(), 0, taskId, userId, false, null)
-            val arayListViste = ArrayList<VisitPost>()
-            arayListViste.add(visitePost)
-            responseAdd = viewModelQuiz.addVisite(arayListViste) as Resource<SuccessResponse>
+            AjouterPositionDialog(name,store).show(requireActivity().supportFragmentManager, "AjouterPositionDialog")
 
 
-            if (responseAdd.responseCode == 201) {
-                dialog!!.setCancelable(true)
-                cancel.isEnabled = true
-                dialog!!.dismiss()
+        } else {
 
-            } else {
-                dialog!!.setCancelable(true)
-                cancel.isEnabled = true
-                progress_indicator.visibility = View.GONE
+            dialog!!.setCancelable(false)
+            cancel.isEnabled = false
+            progress_indicator.visibility = View.VISIBLE
+
+            GlobalScope.launch(Dispatchers.Main) {
+                val visitePost = VisitPost(null, getDateNow(), 0, taskId, userId, false, null)
+                val arayListViste = ArrayList<VisitPost>()
+                arayListViste.add(visitePost)
+                responseAdd = viewModelQuiz.addVisite(arayListViste) as Resource<SuccessResponse>
+
+
+                if (responseAdd.responseCode == 201) {
+                    dialog!!.setCancelable(true)
+                    cancel.isEnabled = true
+                    dialog!!.dismiss()
+
+                } else {
+                    dialog!!.setCancelable(true)
+                    cancel.isEnabled = true
+                    progress_indicator.visibility = View.GONE
+                }
+
             }
-            Log.i("ourresponse", "$responseAdd")
         }
     }
 
@@ -184,6 +192,7 @@ class AddVisteDialog(
             if (responseDataStores.responseCode == 200) {
                 progress_indicator.visibility = View.GONE
                 listaDataXX = responseDataStores.data!!.data as ArrayList<DataXX>
+                listaDataXX[0].lng = null
                 listaDataXX.add(listaDataXX[0])
                 listaDataXX.add(listaDataXX[0])
                 listaDataXX.add(listaDataXX[0])

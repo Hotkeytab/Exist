@@ -17,4 +17,8 @@ import retrofit2.http.Multipart
 interface StoreService {
     @GET("store/")
     suspend fun getStores() : Response<GetStore>
+
+    @Multipart
+    @POST("store/")
+    suspend fun modifyStore(@Part("store") store:RequestBody) : Response<ModifyStoreResponse>
 }

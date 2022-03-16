@@ -36,7 +36,7 @@ class AddVisiteAdapter(
 
 
     interface TaskItemListener {
-        fun onClickedTask(taskId: Int)
+        fun onClickedTask(taskId: Int,lat:Double?,lng:Double?,name: String,store:DataXX)
 
     }
 
@@ -102,12 +102,18 @@ class TaskViewHolder(
         itemBinding.distance.text = item.address
 
 
+
     }
 
 
     override fun onClick(v: View?) {
         listener.onClickedTask(
             visiteResponse.id,
+            visiteResponse.lat,
+            visiteResponse.lng,
+            visiteResponse.name,
+            visiteResponse
+
         )
 
     }

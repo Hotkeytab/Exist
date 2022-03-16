@@ -1,4 +1,4 @@
-package com.example.gtm.ui.home.mytask
+package com.example.gtm.ui.home.mytask.positionmap
 
 
 import android.os.Bundle
@@ -9,6 +9,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import android.view.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.example.gtm.data.entities.response.DataXX
 import com.example.gtm.data.entities.response.SuccessResponseWithMessage
 import com.example.gtm.data.entities.response.TimeClass
 import com.example.gtm.data.entities.response.Visite
@@ -21,29 +22,21 @@ import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class SupprimerVisiteDialog(
-    visiteId2: Int,
-    positionVisite2: Int,
-    taskAdapter2: TaskAdapter,
-    items2: ArrayList<Visite>,
-    items3 : ArrayList<Visite>
+class AjouterPositionDialog(
+        name2: String,
+        store2: DataXX
 ) :
     DialogFragment() {
 
-    val visiteId = visiteId2
-    val positionVisite = positionVisite2
-    private lateinit var response: Resource<SuccessResponseWithMessage>
-    private val viewModel: MyTaskViewModel by viewModels()
-    private val taskAdapter = taskAdapter2
-    private val items = items2
-    private val items4 = items3
+    val name = name2
+    val store = store2
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_delete_store, container, false)
+        return inflater.inflate(R.layout.dialog_ajouter_position, container, false)
     }
 
     override fun onStart() {
@@ -64,32 +57,11 @@ class SupprimerVisiteDialog(
         super.onViewCreated(view, savedInstanceState)
 
         accept.setOnClickListener {
-            progress_bar.visibility = View.VISIBLE
-
-
-            /*  items.removeAt(positionVisite)
-              taskAdapter.notifyDataSetChanged()
-              taskAdapter.notifyItemRemoved(positionVisite)*/
-
-
-            lifecycleScope.launch(Dispatchers.Main) {
-                response = viewModel.deleteVisite(visiteId)
-
-                if (response.responseCode == 202) {
-                    progress_bar.visibility = View.GONE
-                    items.removeAt(positionVisite)
-                    items4.removeAt(positionVisite)
-                   // taskAdapter.notifyItemRemoved(positionVisite)
-                    taskAdapter.notifyDataSetChanged()
-                    dialog!!.dismiss()
-                } else {
-                    progress_bar.visibility = View.GONE
-
-                }
-            }
-
-
-
+            AddPositionMapDialog(
+                name,
+                store
+            ).show(requireActivity().supportFragmentManager, "AddPositionMapDialog")
+            dialog!!.dismiss()
         }
 
         cancel_button.setOnClickListener {

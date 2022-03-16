@@ -9,11 +9,13 @@ import com.example.gtm.data.remote.user.UserRemoteDataSource
 import com.example.gtm.data.remote.visite.VisiteRemoteDataSource
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Part
 import javax.inject.Inject
 
 class StoreRepository @Inject constructor(
     private val storeRemoteDataSource: StoreRemoteDataSource
 ) {
-
     suspend fun getStores() = storeRemoteDataSource.getStores()
+
+    suspend fun modifyStore(@Part store: RequestBody) = storeRemoteDataSource.modifyStore(store)
 }
