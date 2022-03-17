@@ -89,7 +89,7 @@ class AddPositionMapDialog(
         mapFragment.getMapAsync(this)
 
         confirm_position.setOnClickListener {
-
+            progress_indicator_position.visibility = View.VISIBLE
             val newStore = store.copy()
             newStore.lat = newPosition.latitude
             newStore.lng = newPosition.longitude
@@ -104,7 +104,14 @@ class AddPositionMapDialog(
 
                 response = viewModel.modifyStore(bodyJson)
 
-                Log.i("mybest","$response")
+                if(response.responseCode == 201)
+                {
+                    store.lat = newPosition.latitude
+                    store.lng = newPosition.longitude
+                    dialog!!.dismiss()
+                }
+
+                progress_indicator_position.visibility = View.GONE
             }
 
 
@@ -117,19 +124,53 @@ class AddPositionMapDialog(
 
 
         // Add a marker in Market and move the camera
-        val marketPosition = LatLng(
+      /*  val marketPosition = LatLng(
             LocationValueListener.myLocation.latitude,
             LocationValueListener.myLocation.longitude
         )
 
         val location = CameraUpdateFactory.newLatLngZoom(
-            marketPosition, 15f
+            marketPosition, 16f
+        )
+        mMap.animateCamera(location) */
+
+        val marketPosition = LatLng(
+                LocationValueListener.myLocation.latitude,
+        LocationValueListener.myLocation.longitude
+        )
+
+        val markerOptions = MarkerOptions()
+
+        // Setting the position for the marker
+        markerOptions.position(marketPosition)
+        newPosition = marketPosition
+
+
+        markerOptions.title(nameIn)
+
+        // Clears the previously touched position
+        googleMap.clear()
+
+        // Animating to the touched position
+        googleMap.animateCamera(CameraUpdateFactory.newLatLng(marketPosition))
+
+        // Placing a marker on the touched position
+        googleMap.addMarker(markerOptions)
+
+        val location = CameraUpdateFactory.newLatLngZoom(
+            marketPosition, 16f
         )
         mMap.animateCamera(location)
 
+        confirm_position.visibility = View.VISIBLE
+
+
+
+
+
 
         // Setting a click event handler for the map
-        mMap.setOnMapClickListener { latLng -> // Creating a marker
+       /* mMap.setOnMapClickListener { latLng -> // Creating a marker
             val markerOptions = MarkerOptions()
 
             // Setting the position for the marker
@@ -150,7 +191,7 @@ class AddPositionMapDialog(
 
 
             confirm_position.visibility = View.VISIBLE
-        }
+        } */
     }
 
 

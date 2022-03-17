@@ -12,6 +12,11 @@
         android:icon="@drawable/outline_calendar_month_24"
         android:title="Suivie planning"/>
 
+    <item
+        android:id="@+id/kpi"
+        android:icon="@drawable/ic_baseline_bar_chart_24"
+        android:title="Kpi"/>
+
 
 
 

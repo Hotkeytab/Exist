@@ -234,7 +234,10 @@ class AddVisteDialog(
         var patternRegex2 = ""
         var count = 0
         var count2 = 0
-        val chunks = editTextName.toUpperCase().split("\\s+".toRegex())
+
+       var  editTextName2 = editTextName.replace('e','é')
+        val chunks = editTextName2.toUpperCase().split("\\s+".toRegex())
+
 
         for (i in chunks) {
             if (count == 0) {

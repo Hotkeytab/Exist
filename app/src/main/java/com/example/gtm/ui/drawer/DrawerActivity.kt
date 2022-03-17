@@ -29,6 +29,7 @@ import com.example.gtm.data.entities.ui.User
 import com.example.gtm.ui.auth.AuthActivity
 import com.example.gtm.ui.drawer.profile.EditProfileDialog
 import com.example.gtm.ui.home.HomeActivity
+import com.example.gtm.ui.home.kpi.KpiFragment
 import com.example.gtm.ui.home.mytask.BeforeHomeFragment
 import com.example.gtm.ui.home.suivie.SuiviePlanningFragment
 import com.example.gtm.utils.animations.UiAnimations
@@ -122,6 +123,12 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                         lastTimeClicked = SystemClock.elapsedRealtime()
                     }
 
+                    R.id.kpi -> {
+                        if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
+                            selectedFragment = KpiFragment()
+                        }
+                        lastTimeClicked = SystemClock.elapsedRealtime()
+                    }
 
                 }
 
