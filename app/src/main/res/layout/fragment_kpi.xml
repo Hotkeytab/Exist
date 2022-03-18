@@ -8,12 +8,11 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
-        >
+        android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="@dimen/_600sdp">
 
 
             <com.google.android.material.appbar.AppBarLayout
@@ -43,22 +42,168 @@
                 app:layout_constraintTop_toBottomOf="@+id/appbar" />
 
 
-            <com.jjoe64.graphview.GraphView
-                android:id="@+id/line_graph"
+            <LinearLayout
+                android:id="@+id/mainlinear"
                 android:layout_width="match_parent"
-                android:layout_height="200dip"
-                app:layout_constraintTop_toBottomOf="@id/progress_indicator" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/progress_indicator">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardview_orders"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_60sdp"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginRight="@dimen/_10sdp"
+                        android:layout_marginBottom="@dimen/_10sdp"
+                        app:cardCornerRadius="@dimen/_4sdp"
+                        app:cardUseCompatPadding="true"
+                        app:layout_constraintTop_toBottomOf="@+id/date_text">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="@dimen/_5sdp"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+
+                                >
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:hint="Orders"
+                                    android:textStyle="bold" />
 
 
-            <com.jjoe64.graphview.GraphView
-                android:id="@+id/bar_graph"
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="1,235"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                            <ImageView
+                                android:layout_width="@dimen/_35sdp"
+                                android:layout_height="@dimen/_35sdp"
+                                android:layout_gravity="center"
+                                android:layout_marginLeft="@dimen/_15sdp"
+                                android:src="@drawable/outline_list_alt_24"
+                                app:tint="@color/purpleLogin" />
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_60sdp"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginRight="@dimen/_10sdp"
+                        android:layout_marginBottom="@dimen/_10sdp"
+                        app:cardCornerRadius="@dimen/_4sdp"
+                        app:cardUseCompatPadding="true"
+                        app:layout_constraintTop_toBottomOf="@+id/date_text">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="@dimen/_5sdp"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+
+                                >
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:hint="Revenue"
+                                    android:textStyle="bold" />
+
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="$35,723"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                            <ImageView
+                                android:layout_width="@dimen/_35sdp"
+                                android:layout_height="@dimen/_35sdp"
+                                android:layout_gravity="center"
+                                android:layout_marginLeft="@dimen/_15sdp"
+                                android:src="@drawable/outline_attach_money_24"
+                                app:tint="@color/purpleLogin" />
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="200dip"
-                android:layout_marginTop="@dimen/_10sdp"
-                app:layout_constraintTop_toBottomOf="@id/line_graph" />
+                android:layout_height="0dp"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_25sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                app:cardCornerRadius="@dimen/_4sdp"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mainlinear">
 
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/activity_piechart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
-
+            </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

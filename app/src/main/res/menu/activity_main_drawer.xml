@@ -3,11 +3,6 @@
 
 
 
-    <item
-        android:id="@+id/task"
-        android:icon="@drawable/outline_receipt_long_24"
-        android:title="Planning du jour"/>
-
 
     <item
         android:id="@+id/nav_profile"

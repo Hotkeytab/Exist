@@ -151,9 +151,6 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
 
         when (item.itemId) {
-            R.id.task -> {
-                print("1")
-            }
             R.id.nav_profile -> {
                 user.first_name = firstname_only.text.toString()
                 user.last_name = lastname_only.text.toString()
