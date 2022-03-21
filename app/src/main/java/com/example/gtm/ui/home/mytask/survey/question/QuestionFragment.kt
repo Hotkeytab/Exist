@@ -29,12 +29,15 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.example.gtm.data.entities.remote.ImagePath
 import com.example.gtm.data.entities.remote.QuestionPost
 import com.example.gtm.data.entities.remote.SurveyPost
 import com.example.gtm.data.entities.response.SuccessResponse
 import com.example.gtm.ui.drawer.DrawerActivity
+import com.example.gtm.utils.remote.Internet.InternetCheck
+import com.example.gtm.utils.remote.Internet.InternetCheckDialog
 import com.example.gtm.utils.remote.Internet.ProgressRequestBody
 import com.example.gtm.utils.resources.Resource
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -73,6 +76,8 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
     private var storeId = 0
     private var surveyId = 0
     lateinit var sharedPref: SharedPreferences
+    private lateinit var dialogInternet: InternetCheckDialog
+    private lateinit var fm: FragmentManager
 
 
     override fun onCreateView(
@@ -81,6 +86,9 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentQuestionBinding.inflate(inflater, container, false)
+
+        dialogInternet = InternetCheckDialog()
+        fm = requireActivity().supportFragmentManager
 
         requireActivity().bottom_nav.visibility = View.GONE
 
@@ -550,17 +558,20 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
             userNewJson
         )
 
+
+        checkInternet(listMultipartBody,bodyJson)
+    }
+
+
+    private fun getQuestions(listMultipartBody:ArrayList<MultipartBody.Part?>,bodyJson:RequestBody)
+    {
         GlobalScope.launch(Dispatchers.Main) {
             responseData = viewModel.postSurveyResponse(
                 listMultipartBody,
                 bodyJson
             ) as Resource<SuccessResponse>
-            Log.i("surveyresponse", "Called")
-            Log.i("surveyresponse", "$responseData")
         }
-
     }
-
 
     private fun nextCategory() {
         (activity as DrawerActivity).listOfQuestionsPerSc[questionList[i].questionSubCategoryId] =
@@ -616,6 +627,28 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
         return true
     }
 
+
+    private fun checkInternet(listMultipartBody:ArrayList<MultipartBody.Part?>,bodyJson:RequestBody) {
+        InternetCheck { internet ->
+            if (internet)
+                getQuestions(listMultipartBody,bodyJson)
+            else {
+
+                //  progress_indicator_dialog.visibility = View.INVISIBLE
+                dialogInternet.show(
+                    fm,
+                    "Internet check"
+                )
+                fm.executePendingTransactions();
+
+                dialogInternet.dialog!!.setOnCancelListener {
+                    checkInternet(listMultipartBody,bodyJson)
+                }
+
+
+            }
+        }
+    }
 
 }
 

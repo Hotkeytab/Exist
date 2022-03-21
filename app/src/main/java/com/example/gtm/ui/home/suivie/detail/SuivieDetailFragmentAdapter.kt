@@ -80,7 +80,7 @@ class SuivieDetailViewHolder(
         this.quizResponse = item
 
 
-        itemBinding.surveyName.text = item.name + "\n" + "note:       " +item.average + "/10"
+        itemBinding.surveyName.text = item.name + "\n" + "note:       " +String.format("%.1f",item.average) + "/10"
 
         for(i in (sdActivity).afterSuiviArray)
         {
@@ -88,6 +88,7 @@ class SuivieDetailViewHolder(
             {
                 itemBinding.time.text = extractDate(i.responses[0].createdAt)
                 return
+
             }
         }
 

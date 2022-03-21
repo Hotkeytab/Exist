@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +19,8 @@ import com.example.gtm.data.entities.response.QuizData
 import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.databinding.FragmentQuizBinding
 import com.example.gtm.ui.drawer.DrawerActivity
+import com.example.gtm.utils.remote.Internet.InternetCheck
+import com.example.gtm.utils.remote.Internet.InternetCheckDialog
 import com.example.gtm.utils.resources.Resource
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,6 +41,8 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
     private val viewModel: MyQuizViewModel by viewModels()
     private var storeName: String? = ""
     lateinit var sharedPref: SharedPreferences
+    private lateinit var dialogInternet: InternetCheckDialog
+    private lateinit var fm: FragmentManager
 
 
 
@@ -47,6 +52,10 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentQuizBinding.inflate(inflater, container, false)
+
+
+        dialogInternet = InternetCheckDialog()
+        fm = requireActivity().supportFragmentManager
 
         DrawerActivity.trackState.currentOne = "quiz fragment"
 
@@ -83,7 +92,7 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
 
         binding.title.text = storeName
 
-        getVisites()
+        checkInternet()
 
 
 
@@ -135,6 +144,30 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
                 setupRecycleViewSurvey()
             }
 
+        }
+    }
+
+
+
+    private fun checkInternet() {
+        InternetCheck { internet ->
+            if (internet)
+                getVisites()
+            else {
+
+                //  progress_indicator_dialog.visibility = View.INVISIBLE
+                dialogInternet.show(
+                    fm,
+                    "Internet check"
+                )
+                fm.executePendingTransactions();
+
+                dialogInternet.dialog!!.setOnCancelListener {
+                    checkInternet()
+                }
+
+
+            }
         }
     }
 

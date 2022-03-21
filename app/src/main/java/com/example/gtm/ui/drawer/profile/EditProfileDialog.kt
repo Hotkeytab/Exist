@@ -12,6 +12,7 @@ import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.gtm.R
@@ -23,6 +24,8 @@ import com.example.gtm.utils.extensions.getFileName
 import com.example.gtm.utils.extensions.isNumeric
 import com.example.gtm.utils.extensions.isValidEmail
 import com.example.gtm.utils.extensions.isValidName
+import com.example.gtm.utils.remote.Internet.InternetCheck
+import com.example.gtm.utils.remote.Internet.InternetCheckDialog
 import com.example.gtm.utils.resources.Resource
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dagger.hilt.android.AndroidEntryPoint
@@ -66,6 +69,8 @@ class EditProfileDialog(
     private var profilePictureIn = profilePicture
     private var file: File? = null
     private var body: UploadRequestBody? = null
+    private lateinit var dialogInternet: InternetCheckDialog
+    private lateinit var fm: FragmentManager
 
 
     override fun onCreateView(
@@ -76,7 +81,7 @@ class EditProfileDialog(
         dialog!!.window!!.setBackgroundDrawableResource(R.drawable.corned_white_purple)
 
 
-
+        dialogInternet = InternetCheckDialog()
         return inflater.inflate(R.layout.dialog_edit_profile, container, false)
     }
 
@@ -92,6 +97,8 @@ class EditProfileDialog(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        fm = requireActivity().supportFragmentManager
+
         profile_picture_dialog.setOnClickListener {
             openImageChoser()
         }
@@ -100,7 +107,7 @@ class EditProfileDialog(
         }
 
         submit.setOnClickListener {
-            changeProfile()
+            checkInternet()
         }
         initProfile()
     }
@@ -236,5 +243,28 @@ class EditProfileDialog(
         print("ok")
     }
 
+
+
+    private fun checkInternet() {
+        InternetCheck { internet ->
+            if (internet)
+                changeProfile()
+            else {
+
+                progress_indicator_dialog.visibility = View.INVISIBLE
+                dialogInternet.show(
+                    fm,
+                    "Internet check"
+                )
+                fm.executePendingTransactions();
+
+                dialogInternet.dialog!!.setOnCancelListener {
+                    checkInternet()
+                }
+
+
+            }
+        }
+    }
 
 }

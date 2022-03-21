@@ -261,18 +261,20 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
 
     }
 
-    override fun onClickedTask(taskId: Int, distance: String, visite2: Visite) {
+    override fun onClickedTask(taskId: Int, distance: String, visite2: Visite, theDistance: Float) {
 
-        visite = visite2
-        askForPermissionsDialog()
-        sharedPref =
-            requireContext().getSharedPreferences(
-                R.string.app_name.toString(),
-                Context.MODE_PRIVATE
-            )!!
-        with(sharedPref.edit()) {
-            this?.putInt("storeId", taskId)
-        }?.commit()
+        if (theDistance < 250) {
+            visite = visite2
+            askForPermissionsDialog()
+            sharedPref =
+                requireContext().getSharedPreferences(
+                    R.string.app_name.toString(),
+                    Context.MODE_PRIVATE
+                )!!
+            with(sharedPref.edit()) {
+                this?.putInt("storeId", taskId)
+            }?.commit()
+        }
     }
 
     @DelicateCoroutinesApi
@@ -367,6 +369,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
             if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 showPermissionDeniedDialog()
             } else {
+
                 requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE)
             }
             return false

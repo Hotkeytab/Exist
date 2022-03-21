@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.example.gtm.R
 import com.example.gtm.data.entities.response.DataXX
@@ -15,6 +16,8 @@ import com.example.gtm.data.entities.response.ModifyStoreResponse
 import com.example.gtm.ui.home.mytask.LocationValueListener
 import com.example.gtm.ui.home.mytask.StaticMapClicked
 import com.example.gtm.ui.home.mytask.addvisite.AddVisiteDialogViewModel
+import com.example.gtm.utils.remote.Internet.InternetCheck
+import com.example.gtm.utils.remote.Internet.InternetCheckDialog
 import com.example.gtm.utils.resources.Resource
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -48,6 +51,8 @@ class AddPositionMapDialog(
     private val store = store2
     private val viewModel: AddPositionMapDialogViewModel by viewModels()
     private lateinit var response: Resource<ModifyStoreResponse>
+    private lateinit var dialogInternet: InternetCheckDialog
+    private lateinit var fm: FragmentManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,6 +61,8 @@ class AddPositionMapDialog(
     ): View? {
         //   dialog!!.window!!.setBackgroundDrawableResource(R.drawable.corned_white_purple)
 
+        dialogInternet = InternetCheckDialog()
+        fm = requireActivity().supportFragmentManager
         return inflater.inflate(R.layout.fragment_position_map, container, false)
     }
 
@@ -89,34 +96,37 @@ class AddPositionMapDialog(
         mapFragment.getMapAsync(this)
 
         confirm_position.setOnClickListener {
-            progress_indicator_position.visibility = View.VISIBLE
-            val newStore = store.copy()
-            newStore.lat = newPosition.latitude
-            newStore.lng = newPosition.longitude
 
-            GlobalScope.launch(Dispatchers.Main) {
-
-                val newStoreJson = jacksonObjectMapper().writeValueAsString(newStore)
-                val bodyJson = RequestBody.create(
-                    "application/json; charset=utf-8".toMediaTypeOrNull(),
-                    newStoreJson
-                )
-
-                response = viewModel.modifyStore(bodyJson)
-
-                if(response.responseCode == 201)
-                {
-                    store.lat = newPosition.latitude
-                    store.lng = newPosition.longitude
-                    dialog!!.dismiss()
-                }
-
-                progress_indicator_position.visibility = View.GONE
-            }
-
+            checkInternet()
 
         }
 
+    }
+
+    private fun addPosition() {
+        progress_indicator_position.visibility = View.VISIBLE
+        val newStore = store.copy()
+        newStore.lat = newPosition.latitude
+        newStore.lng = newPosition.longitude
+
+        GlobalScope.launch(Dispatchers.Main) {
+
+            val newStoreJson = jacksonObjectMapper().writeValueAsString(newStore)
+            val bodyJson = RequestBody.create(
+                "application/json; charset=utf-8".toMediaTypeOrNull(),
+                newStoreJson
+            )
+
+            response = viewModel.modifyStore(bodyJson)
+
+            if (response.responseCode == 201) {
+                store.lat = newPosition.latitude
+                store.lng = newPosition.longitude
+                dialog!!.dismiss()
+            }
+
+            progress_indicator_position.visibility = View.GONE
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -124,19 +134,19 @@ class AddPositionMapDialog(
 
 
         // Add a marker in Market and move the camera
-      /*  val marketPosition = LatLng(
-            LocationValueListener.myLocation.latitude,
-            LocationValueListener.myLocation.longitude
-        )
+        /*  val marketPosition = LatLng(
+              LocationValueListener.myLocation.latitude,
+              LocationValueListener.myLocation.longitude
+          )
 
-        val location = CameraUpdateFactory.newLatLngZoom(
-            marketPosition, 16f
-        )
-        mMap.animateCamera(location) */
+          val location = CameraUpdateFactory.newLatLngZoom(
+              marketPosition, 16f
+          )
+          mMap.animateCamera(location) */
 
         val marketPosition = LatLng(
-                LocationValueListener.myLocation.latitude,
-        LocationValueListener.myLocation.longitude
+            LocationValueListener.myLocation.latitude,
+            LocationValueListener.myLocation.longitude
         )
 
         val markerOptions = MarkerOptions()
@@ -165,35 +175,52 @@ class AddPositionMapDialog(
         confirm_position.visibility = View.VISIBLE
 
 
-
-
-
-
         // Setting a click event handler for the map
-       /* mMap.setOnMapClickListener { latLng -> // Creating a marker
-            val markerOptions = MarkerOptions()
+        /* mMap.setOnMapClickListener { latLng -> // Creating a marker
+             val markerOptions = MarkerOptions()
 
-            // Setting the position for the marker
-            markerOptions.position(latLng)
-            newPosition = latLng
-
-
-            markerOptions.title(nameIn)
-
-            // Clears the previously touched position
-            googleMap.clear()
-
-            // Animating to the touched position
-            googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
-
-            // Placing a marker on the touched position
-            googleMap.addMarker(markerOptions)
+             // Setting the position for the marker
+             markerOptions.position(latLng)
+             newPosition = latLng
 
 
-            confirm_position.visibility = View.VISIBLE
-        } */
+             markerOptions.title(nameIn)
+
+             // Clears the previously touched position
+             googleMap.clear()
+
+             // Animating to the touched position
+             googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+
+             // Placing a marker on the touched position
+             googleMap.addMarker(markerOptions)
+
+
+             confirm_position.visibility = View.VISIBLE
+         } */
     }
 
 
+    private fun checkInternet() {
+        InternetCheck { internet ->
+            if (internet)
+                addPosition()
+            else {
+
+                //  progress_indicator_dialog.visibility = View.INVISIBLE
+                dialogInternet.show(
+                    fm,
+                    "Internet check"
+                )
+                fm.executePendingTransactions();
+
+                dialogInternet.dialog!!.setOnCancelListener {
+                    checkInternet()
+                }
+
+
+            }
+        }
+    }
 }
 

@@ -238,8 +238,6 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
                 listMultipartBody,
                 bodyJson
             ) as Resource<SuccessResponse>
-            Log.i("surveyresponse", "Called")
-            Log.i("surveyresponse", "$responseData")
 
             if (responseData.responseCode == 201) {
                 val snack = Snackbar.make(

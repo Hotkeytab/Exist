@@ -61,9 +61,13 @@ import androidx.fragment.app.Fragment
 import android.text.Editable
 
 import android.text.TextWatcher
+import androidx.fragment.app.FragmentManager
 import com.example.gtm.ui.home.mytask.positionmap.AddPositionMapDialog
 import com.example.gtm.ui.home.mytask.positionmap.AjouterPositionDialog
 import com.example.gtm.ui.home.mytask.positionmap.PositionMapDialog
+import com.example.gtm.utils.remote.Internet.InternetCheck
+import com.example.gtm.utils.remote.Internet.InternetCheckDialog
+import kotlinx.android.synthetic.main.dialog_edit_profile.*
 
 
 @AndroidEntryPoint
@@ -81,6 +85,8 @@ class AddVisteDialog(
     private var listaDataXX = ArrayList<DataXX>()
     private var userId = 0
     lateinit var sharedPref: SharedPreferences
+    private lateinit var dialogInternet: InternetCheckDialog
+    private lateinit var fm: FragmentManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -107,7 +113,12 @@ class AddVisteDialog(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getStores()
+
+        dialogInternet = InternetCheckDialog()
+        fm = requireActivity().supportFragmentManager
+
+        checkInternetGetStore()
+
 
         cancel.setOnClickListener {
             dialog!!.dismiss()
@@ -137,38 +148,55 @@ class AddVisteDialog(
 
     }
 
-    override fun onClickedTask(taskId: Int, lat: Double?, lng: Double?, name: String,store: DataXX) {
+    override fun onClickedTask(
+        taskId: Int,
+        lat: Double?,
+        lng: Double?,
+        name: String,
+        store: DataXX
+    ) {
 
         if (lat == null || lng == null) {
 
-            AjouterPositionDialog(name,store).show(requireActivity().supportFragmentManager, "AjouterPositionDialog")
+            AjouterPositionDialog(name, store).show(
+                requireActivity().supportFragmentManager,
+                "AjouterPositionDialog"
+            )
 
 
         } else {
 
-            dialog!!.setCancelable(false)
-            cancel.isEnabled = false
-            progress_indicator.visibility = View.VISIBLE
 
-            GlobalScope.launch(Dispatchers.Main) {
-                val visitePost = VisitPost(null, getDateNow(), 0, taskId, userId, false, null)
-                val arayListViste = ArrayList<VisitPost>()
-                arayListViste.add(visitePost)
-                responseAdd = viewModelQuiz.addVisite(arayListViste) as Resource<SuccessResponse>
+            checkInternetAddVisite(taskId)
 
 
-                if (responseAdd.responseCode == 201) {
-                    dialog!!.setCancelable(true)
-                    cancel.isEnabled = true
-                    dialog!!.dismiss()
+        }
+    }
 
-                } else {
-                    dialog!!.setCancelable(true)
-                    cancel.isEnabled = true
-                    progress_indicator.visibility = View.GONE
-                }
 
+    private fun addVisite(taskId: Int) {
+        dialog!!.setCancelable(false)
+        cancel.isEnabled = false
+        progress_indicator.visibility = View.VISIBLE
+
+        GlobalScope.launch(Dispatchers.Main) {
+            val visitePost = VisitPost(null, getDateNow(), 0, taskId, userId, false, null)
+            val arayListViste = ArrayList<VisitPost>()
+            arayListViste.add(visitePost)
+            responseAdd = viewModelQuiz.addVisite(arayListViste) as Resource<SuccessResponse>
+
+
+            if (responseAdd.responseCode == 201) {
+                dialog!!.setCancelable(true)
+                cancel.isEnabled = true
+                dialog!!.dismiss()
+
+            } else {
+                dialog!!.setCancelable(true)
+                cancel.isEnabled = true
+                progress_indicator.visibility = View.GONE
             }
+
         }
     }
 
@@ -235,7 +263,7 @@ class AddVisteDialog(
         var count = 0
         var count2 = 0
 
-       var  editTextName2 = editTextName.replace('e','é')
+        var editTextName2 = editTextName.replace('e', 'é')
         val chunks = editTextName2.toUpperCase().split("\\s+".toRegex())
 
 
@@ -265,6 +293,53 @@ class AddVisteDialog(
         val regexFilter2 = Regex(patternRegex2)
 
         return regexFilter.containsMatchIn(name.toUpperCase()) || regexFilter2.containsMatchIn(name.toUpperCase())
+    }
+
+
+    private fun checkInternetGetStore() {
+        InternetCheck { internet ->
+            if (internet)
+                getStores()
+            else {
+
+              //  progress_indicator_dialog.visibility = View.INVISIBLE
+                dialogInternet.show(
+                    fm,
+                    "Internet check"
+                )
+                fm.executePendingTransactions();
+
+                dialogInternet.dialog!!.setOnCancelListener {
+                    checkInternetGetStore()
+                }
+
+
+            }
+        }
+    }
+
+
+
+    private fun checkInternetAddVisite(taskId: Int) {
+        InternetCheck { internet ->
+            if (internet)
+                addVisite(taskId)
+            else {
+
+                progress_indicator_dialog.visibility = View.INVISIBLE
+                dialogInternet.show(
+                    fm,
+                    "Internet check"
+                )
+                fm.executePendingTransactions();
+
+                dialogInternet.dialog!!.setOnCancelListener {
+                    checkInternetGetStore()
+                }
+
+
+            }
+        }
     }
 
 

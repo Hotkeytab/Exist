@@ -37,7 +37,7 @@ class TaskAdapter(
     private val listaTask = listaTasks2
 
     interface TaskItemListener {
-        fun onClickedTask(taskId: Int, distance: String, visite: Visite)
+        fun onClickedTask(taskId: Int, distance: String, visite: Visite,theDistance: Float)
 
     }
 
@@ -91,6 +91,7 @@ class TaskViewHolder(
     lateinit var sharedPref: SharedPreferences
     private val REQUEST_CODE = 2
     private var finalDistance = ""
+    private var theDistance = 0f
 
     init {
         itemBinding.root.setOnClickListener(this)
@@ -139,7 +140,7 @@ class TaskViewHolder(
         itemBinding.place.text = item.store.governorate + ", " + item.store.address
 
 
-        val theDistance = distance(
+         theDistance = distance(
             LocationValueListener.myLocation.latitude.toFloat(),
             LocationValueListener.myLocation.longitude.toFloat(),
             item.store.lat.toFloat(),
@@ -148,7 +149,7 @@ class TaskViewHolder(
 
 
 
-        if (theDistance < 1000) {
+        if (theDistance < 250) {
 
             finalDistance = theDistance.toInt().toString() + " m"
             itemBinding.cardviewColorEnable.setCardBackgroundColor(Color.rgb(255, 255, 255))
@@ -157,7 +158,8 @@ class TaskViewHolder(
                 listener.onClickedTask(
                     visiteResponse.id,
                     finalDistance,
-                    item
+                    item,
+                    theDistance
                 )
                 /*  parent.findNavController()
                       .navigate(R.id.action_taskFragment_to_quizFragment)*/
@@ -168,7 +170,8 @@ class TaskViewHolder(
                 listener.onClickedTask(
                     visiteResponse.id,
                     finalDistance,
-                    item
+                    item,
+                    theDistance
                 )
                 /* parent.findNavController()
                      .navigate(R.id.action_taskFragment_to_quizFragment)*/
@@ -211,7 +214,8 @@ class TaskViewHolder(
             listener.onClickedTask(
                 visiteResponse.storeId,
                 finalDistance,
-                item
+                item,
+                theDistance
             )
         }
 
@@ -221,7 +225,8 @@ class TaskViewHolder(
             listener.onClickedTask(
                 visiteResponse.storeId,
                 finalDistance,
-                item
+                item,
+                theDistance
             )
         }
 
@@ -235,7 +240,8 @@ class TaskViewHolder(
         listener.onClickedTask(
             visiteResponse.storeId,
             finalDistance,
-            visiteResponse
+            visiteResponse,
+            theDistance
         )
 
 
