@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.gtm.R
 import com.example.gtm.data.entities.response.Quiz
 import com.example.gtm.data.entities.response.QuizData
@@ -25,6 +26,7 @@ import com.example.gtm.utils.resources.Resource
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.dialog_add_visite.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -45,7 +47,6 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
     private lateinit var fm: FragmentManager
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,7 +60,7 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
 
         DrawerActivity.trackState.currentOne = "quiz fragment"
 
-        (activity as DrawerActivity).listOfQuestionsPerSc =  HashMap<Int,HashMap<Int, Survey?>>()
+        (activity as DrawerActivity).listOfQuestionsPerSc = HashMap<Int, HashMap<Int, Survey?>>()
         sharedPref = requireContext().getSharedPreferences(
             R.string.app_name.toString(),
             Context.MODE_PRIVATE
@@ -95,6 +96,11 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
         checkInternet()
 
 
+        binding.swiperefreshlayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
+
+            getVisites()
+            swiperefreshlayout.isRefreshing = false
+        })
 
     }
 
@@ -115,7 +121,7 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
 
     }
 
-    override fun onClickedQuiz(quiz: QuizData,surveyId:Int) {
+    override fun onClickedQuiz(quiz: QuizData, surveyId: Int) {
 
         val responsJson: String = Gson().toJson(quiz)
 
@@ -123,7 +129,10 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
         val bundle = bundleOf("quizObject" to responsJson)
 
         sharedPref =
-            requireContext().getSharedPreferences(R.string.app_name.toString(), Context.MODE_PRIVATE)!!
+            requireContext().getSharedPreferences(
+                R.string.app_name.toString(),
+                Context.MODE_PRIVATE
+            )!!
         with(sharedPref.edit()) {
             this?.putInt("surveyId", surveyId)
         }?.commit()
@@ -137,7 +146,9 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
         binding.progressIndicator.visibility = View.VISIBLE
         GlobalScope.launch(Dispatchers.Main) {
 
-            responseDataQuiz = viewModel.getSurvey()
+
+            if (isAdded)
+                responseDataQuiz = viewModel.getSurvey()
 
             if (responseDataQuiz.responseCode == 200) {
                 listaQuiz = responseDataQuiz.data!!.data as ArrayList<QuizData>
@@ -146,7 +157,6 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
 
         }
     }
-
 
 
     private fun checkInternet() {
@@ -160,25 +170,24 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
                     fm,
                     "Internet check"
                 )
-                fm.executePendingTransactions();
+                fm.executePendingTransactions()
 
                 dialogInternet.dialog!!.setOnCancelListener {
                     checkInternet()
+
                 }
-
-
             }
         }
     }
 
 
-    private fun putQuestionName(questionName:String)
-    {
+    private fun putQuestionName(questionName: String) {
         sharedPref =
-          requireContext().getSharedPreferences(
+            requireContext().getSharedPreferences(
                 R.string.app_name.toString(),
                 Context.MODE_PRIVATE
             )!!
+        
         with(sharedPref.edit()) {
             this?.putString("questionName", questionName)
         }?.commit()

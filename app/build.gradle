@@ -122,5 +122,8 @@ dependencies {
     //Better Graph
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
+    //Adding Swipe Refresh Layout Dependency
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
 
 }

@@ -31,6 +31,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.gtm.R
 import com.example.gtm.data.entities.response.DataX
 import com.example.gtm.data.entities.response.SurveyResponse
@@ -46,7 +47,9 @@ import com.example.gtm.utils.resources.Resource
 import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.dialog_add_visite.*
 import kotlinx.android.synthetic.main.fragment_task.*
+import kotlinx.android.synthetic.main.fragment_task.swiperefreshlayout
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -200,6 +203,11 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningAdapter.TaskItemListene
 
         }
 
+        binding.swiperefreshlayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
+
+            getVisites()
+            swiperefreshlayout.isRefreshing = false
+        })
 
 
     }

@@ -53,9 +53,12 @@ import android.view.MenuInflater
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.lifecycleScope
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.gtm.data.entities.response.TimeClass
 import com.example.gtm.ui.home.mytask.addvisite.AddVisteDialog
 import com.example.gtm.ui.home.suivie.ChoixImageDialogSuivie
+import kotlinx.android.synthetic.main.dialog_add_visite.*
+import kotlinx.android.synthetic.main.fragment_task.swiperefreshlayout
 
 
 @AndroidEntryPoint
@@ -125,6 +128,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
             val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
             dateTimeBegin = simpleDateFormat.format(d.time).toString()
             dateTimeEnd = simpleDateFormat.format(d.time).toString()
+
 
         }
 
@@ -225,6 +229,11 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
 
 
         }
+        binding.swiperefreshlayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
+
+            getVisites()
+            swiperefreshlayout.isRefreshing = false
+        })
 
 
     }

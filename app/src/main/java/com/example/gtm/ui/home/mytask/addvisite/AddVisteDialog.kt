@@ -68,6 +68,8 @@ import com.example.gtm.ui.home.mytask.positionmap.PositionMapDialog
 import com.example.gtm.utils.remote.Internet.InternetCheck
 import com.example.gtm.utils.remote.Internet.InternetCheckDialog
 import kotlinx.android.synthetic.main.dialog_edit_profile.*
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 
 
 @AndroidEntryPoint
@@ -146,6 +148,12 @@ class AddVisteDialog(
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
 
+
+        swiperefreshlayout.setOnRefreshListener(OnRefreshListener {
+
+            checkInternetGetStore()
+            swiperefreshlayout.isRefreshing = false
+        })
     }
 
     override fun onClickedTask(
