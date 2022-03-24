@@ -27,13 +27,15 @@ import kotlinx.android.synthetic.main.item_sous_category.view.*
 class CategoryDetailAdapter(
     private val listener: CategoryDetailFragment,
     activity: FragmentActivity,
-    myVal: String
+    myVal: String,
+    svdActivity: SuiviDetailActivity
 ) :
     RecyclerView.Adapter<CategoryDetailViewHolder>() {
 
 
     private val activityIns = activity
     private val myValIns = myVal
+    private val suiviDetailActivity = svdActivity
 
     interface CategoryDetailItemListener {
         fun onClickedCategory(categoryId: Int)
@@ -57,7 +59,8 @@ class CategoryDetailAdapter(
             listener as CategoryDetailItemListener,
             activityIns,
             parent,
-            myValIns
+            myValIns,
+            suiviDetailActivity
         )
 
     }
@@ -73,7 +76,8 @@ class CategoryDetailViewHolder(
     private val listener: CategoryDetailAdapter.CategoryDetailItemListener,
     private val activityIns: FragmentActivity,
     private var parent: ViewGroup,
-    private var myVal: String
+    private var myVal: String,
+    private var suiviDetailActivity: SuiviDetailActivity
 ) : RecyclerView.ViewHolder(itemBinding.root),
     View.OnClickListener {
 
@@ -127,6 +131,8 @@ class CategoryDetailViewHolder(
             )
             itemBinding.testLinear.visibility = View.VISIBLE
             val layout = itemBinding.testLinear
+
+
             layout.orientation = LinearLayout.VERTICAL
             if (!addedValues) {
 

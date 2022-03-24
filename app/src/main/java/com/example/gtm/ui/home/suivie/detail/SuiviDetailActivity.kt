@@ -28,6 +28,7 @@ class SuiviDetailActivity : AppCompatActivity() {
         val objectList = gson.fromJson(newValue, ArrayListDataX::class.java)
 
         afterSuiviArray = objectList.myFinal
+        Log.i("myplz","$afterSuiviArray")
 
     }
 }

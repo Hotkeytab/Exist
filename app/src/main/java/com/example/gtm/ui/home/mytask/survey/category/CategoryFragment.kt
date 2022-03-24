@@ -57,6 +57,7 @@ import kotlin.collections.HashMap
 import kotlin.concurrent.schedule
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
+import java.text.DecimalFormat
 
 
 @AndroidEntryPoint
@@ -215,10 +216,15 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
         }
 
-        val finalAverage = (average / coefTotal)
+
+        val finalAverageBefore : Double = (average / coefTotal)
+        val stringDecimal = (finalAverageBefore.toString()).substring(0,3)
+
+
+
 
         val qp2 =
-            SurveyPost(userId.toLong(), storeId.toLong(), surveyId.toLong(), finalAverage, listBody)
+            SurveyPost(userId.toLong(), storeId.toLong(), surveyId.toLong(), stringDecimal.toDouble(), listBody)
 
 
         val userNewJson = jacksonObjectMapper().writeValueAsString(qp2)
@@ -307,6 +313,8 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
             listMultipartBody.add(mbp)
 
+            requireActivity().contentResolver.delete(selectedImageUri,null,null)
+
         }
 
         return null
@@ -322,6 +330,8 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
             MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "Title", null)
         return Uri.parse(path)
     }
+
+    
 
 
     @RequiresApi(Build.VERSION_CODES.N)

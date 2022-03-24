@@ -174,6 +174,8 @@ class AfficherReponsesFragment : Fragment(), ImageAfficherReponseAdapter.ImageIt
 
 
     private fun searchForResponse() {
+
+
         imagesArray = ArrayList<String>()
         for (i in (activity as SuiviDetailActivity).afterSuiviArray) {
             for (j in i.responses) {
@@ -183,6 +185,7 @@ class AfficherReponsesFragment : Fragment(), ImageAfficherReponseAdapter.ImageIt
                     for (k in j.responsePictures) {
                         imagesArray.add(k.path)
                     }
+
                     setupRecycleViewQuestion()
 
                     return

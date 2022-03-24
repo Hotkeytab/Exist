@@ -140,6 +140,7 @@ class TaskViewHolder(
         itemBinding.place.text = item.store.governorate + ", " + item.store.address
 
 
+
          theDistance = distance(
             LocationValueListener.myLocation.latitude.toFloat(),
             LocationValueListener.myLocation.longitude.toFloat(),
@@ -268,6 +269,7 @@ class TaskViewHolder(
     { //Normal Date Format
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         val date: Date = format.parse(day)
+        date.hours++
         format.applyPattern("HH:mm:ss")
         return format.format(date)
     }

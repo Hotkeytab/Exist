@@ -25,8 +25,6 @@ class BeforeHomeFragment : Fragment() {
     ): View {
         binding = BeforeHomeBinding.inflate(inflater, container, false)
 
-
-
         return binding.root
     }
 

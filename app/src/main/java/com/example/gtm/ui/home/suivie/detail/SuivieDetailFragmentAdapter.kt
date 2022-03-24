@@ -82,13 +82,15 @@ class SuivieDetailViewHolder(
 
         itemBinding.surveyName.text = item.name + "\n" + "note:       " +String.format("%.1f",item.average) + "/10"
 
+
+
+        Log.i("anacondalast","${item}")
         for(i in (sdActivity).afterSuiviArray)
         {
             if(i.survey == item)
             {
                 itemBinding.time.text = extractDate(i.responses[0].createdAt)
                 return
-
             }
         }
 

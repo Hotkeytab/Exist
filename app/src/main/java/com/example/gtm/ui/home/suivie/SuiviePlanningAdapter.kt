@@ -157,7 +157,7 @@ class TaskViewHolder(
 
 
         for (i in listaSurveyResponse) {
-            if (item.storeId == i.storeId && extractDate(item.day) == extractDate(i.createdAt)) {
+            if (item.storeId == i.storeId &&  extractDate(item.day) == extractDate(i.createdAt)) {
                 suivie = true
                 afterSuiviArray.add(i)
             }
@@ -283,6 +283,7 @@ class TaskViewHolder(
     { //Normal Date Format
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         val date: Date = format.parse(day)
+        date.hours++
         format.applyPattern("HH:mm:ss")
         return format.format(date)
     }

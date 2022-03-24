@@ -127,6 +127,9 @@ class SurveyCheckDialog(
         accept.setOnClickListener {
 
             progress_indicator.visibility = View.VISIBLE
+            cancel_button.isEnabled =false
+            accept.isEnabled = false
+            dialog!!.setCancelable(false)
 
             if (etat == 1) {
 
@@ -147,6 +150,10 @@ class SurveyCheckDialog(
                     responseAdd = viewModelQuiz.addVisite(arayListVsitePost)
 
                     if (responseAdd.responseCode == 201) {
+                        cancel_button.isEnabled =true
+                        accept.isEnabled = true
+                        dialog!!.setCancelable(true)
+
                         progress_indicator.visibility = View.GONE
 
                         val snack = Snackbar.make(
@@ -163,6 +170,9 @@ class SurveyCheckDialog(
                         var targetNew = listener as CloseCheckDialogListener
                         targetNew.onClosedCheckDialog()
                     } else {
+                        cancel_button.isEnabled =true
+                        accept.isEnabled = true
+                        dialog!!.setCancelable(true)
                         progress_indicator.visibility = View.GONE
                         val snack = Snackbar.make(
                             viewAct,
@@ -200,6 +210,9 @@ class SurveyCheckDialog(
 
                     if (responseAdd.responseCode == 201) {
                         progress_indicator.visibility = View.GONE
+                        cancel_button.isEnabled =true
+                        accept.isEnabled = true
+                        dialog!!.setCancelable(true)
 
                         val snack = Snackbar.make(
                             viewAct,
@@ -215,6 +228,9 @@ class SurveyCheckDialog(
                         var targetNew = listener as CloseCheckDialogListener
                         targetNew.onClosedCheckDialog()
                     } else {
+                        cancel_button.isEnabled =true
+                        accept.isEnabled = true
+                        dialog!!.setCancelable(true)
                         progress_indicator.visibility = View.GONE
                         val snack = Snackbar.make(
                             viewAct,
@@ -235,6 +251,9 @@ class SurveyCheckDialog(
 
 
             } else if (etat == 3) {
+                cancel_button.isEnabled =true
+                accept.isEnabled = true
+                dialog!!.setCancelable(true)
                 progress_indicator.visibility = View.GONE
                 dismiss()
                 LocationValueListener.locationOn = false

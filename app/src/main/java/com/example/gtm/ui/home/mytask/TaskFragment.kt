@@ -152,7 +152,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
 
 
         if (isAdded && activity != null) {
-            Log.i("repeat", "1")
             val mDrawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
             //Top Bar
             topAppBar.setNavigationOnClickListener {
@@ -253,7 +252,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     private fun setupRecycleViewPredictionDetail() {
 
 
-        Log.i("repeat", "1")
         adapterTask = TaskAdapter(this, requireActivity(), activity as DrawerActivity, listaTasks)
         binding.taskRecycleview.isMotionEventSplittingEnabled = false
         binding.taskRecycleview.layoutManager = LinearLayoutManager(requireContext())
@@ -292,12 +290,14 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
 
 
             if (!isDetached) {
-                Log.i("repeat", "1")
 
                 if (isAdded) {
                     responseData =
                         viewModel.getVisites(userId.toString(), dateTimeBegin, dateTimeEnd)
 
+
+
+                    Log.i("selimtime","${responseData.data!!.data[0]}")
 
                     if (responseData.responseCode == 200) {
                         listaTasks = responseData.data!!.data as ArrayList<Visite>
@@ -313,6 +313,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
                         else if (daysFilter.monthFilter == 1)
                             listaTasks =
                                 listaTasks.filter { list -> compareDatesMonth(list.day) } as ArrayList<Visite>
+
 
                         if (listaTasks.size == 0)
                             binding.novisit.visibility = View.VISIBLE
@@ -364,6 +365,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
             if (CheckGpsStatus())
             // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
             {
+                Log.i("PERMISSIONBITCH", "5")
                 setUpLocationListener()
 
             } else {
@@ -504,12 +506,21 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
 
     private fun setUpLocationListener() {
 
-
+        Log.i("PERMISSIONBITCH", "7")
         if (listaTasks.size == 0)
             binding.progressIndicator.visibility = View.VISIBLE
         // for getting the current location update after every 2 seconds with high accuracy
-        val locationRequest = LocationRequest().setInterval(2000).setFastestInterval(2000)
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+
+
+        val locationRequest = LocationRequest.create().apply {
+            interval = 2000
+            fastestInterval = 2000
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            maxWaitTime= 2000
+        }
+
+      /*  val locationRequest = LocationRequest().setInterval(2000).setFastestInterval(2000)
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) */
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -518,6 +529,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
+
             return
         }
 
@@ -527,6 +539,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
                 override fun onLocationResult(locationResult: LocationResult) {
                     super.onLocationResult(locationResult)
 
+                    Log.i("PERMISSIONBITCH", "6")
                     if (!LocationValueListener.locationOn) {
                         fusedLocationClient.removeLocationUpdates(this)
                     }
@@ -561,7 +574,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
                                   dismiss()
                               }
                           }*/
-
 
                     }
 

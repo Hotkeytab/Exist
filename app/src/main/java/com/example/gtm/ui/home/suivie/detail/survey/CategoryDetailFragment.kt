@@ -85,7 +85,7 @@ class CategoryDetailFragment : Fragment(), CategoryDetailAdapter.CategoryDetailI
     private fun setupRecycleViewCategory() {
 
         adapterDetailCategory =
-            CategoryDetailAdapter(this, requireActivity(), myVal!!)
+            CategoryDetailAdapter(this, requireActivity(), myVal!!,(activity as SuiviDetailActivity))
         binding.categoryRecycleview.isMotionEventSplittingEnabled = false
         binding.categoryRecycleview.layoutManager = LinearLayoutManager(requireContext())
         binding.categoryRecycleview.layoutManager = LinearLayoutManager(

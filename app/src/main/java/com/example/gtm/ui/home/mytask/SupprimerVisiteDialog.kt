@@ -65,6 +65,9 @@ class SupprimerVisiteDialog(
 
         accept.setOnClickListener {
             progress_bar.visibility = View.VISIBLE
+            accept.isEnabled = false
+            cancel_button.isEnabled = false
+            dialog!!.setCancelable(false)
 
 
             /*  items.removeAt(positionVisite)
@@ -84,6 +87,9 @@ class SupprimerVisiteDialog(
                     dialog!!.dismiss()
                 } else {
                     progress_bar.visibility = View.GONE
+                    accept.isEnabled = true
+                    cancel_button.isEnabled = true
+                    dialog!!.setCancelable(true)
 
                 }
             }

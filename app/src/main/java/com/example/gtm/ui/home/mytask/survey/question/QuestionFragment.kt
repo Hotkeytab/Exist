@@ -464,6 +464,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
         val selectedImageUri = getImageUri(requireContext(), image.url)
 
         if (selectedImageUri != null) {
+
             val parcelFileDescriptor =
                 requireActivity().contentResolver.openFileDescriptor(selectedImageUri, "r", null)
                     ?: return null
@@ -492,6 +493,9 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
             )
 
             listMultipartBody.add(mbp)
+
+
+
         }
 
         return null

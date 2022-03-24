@@ -157,6 +157,13 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
                                 clearError()
                                 binding.password.error = "Mot de passe ou nom d'utilisateur Erroné "
                             }
+                            else
+                            {
+                                binding.signinButton.isEnabled = true
+                                binding.progressIndicator.visibility = View.INVISIBLE
+                                clearError()
+                                binding.password.error = "Erreur Connexion "
+                            }
                         }
 
                         else
