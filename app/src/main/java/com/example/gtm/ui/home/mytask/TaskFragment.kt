@@ -296,9 +296,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
                         viewModel.getVisites(userId.toString(), dateTimeBegin, dateTimeEnd)
 
 
-
-                    Log.i("selimtime","${responseData.data!!.data[0]}")
-
                     if (responseData.responseCode == 200) {
                         listaTasks = responseData.data!!.data as ArrayList<Visite>
                         /* listaTasks[0].store.lat = 22.3

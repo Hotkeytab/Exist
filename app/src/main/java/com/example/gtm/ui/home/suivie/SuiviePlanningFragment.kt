@@ -63,11 +63,11 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 @AndroidEntryPoint
-class SuiviePlanningFragment : Fragment(), SuiviePlanningAdapter.TaskItemListener {
+class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemListener {
 
 
     private lateinit var binding: FragmentSuiviePlanningBinding
-    private lateinit var adapterTask: SuiviePlanningAdapter
+    private lateinit var adapterTask: SuiviePlanningBlocAdapter
     private var listaTasks = ArrayList<Visite>()
     private var listaSurveyResponse = ArrayList<DataX>()
     lateinit var sharedPref: SharedPreferences
@@ -218,7 +218,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningAdapter.TaskItemListene
 
         Log.i("repeat", "1")
         if(isAdded) {
-            adapterTask = SuiviePlanningAdapter(
+            adapterTask = SuiviePlanningBlocAdapter(
                 this,
                 requireActivity(),
                 activity as DrawerActivity,
