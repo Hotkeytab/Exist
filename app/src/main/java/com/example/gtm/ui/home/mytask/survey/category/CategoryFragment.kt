@@ -77,6 +77,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
     private var surveyId = 0
     private var percent = 0
     private var filesNumber = 0
+    private var visiteId = 0
 
     var recentPercent = 0
 
@@ -95,6 +96,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
         userId = sharedPref.getInt("id", 0)
         storeId = sharedPref.getInt("storeId", 0)
         surveyId = sharedPref.getInt("surveyId", 0)
+        visiteId = sharedPref.getInt("visiteId",0)
 
         requireActivity().bottom_nav.visibility = View.GONE
 
@@ -224,7 +226,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
 
         val qp2 =
-            SurveyPost(userId.toLong(), storeId.toLong(), surveyId.toLong(), stringDecimal.toDouble(), listBody)
+            SurveyPost(userId.toLong(), storeId.toLong(),visiteId, surveyId.toLong(), stringDecimal.toDouble(), listBody)
 
 
         val userNewJson = jacksonObjectMapper().writeValueAsString(qp2)

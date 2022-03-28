@@ -75,6 +75,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
     private var userId = 0
     private var storeId = 0
     private var surveyId = 0
+    private var visiteId = 0
     lateinit var sharedPref: SharedPreferences
     private lateinit var dialogInternet: InternetCheckDialog
     private lateinit var fm: FragmentManager
@@ -118,8 +119,9 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
         userId = sharedPref.getInt("id", 0)
         storeId = sharedPref.getInt("storeId", 0)
         surveyId = sharedPref.getInt("surveyId", 0)
+        visiteId = sharedPref.getInt("visiteId",0)
 
-        Log.i("welcome", "$surveyId")
+
         return binding.root
     }
 
@@ -553,7 +555,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
 
         }
 
-        val qp2 = SurveyPost(userId.toLong(), storeId.toLong(), surveyId.toLong(), 0.0, listBody)
+        val qp2 = SurveyPost(userId.toLong(), storeId.toLong(),visiteId, surveyId.toLong(), 0.0, listBody)
         Log.i("kamehameha", "$qp2")
 
         val userNewJson = jacksonObjectMapper().writeValueAsString(qp2)

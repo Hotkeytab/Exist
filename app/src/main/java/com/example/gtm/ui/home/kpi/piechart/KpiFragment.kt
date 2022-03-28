@@ -1,4 +1,4 @@
-package com.example.gtm.ui.home.kpi
+package com.example.gtm.ui.home.kpi.piechart
 
 import android.graphics.Color
 import android.os.Bundle
@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import com.example.gtm.R
 import com.example.gtm.databinding.FragmentKpiBinding
 import com.example.gtm.databinding.FragmentMapBinding
@@ -36,10 +37,6 @@ import com.github.mikephil.charting.data.PieEntry
 
 
 
-
-
-
-
 @AndroidEntryPoint
 class KpiFragment : Fragment() {
 
@@ -53,55 +50,12 @@ class KpiFragment : Fragment() {
     ): View {
         binding = FragmentKpiBinding.inflate(inflater,container,false)
 
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-       /* val lineSeries: LineGraphSeries<DataPoint> = LineGraphSeries(
-            arrayOf(
-                DataPoint(0.0, 1.0),
-                DataPoint(1.0, 5.0),
-                DataPoint(2.0, 3.0),
-                DataPoint(3.0, 2.0),
-                DataPoint(4.0, 12.0)
-            )
-        )
-        line_graph.addSeries(lineSeries)
-
-
-        val barGraph_Data: BarGraphSeries<DataPoint> = BarGraphSeries(
-            arrayOf(
-                DataPoint(0.0, 1.0),
-                DataPoint(1.0, 5.0),
-                DataPoint(2.0, 3.0),
-                DataPoint(3.0, 2.0),
-                DataPoint(4.0, 12.0)
-            )
-        )
-        bar_graph.addSeries(barGraph_Data)
-
-
-    /*    barGraph_Data.setValueDependentColor(new ValueDependentColor<Data>() {
-            @Override
-            public int get(Data info) {
-                return Color.rgb((int) info.getX()*255/4, (int) Math.abs(info.getY()*255/6), 100);
-            }
-        }) */
-
-
-        barGraph_Data.setValueDependentColor {
-            return@setValueDependentColor Color.rgb( (it.x *255/4).toInt(),  (abs(it.y *255/6)).toInt(), 100)
-        }
-
-        barGraph_Data.spacing = 20
-
-        barGraph_Data.isDrawValuesOnTop = true
-        barGraph_Data.valuesOnTopColor = Color.RED
-        */
-
         setupPieChart()
         loadPieChartData()
     }
@@ -143,7 +97,7 @@ class KpiFragment : Fragment() {
         data.setValueFormatter(PercentFormatter(binding.activityPiechart))
         data.setValueTextSize(12f)
         data.setValueTextColor(Color.BLACK)
-        binding.activityPiechart.setData(data)
+        binding.activityPiechart.data = data
         binding.activityPiechart.invalidate()
         binding.activityPiechart.animateY(1400, Easing.EaseInOutQuad)
     }

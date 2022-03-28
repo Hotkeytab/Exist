@@ -7,29 +7,23 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
-import androidx.navigation.Navigation
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.gtm.R
-import com.example.gtm.data.entities.remote.QuestionPost
 import com.example.gtm.data.entities.response.UserResponse
 import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.data.entities.ui.User
 import com.example.gtm.ui.auth.AuthActivity
 import com.example.gtm.ui.drawer.profile.EditProfileDialog
-import com.example.gtm.ui.home.HomeActivity
-import com.example.gtm.ui.home.kpi.KpiFragment
+import com.example.gtm.ui.home.kpi.KpiGraphFragment
+import com.example.gtm.ui.home.kpi.piechart.KpiFragment
 import com.example.gtm.ui.home.mytask.BeforeHomeFragment
 import com.example.gtm.ui.home.suivie.SuiviePlanningFragment
 import com.example.gtm.utils.animations.UiAnimations
@@ -38,8 +32,6 @@ import com.example.gtm.utils.token.SessionManager
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.fragment_suivie_detail.*
-import kotlinx.android.synthetic.main.fragment_task.*
 import kotlinx.android.synthetic.main.fragment_task.progress_indicator
 import kotlinx.android.synthetic.main.nav_header_main.*
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -125,7 +117,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
                     R.id.kpi -> {
                         if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
-                            selectedFragment = KpiFragment()
+                            selectedFragment = KpiGraphFragment()
                         }
                         lastTimeClicked = SystemClock.elapsedRealtime()
                     }

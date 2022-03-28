@@ -156,6 +156,7 @@ class TaskViewHolder(
             itemBinding.cardviewColorEnable.setCardBackgroundColor(Color.rgb(255, 255, 255))
             itemBinding.storeIconBlue.setOnClickListener {
                 putStoreName(item.store.name)
+                putVisiteId(item.id)
                 listener.onClickedTask(
                     visiteResponse.id,
                     finalDistance,
@@ -168,6 +169,7 @@ class TaskViewHolder(
 
             itemBinding.storeText.setOnClickListener {
                 putStoreName(item.store.name)
+                putVisiteId(item.id)
                 listener.onClickedTask(
                     visiteResponse.id,
                     finalDistance,
@@ -212,6 +214,7 @@ class TaskViewHolder(
 
         itemBinding.storeIconBlue.setOnClickListener {
             putStoreName(item.store.name)
+            putVisiteId(item.id)
             listener.onClickedTask(
                 visiteResponse.storeId,
                 finalDistance,
@@ -223,6 +226,7 @@ class TaskViewHolder(
 
         itemBinding.storeText.setOnClickListener {
             putStoreName(item.store.name)
+            putVisiteId(item.id)
             listener.onClickedTask(
                 visiteResponse.storeId,
                 finalDistance,
@@ -238,6 +242,7 @@ class TaskViewHolder(
     override fun onClick(v: View?) {
         Log.i("Clicked", "${visiteResponse.storeId}")
         putStoreName(visiteResponse.store.name)
+        putVisiteId(visiteResponse.id)
         listener.onClickedTask(
             visiteResponse.storeId,
             finalDistance,
@@ -340,6 +345,17 @@ class TaskViewHolder(
             )!!
         with(sharedPref.edit()) {
             this?.putString("storeName", storeName)
+        }?.commit()
+    }
+
+    private fun putVisiteId(visiteId: Int) {
+        sharedPref =
+            parent.context.getSharedPreferences(
+                R.string.app_name.toString(),
+                Context.MODE_PRIVATE
+            )!!
+        with(sharedPref.edit()) {
+            this?.putInt("visiteId", visiteId)
         }?.commit()
     }
 

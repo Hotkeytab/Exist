@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/kpi_graph"
+    app:startDestination="@id/kpiFIlterFragment">
+
+    <fragment
+        android:id="@+id/kpiFragment"
+        android:name="com.example.gtm.ui.home.kpi.piechart.KpiFragment"
+        android:label="fragment_kpi"
+        tools:layout="@layout/fragment_kpi" >
+        <action
+            android:id="@+id/action_kpiFragment_to_kpiFIlterFragment"
+            app:destination="@id/kpiFIlterFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/kpiFIlterFragment"
+        android:name="com.example.gtm.ui.home.kpi.kpifilter.KpiFIlterFragment"
+        android:label="fragment_kpi_f_ilter"
+        tools:layout="@layout/fragment_kpi_f_ilter" >
+        <action
+            android:id="@+id/action_kpiFIlterFragment_to_kpiFragment"
+            app:destination="@id/kpiFragment" />
+    </fragment>
+</navigation>
