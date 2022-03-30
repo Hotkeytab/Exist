@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.example.gtm.BuildConfig
 import com.example.gtm.data.remote.auth.AuthService
+import com.example.gtm.data.remote.chart.ChartService
 import com.example.gtm.data.remote.store.StoreService
 import com.example.gtm.data.remote.survey.SurveyService
 import com.example.gtm.data.remote.time.TimeService
@@ -127,5 +128,9 @@ object AppModule {
     @Provides
     fun provideStoreService(@Named("Normal") retrofit: Retrofit): StoreService =
         retrofit.create(StoreService::class.java)
+
+    @Provides
+    fun provideChartService(@Named("Normal") retrofit: Retrofit): ChartService =
+        retrofit.create(ChartService::class.java)
 
 }

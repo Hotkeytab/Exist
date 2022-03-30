@@ -1,14 +1,13 @@
-package com.example.gtm.data.remote.store
+package com.example.gtm.data.remote.chart
 
 import com.example.gtm.data.remote.BaseRemoteDataSource
 import okhttp3.RequestBody
 import retrofit2.http.Part
 import javax.inject.Inject
 
-class StoreRemoteDataSource @Inject constructor(
-    private val storeService: StoreService
+class ChartRemoteDataSource @Inject constructor(
+    private val chartService: ChartService
 ) : BaseRemoteDataSource() {
-    suspend fun getStores() = getResult { storeService.getStores() }
 
-    suspend fun modifyStore(@Part store:RequestBody) = getResult {storeService.modifyStore(store)}
+    suspend fun getStatTable(from: String,to: String,stores:ArrayList<Int>,surveyId:ArrayList<Int>,supervisors:ArrayList<Int>,governorates:ArrayList<String>) = getResult { chartService.getStatTable(from,to,stores,surveyId,supervisors,governorates) }
 }

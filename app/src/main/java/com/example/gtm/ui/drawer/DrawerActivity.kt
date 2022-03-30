@@ -101,25 +101,27 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
                     R.id.task -> {
 
-                        if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
+                       // if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
                             selectedFragment = BeforeHomeFragment()
 
-                        }
 
-                        lastTimeClicked = SystemClock.elapsedRealtime()
+
+                      //  lastTimeClicked = SystemClock.elapsedRealtime()
+
                     }
                     R.id.suivie -> {
-                        if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
+                     //   if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
                             selectedFragment = SuiviePlanningFragment()
-                        }
-                        lastTimeClicked = SystemClock.elapsedRealtime()
+
+                   //     lastTimeClicked = SystemClock.elapsedRealtime()
+
                     }
 
                     R.id.kpi -> {
-                        if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
+                     //   if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
                             selectedFragment = KpiGraphFragment()
-                        }
-                        lastTimeClicked = SystemClock.elapsedRealtime()
+
+                      //  lastTimeClicked = SystemClock.elapsedRealtime()
                     }
 
                 }
@@ -134,6 +136,9 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 true
 
             }
+
+
+
 
 
     }

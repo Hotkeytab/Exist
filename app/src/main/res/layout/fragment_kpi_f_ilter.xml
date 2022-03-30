@@ -4,14 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.home.kpi.kpifilter.KpiFIlterFragment">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_600sdp">
+            android:layout_height="match_parent">
 
 
             <com.google.android.material.appbar.AppBarLayout
@@ -78,7 +74,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:inputType="none"
+                                android:editable="true"
                                 android:text="Villes" />
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -104,7 +100,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:inputType="none"
+                                android:editable="true"
                                 android:text="Magasins" />
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -130,7 +126,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:inputType="none"
+                                android:editable="true"
                                 android:text="Questionnaires" />
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -159,6 +155,7 @@
                             app:cardUseCompatPadding="true">
 
                             <DatePicker
+                                android:id="@+id/date_debut_picker"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -184,6 +181,7 @@
                             app:cardUseCompatPadding="true">
 
                             <DatePicker
+                                android:id="@+id/date_fin_picker"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -198,7 +196,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginTop="@dimen/_15sdp"
-                            android:text="Type d'analyse\n       (Tableau)"
+                            android:text="Type d'analyse"
                             android:textStyle="bold" />
 
                         <LinearLayout
@@ -276,7 +274,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </ScrollView>
+
 
 
 </layout>

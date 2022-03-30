@@ -4,16 +4,15 @@ import com.example.gtm.data.entities.remote.SignInPost
 import com.example.gtm.data.entities.ui.User
 import com.example.gtm.data.remote.BaseRemoteDataSource
 import com.example.gtm.data.remote.auth.AuthRemoteDataSource
+import com.example.gtm.data.remote.chart.ChartRemoteDataSource
 import com.example.gtm.data.remote.user.UserRemoteDataSource
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
 
-class UserRepository @Inject constructor(
-    private val userDataSource: UserRemoteDataSource
+class ChartRepository @Inject constructor(
+    private val chartRemoteDataSource: ChartRemoteDataSource
 ) {
 
-    suspend fun getUser(username: String) = userDataSource.getUser(username)
-
-    suspend fun changeProfile(file: MultipartBody.Part?, user: RequestBody)= userDataSource.changeProfile(file,user)
+    suspend fun getStatTable(from: String,to: String,stores:ArrayList<Int>,surveyId:ArrayList<Int>,supervisors:ArrayList<Int>,governorates:ArrayList<String>) = chartRemoteDataSource.getStatTable(from,to,stores,surveyId,supervisors,governorates)
 }

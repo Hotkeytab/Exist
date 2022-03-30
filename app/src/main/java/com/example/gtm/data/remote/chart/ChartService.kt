@@ -1,4 +1,4 @@
-package com.example.gtm.data.remote.store
+package com.example.gtm.data.remote.chart
 
 
 import com.example.gtm.data.entities.response.*
@@ -14,11 +14,8 @@ import retrofit2.http.POST
 import retrofit2.http.Multipart
 
 
-interface StoreService {
-    @GET("store/")
-    suspend fun getStores() : Response<GetStore>
+interface ChartService {
 
-    @Multipart
-    @POST("store/")
-    suspend fun modifyStore(@Part("store") store:RequestBody) : Response<ModifyStoreResponse>
+    @GET("/chart/supervisorPerformance/{from}/{to}/{stores}/{surveyId}/{supervisors}/{governorates}")
+    suspend fun getStatTable(@Path("from") from: String,@Path("to") to: String,@Path("stores") stores: ArrayList<Int>,@Path("surveyId") surveyId: ArrayList<Int>,@Path("supervisors") supervisors: ArrayList<Int>,@Path("governorates") governorates: ArrayList<String>): Response<UserResponse>
 }
