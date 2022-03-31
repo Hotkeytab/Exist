@@ -120,7 +120,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                     R.id.kpi -> {
                      //   if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
                             selectedFragment = KpiGraphFragment()
-
+                              //  selectedFragment = KpiFragment()
                       //  lastTimeClicked = SystemClock.elapsedRealtime()
                     }
 

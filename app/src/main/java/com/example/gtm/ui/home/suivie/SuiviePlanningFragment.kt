@@ -209,6 +209,11 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
             swiperefreshlayout.isRefreshing = false
         })
 
+        val mDrawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
+        //Top Bar
+        topAppBar.setNavigationOnClickListener {
+            mDrawerLayout.openDrawer(Gravity.LEFT)
+        }
 
     }
 

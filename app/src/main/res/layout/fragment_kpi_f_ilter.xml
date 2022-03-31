@@ -60,6 +60,11 @@
                         android:layout_margin="@dimen/_5sdp"
                         android:orientation="vertical">
 
+                        <TextView
+                            android:id="@+id/hiddenfocus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"/>
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                             android:layout_width="match_parent"
@@ -139,14 +144,30 @@
                             android:layout_marginEnd="32dp" />
 
                         <TextView
+                            android:id="@+id/date_debut_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginTop="@dimen/_15sdp"
                             android:text="Date début"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
+                        <TextView
+                            android:id="@+id/error_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/_15sdp"
+                            android:maxLines="2"
+                            android:textColor="@color/red"
+                            android:textAlignment="center"
+                            android:text="La date de début doit être\n inférieur à la date de fin"
+                            android:textStyle="bold"
+                            android:visibility="gone"/>
 
                         <androidx.cardview.widget.CardView
+                            android:id="@+id/date_debut_card"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"

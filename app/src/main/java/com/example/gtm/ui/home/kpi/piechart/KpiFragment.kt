@@ -66,7 +66,7 @@ class KpiFragment : Fragment() {
         binding.activityPiechart.setUsePercentValues(true)
         binding.activityPiechart.setEntryLabelTextSize(12f)
         binding.activityPiechart.setEntryLabelColor(Color.BLACK)
-        binding.activityPiechart.centerText = "Spending by Category"
+        binding.activityPiechart.centerText = "Questionnaires par ville"
         binding.activityPiechart.setCenterTextSize(24f)
         binding.activityPiechart.description.isEnabled = false
         val l: Legend = binding.activityPiechart.legend
@@ -80,9 +80,9 @@ class KpiFragment : Fragment() {
 
     private fun loadPieChartData() {
         val entries: ArrayList<PieEntry> = ArrayList()
-        entries.add(PieEntry(0.2f, "Food & Dining"))
-        entries.add(PieEntry(0.15f, "Medical"))
-        entries.add(PieEntry(0.10f, "Entertainment"))
+        entries.add(PieEntry(0.3f, "Gabès"))
+        entries.add(PieEntry(0.15f, "Arianna"))
+        entries.add(PieEntry(0.10f, "Sfax"))
         val colors: ArrayList<Int> = ArrayList()
         for (color in ColorTemplate.MATERIAL_COLORS) {
             colors.add(color)
@@ -90,7 +90,7 @@ class KpiFragment : Fragment() {
         for (color in ColorTemplate.VORDIPLOM_COLORS) {
             colors.add(color)
         }
-        val dataSet = PieDataSet(entries, "Expense Category")
+        val dataSet = PieDataSet(entries, "Questionnaires par ville")
         dataSet.colors = colors
         val data = PieData(dataSet)
         data.setDrawValues(true)

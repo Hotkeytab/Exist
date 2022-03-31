@@ -88,7 +88,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:hint="Orders"
+                                    android:hint="Planifiés"
                                     android:textStyle="bold" />
 
 
@@ -96,7 +96,8 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="1,235"
+                                    android:text="10"
+                                    android:layout_gravity="center"
                                     android:textColor="@color/black"
                                     android:textStyle="bold" />
 
@@ -148,7 +149,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:hint="Revenue"
+                                    android:hint="Non planifiés"
                                     android:textStyle="bold" />
 
 
@@ -156,7 +157,8 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="$35,723"
+                                    android:layout_gravity="center"
+                                    android:text="2"
                                     android:textColor="@color/black"
                                     android:textStyle="bold" />
 
@@ -167,7 +169,7 @@
                                 android:layout_height="@dimen/_35sdp"
                                 android:layout_gravity="center"
                                 android:layout_marginLeft="@dimen/_15sdp"
-                                android:src="@drawable/outline_attach_money_24"
+                                android:src="@drawable/outline_storefront_24"
                                 app:tint="@color/purpleLogin" />
 
                         </LinearLayout>

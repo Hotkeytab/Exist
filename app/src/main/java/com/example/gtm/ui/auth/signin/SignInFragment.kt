@@ -149,6 +149,14 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
                                 activity?.finish()
                             }
 
+                            else
+                            {
+                                binding.signinButton.isEnabled = true
+                                binding.progressIndicator.visibility = View.INVISIBLE
+                                clearError()
+                                binding.password.error = "Erreur Connexion "
+                            }
+
                         } else if(responseDataUser != null) {
 
                             if(responseDataUser!!.responseCode == 401) {

@@ -14,6 +14,7 @@ import com.example.gtm.data.remote.visite.VisiteService
 import com.example.gtm.utils.animations.UiAnimations
 import com.example.gtm.utils.remote.Urls
 import com.example.gtm.utils.token.AuthInterceptor
+import com.example.gtm.utils.token.EncodeInterceptors
 import com.example.gtm.utils.token.SessionManager
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -41,9 +42,11 @@ object AppModule {
     fun provideOkHttpClient(@ApplicationContext context: Context) = if (BuildConfig.DEBUG) {
         val authInterceptor = AuthInterceptor(context)
         val logIntercept = HttpLoggingInterceptor()
+        val encodeInterceptors = EncodeInterceptors()
         logIntercept.setLevel(HttpLoggingInterceptor.Level.BODY)
 
         OkHttpClient.Builder()
+            .addInterceptor(encodeInterceptors)
             .addInterceptor(authInterceptor)
             .addInterceptor(logIntercept)
             .build()

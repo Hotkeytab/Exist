@@ -1,9 +1,11 @@
 package com.example.gtm.ui.home.kpi.kpifilter
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,10 +18,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.gtm.R
-import com.example.gtm.data.entities.response.DataXX
-import com.example.gtm.data.entities.response.GetStore
-import com.example.gtm.data.entities.response.Quiz
-import com.example.gtm.data.entities.response.QuizData
 import com.example.gtm.databinding.FragmentKpiFIlterBinding
 import com.example.gtm.databinding.FragmentKpiGraphBinding
 import com.example.gtm.ui.home.mytask.addvisite.AddVisiteDialogViewModel
@@ -36,6 +34,11 @@ import kotlinx.coroutines.launch
 import android.widget.AdapterView
 
 import android.widget.AdapterView.OnItemClickListener
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.FragmentManager
+import com.example.gtm.data.entities.response.*
+import kotlinx.android.synthetic.main.fragment_kpi_f_ilter.topAppBar
+import kotlinx.android.synthetic.main.fragment_task.*
 import java.text.SimpleDateFormat
 
 
@@ -45,8 +48,11 @@ class KpiFIlterFragment : Fragment() {
     private lateinit var binding: FragmentKpiFIlterBinding
     private lateinit var responseDataStores: Resource<GetStore>
     private val viewModel: AddVisiteDialogViewModel by viewModels()
+    private val viewModelKpi: KpiFilterFragmentViewModel by viewModels()
     private var listaDataXX = ArrayList<DataXX>()
+    private var listaKpi = ArrayList<DataXXX>()
     private lateinit var responseDataQuiz: Resource<Quiz>
+    private lateinit var responseKpi: Resource<AnalyseKpi>
     private var listaQuiz = ArrayList<QuizData>()
     private val viewModelQuestionnaire: MyQuizViewModel by viewModels()
     private val mapStore: HashMap<String, Int> = HashMap<String, Int>()
@@ -57,6 +63,42 @@ class KpiFIlterFragment : Fragment() {
     private var arrayStoreNew = ArrayList<String>()
     private var arrayQuestNew = ArrayList<String>()
     private var type = ""
+    private var userId = 0
+    lateinit var sharedPref: SharedPreferences
+    private var arraySupervisorsId = ArrayList<Int>()
+    private var arrayStoresId = ArrayList<Int>()
+    private var arrayQuestIds = ArrayList<Int>()
+    var day_debut_picker = ""
+    var day_fin_picker = ""
+    private var fm: FragmentManager? = null
+    private val progressUploadDialog =   ProgressUploadDialog()
+
+    val items = listOf(
+        "Ariana",
+        "Béja",
+        "Ben Arous",
+        "Bizerte",
+        "Gabès",
+        "Nabeul",
+        "Jendouba",
+        "Kairouan",
+        "Kasserine",
+        "Kebili",
+        "Kef",
+        "Mahdia",
+        "Manouba",
+        "Medenine",
+        "Monastir",
+        "Gafsa",
+        "Sfax",
+        "Sidi Bouzid",
+        "Siliana",
+        "Sousse",
+        "Tataouine",
+        "Tozeur",
+        "Zaghouan"
+    )
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,6 +107,13 @@ class KpiFIlterFragment : Fragment() {
     ): View {
         binding = FragmentKpiFIlterBinding.inflate(inflater, container, false)
 
+        fm = childFragmentManager
+
+        sharedPref = requireContext().getSharedPreferences(
+            R.string.app_name.toString(),
+            Context.MODE_PRIVATE
+        )
+        userId = sharedPref.getInt("id", 0)
 
         return binding.root
     }
@@ -72,48 +121,33 @@ class KpiFIlterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        progressUploadDialog.show(fm!!,"ProgressUploadDialog")
+
+
+        val mDrawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
+        //Top Bar
+        topAppBar.setNavigationOnClickListener {
+            mDrawerLayout.openDrawer(Gravity.LEFT)
+        }
+
         binding.topAppBar.title = "Analyse Kpi"
 
-        binding.imageTableStats.setColorFilter(Color.argb(255, 0, 0, 255))
+        binding.imageTableStats.setColorFilter(Color.argb(255, 0, 0, 0))
         binding.imageKpiStats.setColorFilter(Color.argb(255, 220, 220, 220))
 
         binding.imageTableStats.setOnClickListener {
-            binding.imageTableStats.setColorFilter(Color.argb(255, 0, 0, 255))
+            binding.imageTableStats.setColorFilter(Color.argb(255, 0, 0, 0))
             binding.imageKpiStats.setColorFilter(Color.argb(255, 220, 220, 220))
             type = "table"
         }
 
         binding.imageKpiStats.setOnClickListener {
-            binding.imageKpiStats.setColorFilter(Color.argb(255, 0, 0, 255))
+            binding.imageKpiStats.setColorFilter(Color.argb(255, 0, 0, 0))
             binding.imageTableStats.setColorFilter(Color.argb(255, 220, 220, 220))
             type = "stats"
         }
 
-        val items = listOf(
-            "Ariana",
-            "Béja",
-            "Ben Arous",
-            "Bizerte",
-            "Gabès",
-            "Nabeul",
-            "Jendouba",
-            "Kairouan",
-            "Kasserine",
-            "Kebili",
-            "Kef",
-            "Mahdia",
-            "Manouba",
-            "Medenine",
-            "Monastir",
-            "Gafsa",
-            "Sfax",
-            "Sidi Bouzid",
-            "Siliana",
-            "Sousse",
-            "Tataouine",
-            "Tozeur",
-            "Zaghouan"
-        )
 
         val arrayAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, items)
         binding.villeText.setAdapter(arrayAdapter)
@@ -148,7 +182,16 @@ class KpiFIlterFragment : Fragment() {
         }
 
         valider_kpi.setOnClickListener {
-            Log.i("DateDebut","${controleDate()}")
+            Log.i("DateDebut", "${controleDate()}")
+            if (!controleDate()) {
+                error_text.visibility = View.VISIBLE
+                date_debut_text.requestFocus()
+            }
+
+            else
+            {
+                prepareRequestList()
+            }
         }
 
     }
@@ -192,10 +235,11 @@ class KpiFIlterFragment : Fragment() {
         )
     }
 
-    private fun controleDate() :Boolean
-    {
-        val day_debut_picker = "${date_debut_picker.year}-${(date_debut_picker.month + 1)}-${date_debut_picker.dayOfMonth}"
-        val day_fin_picker = "${date_fin_picker.year}-${(date_fin_picker.month + 1)}-${date_fin_picker.dayOfMonth}"
+    private fun controleDate(): Boolean {
+        day_debut_picker =
+            "${date_debut_picker.year}-${(date_debut_picker.month + 1)}-${date_debut_picker.dayOfMonth}"
+        day_fin_picker =
+            "${date_fin_picker.year}-${(date_fin_picker.month + 1)}-${date_fin_picker.dayOfMonth}"
 
         val sdf = SimpleDateFormat("yyyy-MM-dd")
         val debutParsed = sdf.parse(day_debut_picker)
@@ -203,7 +247,7 @@ class KpiFIlterFragment : Fragment() {
 
         val test = debutParsed.compareTo(finParsed)
 
-        return  (test == 0 || test == -1)
+        return (test == 0 || test == -1)
 
     }
 
@@ -266,8 +310,13 @@ class KpiFIlterFragment : Fragment() {
                 listaDataXX = responseDataStores.data!!.data as ArrayList<DataXX>
                 getSubListStore()
                 getQuestionnaires()
+                progressUploadDialog.dismiss()
+
 
             } else {
+
+
+                getStores()
 
             }
 
@@ -282,8 +331,9 @@ class KpiFIlterFragment : Fragment() {
             if (responseDataQuiz.responseCode == 200) {
                 listaQuiz = responseDataQuiz.data!!.data as ArrayList<QuizData>
                 getSubListQuestionnaire()
+                progressUploadDialog.dismiss()
             } else {
-
+                getQuestionnaires()
             }
 
         }
@@ -306,6 +356,92 @@ class KpiFIlterFragment : Fragment() {
         }
         val arrayAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, arrayQuest)
         binding.questionnaireText.setAdapter(arrayAdapter)
+    }
+
+
+    private fun prepareRequestList() {
+        //Prepare Arraylist Supervisor ID
+        if (arraySupervisorsId.size > 1) {
+            arraySupervisorsId.clear()
+            arraySupervisorsId.add(userId)
+        } else
+            arraySupervisorsId.add(userId)
+
+        Log.i("ArrayTankUser", "$arraySupervisorsId")
+
+        //Prepare Arraylist Villes
+        if (arrayVilleNew.size == 0) {
+
+            for(i in items)
+                arrayVilleNew.add(i)
+        }
+
+        Log.i("ArrayTankVille", "$arrayVilleNew")
+
+        //Prepare ArrayList Magasins
+        if (arrayStoresId.size > 1)
+            arrayStoresId.clear()
+
+
+        if (arrayStoreNew.size == 0) {
+            for (i in listaDataXX.indices) {
+                arrayStoresId.add(listaDataXX[i].id)
+            }
+        } else {
+            for (i in arrayStoreNew) {
+                for ((key, value) in mapStore.entries) {
+                    if (i == key) {
+                        arrayStoresId.add(value)
+                    }
+                }
+            }
+        }
+
+        Log.i("ArrayTankStore", "$arrayStoresId")
+
+
+        //Prepare ArrayList Questionnaire
+        if (arrayQuestIds.size > 1)
+            arrayQuestIds.clear()
+
+        if (arrayQuestNew.size == 0) {
+            for (i in listaQuiz) {
+                arrayQuestIds.add(i.id)
+            }
+        } else {
+            for (i in arrayQuestNew) {
+                for ((key, value) in mapQuest.entries) {
+                    if (i == key) {
+                        arrayQuestIds.add(value)
+                    }
+                }
+            }
+        }
+
+        Log.i("ArrayTankQuestionnaire", "$arrayQuestIds")
+
+        getAnalyseResponse()
+
+    }
+
+
+
+    private fun getAnalyseResponse()
+    {
+        lifecycleScope.launch(Dispatchers.Main) {
+
+            responseKpi = viewModelKpi.getStatTable("day_début_picker",day_fin_picker,arrayStoresId,arrayQuestIds,arraySupervisorsId,arrayVilleNew)
+
+            if (responseKpi.responseCode == 200) {
+
+
+            } else {
+
+            }
+
+            Log.i("responseKpi","$responseKpi")
+
+        }
     }
 
 
