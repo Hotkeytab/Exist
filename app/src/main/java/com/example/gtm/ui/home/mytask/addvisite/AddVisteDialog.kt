@@ -229,9 +229,9 @@ class AddVisteDialog(
                 progress_indicator.visibility = View.GONE
                 listaDataXX = responseDataStores.data!!.data as ArrayList<DataXX>
               //  listaDataXX[0].lng = null
-                listaDataXX.add(listaDataXX[0])
-                listaDataXX.add(listaDataXX[0])
-                listaDataXX.add(listaDataXX[0])
+             //   listaDataXX.add(listaDataXX[0])
+              //  listaDataXX.add(listaDataXX[0])
+              //  listaDataXX.add(listaDataXX[0])
 
                 setupRecycleViewPredictionDetail()
             } else {

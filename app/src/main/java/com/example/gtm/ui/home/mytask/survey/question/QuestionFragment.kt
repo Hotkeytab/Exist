@@ -119,7 +119,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
         userId = sharedPref.getInt("id", 0)
         storeId = sharedPref.getInt("storeId", 0)
         surveyId = sharedPref.getInt("surveyId", 0)
-        visiteId = sharedPref.getInt("visiteId",0)
+        visiteId = sharedPref.getInt("visiteId", 0)
 
 
         return binding.root
@@ -216,7 +216,9 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
                 (activity as DrawerActivity).listOfQuestionsPerSc[questionList[0].questionSubCategoryId]!!
 
             (activity as DrawerActivity).listOfQuestionsPerSc[questionList[0].questionSubCategoryId]!!.forEach { (k, v) ->
-                listaImage[k] = v!!.urls!!
+
+                if (v!!.urls != null)
+                 listaImage[k] = v!!.urls!!
             }
 
             initQuestion()
@@ -497,7 +499,6 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
             listMultipartBody.add(mbp)
 
 
-
         }
 
         return null
@@ -555,7 +556,14 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
 
         }
 
-        val qp2 = SurveyPost(userId.toLong(), storeId.toLong(),visiteId, surveyId.toLong(), 0.0, listBody)
+        val qp2 = SurveyPost(
+            userId.toLong(),
+            storeId.toLong(),
+            visiteId,
+            surveyId.toLong(),
+            0.0,
+            listBody
+        )
         Log.i("kamehameha", "$qp2")
 
         val userNewJson = jacksonObjectMapper().writeValueAsString(qp2)
@@ -565,12 +573,14 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
         )
 
 
-        checkInternet(listMultipartBody,bodyJson)
+        checkInternet(listMultipartBody, bodyJson)
     }
 
 
-    private fun getQuestions(listMultipartBody:ArrayList<MultipartBody.Part?>,bodyJson:RequestBody)
-    {
+    private fun getQuestions(
+        listMultipartBody: ArrayList<MultipartBody.Part?>,
+        bodyJson: RequestBody
+    ) {
         GlobalScope.launch(Dispatchers.Main) {
             responseData = viewModel.postSurveyResponse(
                 listMultipartBody,
@@ -634,10 +644,13 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
     }
 
 
-    private fun checkInternet(listMultipartBody:ArrayList<MultipartBody.Part?>,bodyJson:RequestBody) {
+    private fun checkInternet(
+        listMultipartBody: ArrayList<MultipartBody.Part?>,
+        bodyJson: RequestBody
+    ) {
         InternetCheck { internet ->
             if (internet)
-                getQuestions(listMultipartBody,bodyJson)
+                getQuestions(listMultipartBody, bodyJson)
             else {
 
                 //  progress_indicator_dialog.visibility = View.INVISIBLE
@@ -648,7 +661,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
                 fm.executePendingTransactions();
 
                 dialogInternet.dialog!!.setOnCancelListener {
-                    checkInternet(listMultipartBody,bodyJson)
+                    checkInternet(listMultipartBody, bodyJson)
                 }
 
 

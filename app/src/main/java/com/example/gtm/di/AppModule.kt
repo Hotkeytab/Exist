@@ -28,6 +28,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -46,7 +47,8 @@ object AppModule {
         logIntercept.setLevel(HttpLoggingInterceptor.Level.BODY)
 
         OkHttpClient.Builder()
-            .addInterceptor(encodeInterceptors)
+
+         //   .addInterceptor(encodeInterceptors)
             .addInterceptor(authInterceptor)
             .addInterceptor(logIntercept)
             .build()

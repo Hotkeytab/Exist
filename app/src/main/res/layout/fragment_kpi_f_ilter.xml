@@ -211,7 +211,7 @@
 
                         </androidx.cardview.widget.CardView>
 
-                        <TextView
+                    <!--  <TextView
                             android:id="@+id/text_type_analyse"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -264,7 +264,7 @@
                                     android:id="@+id/image_table_stats"
                                     android:layout_width="@dimen/_40sdp"
                                     android:layout_height="@dimen/_40sdp"
-                                    android:src="@drawable/outline_feed_24"
+                                    android:src="@drawable/outline_table_rows_24"
                                     app:tint="@color/purpleLogin" />
                             </androidx.cardview.widget.CardView>
 
@@ -274,6 +274,18 @@
                                 android:layout_weight="1" />
 
                         </LinearLayout>
+
+                        -->
+
+                        <TextView
+                            android:id="@+id/error_text_kpi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/red"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:text="Erreur connexion, réssayer plus tard"
+                            android:visibility="gone"/>
 
 
                         <androidx.appcompat.widget.AppCompatButton
@@ -286,6 +298,9 @@
                             android:background="@drawable/corned_white_purple"
                             android:text="Valider"
                             android:textColor="@color/purpleLogin" />
+
+
+
                     </LinearLayout>
 
                 </androidx.core.widget.NestedScrollView>

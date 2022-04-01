@@ -21,6 +21,7 @@
         <entry key="..\:/gtm/android/app/src/main/res/layout/activity_auth.xml" value="0.2" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/activity_drawer.xml" value="0.176" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/activity_home.xml" value="0.1921875" />
+        <entry key="..\:/gtm/android/app/src/main/res/layout/activity_kpi_final_result.xml" value="0.2" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/activity_pie_chart.xml" value="0.19947916666666668" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/activity_splashscreen.xml" value="0.17300724637681159" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/activity_suivi_detail.xml" value="0.18885869565217392" />
@@ -55,6 +56,7 @@
         <entry key="..\:/gtm/android/app/src/main/res/layout/fragment_sous_category.xml" value="0.2015625" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/fragment_suivie_detail.xml" value="0.18885869565217392" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/fragment_suivie_planning.xml" value="0.19972826086956522" />
+        <entry key="..\:/gtm/android/app/src/main/res/layout/fragment_table_stats.xml" value="0.2151268115942029" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/fragment_task.xml" value="0.2" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/item_add_store.xml" value="0.16799999999999998" />
         <entry key="..\:/gtm/android/app/src/main/res/layout/item_bloc_suivie.xml" value="0.1693840579710145" />

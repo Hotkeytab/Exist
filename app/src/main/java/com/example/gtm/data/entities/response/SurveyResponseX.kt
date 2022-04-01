@@ -1,7 +1,7 @@
 package com.example.gtm.data.entities.response
 
 data class SurveyResponseX(
-    val average: Int,
+    val average: Double,
     val createdAt: String,
     val id: Int,
     val responses: List<ResponseX>,

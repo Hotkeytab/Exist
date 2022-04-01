@@ -17,6 +17,7 @@ import retrofit2.http.Multipart
 interface ChartService {
 
 
+   // @Headers("Content-Type:application/json; charset=UTF-8")
     @GET("/chart/supervisorPerformance/{from}/{to}/{stores}/{surveyId}/{supervisors}/{governorates}")
     suspend fun getStatTable(@Path("from") from: String,@Path("to") to: String,@Path("stores") stores: ArrayList<Int>,@Path("surveyId") surveyId: ArrayList<Int>,@Path("supervisors") supervisors: ArrayList<Int>,@Path("governorates") governorates: ArrayList<String>): Response<AnalyseKpi>
 }

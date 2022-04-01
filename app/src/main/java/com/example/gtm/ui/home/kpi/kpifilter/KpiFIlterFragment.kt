@@ -1,6 +1,7 @@
 package com.example.gtm.ui.home.kpi.kpifilter
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
@@ -37,6 +38,8 @@ import android.widget.AdapterView.OnItemClickListener
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
 import com.example.gtm.data.entities.response.*
+import com.example.gtm.ui.home.kpi.KpiFinalResultActivity
+import com.example.gtm.ui.home.suivie.detail.SuiviDetailActivity
 import kotlinx.android.synthetic.main.fragment_kpi_f_ilter.topAppBar
 import kotlinx.android.synthetic.main.fragment_task.*
 import java.text.SimpleDateFormat
@@ -96,6 +99,7 @@ class KpiFIlterFragment : Fragment() {
         "Sousse",
         "Tataouine",
         "Tozeur",
+        "Tunis",
         "Zaghouan"
     )
 
@@ -133,20 +137,6 @@ class KpiFIlterFragment : Fragment() {
 
         binding.topAppBar.title = "Analyse Kpi"
 
-        binding.imageTableStats.setColorFilter(Color.argb(255, 0, 0, 0))
-        binding.imageKpiStats.setColorFilter(Color.argb(255, 220, 220, 220))
-
-        binding.imageTableStats.setOnClickListener {
-            binding.imageTableStats.setColorFilter(Color.argb(255, 0, 0, 0))
-            binding.imageKpiStats.setColorFilter(Color.argb(255, 220, 220, 220))
-            type = "table"
-        }
-
-        binding.imageKpiStats.setOnClickListener {
-            binding.imageKpiStats.setColorFilter(Color.argb(255, 0, 0, 0))
-            binding.imageTableStats.setColorFilter(Color.argb(255, 220, 220, 220))
-            type = "stats"
-        }
 
 
         val arrayAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, items)
@@ -162,7 +152,6 @@ class KpiFIlterFragment : Fragment() {
                 addChipVille(parent.getItemAtPosition(position).toString())
                 arrayVilleNew.add(parent.getItemAtPosition(position).toString())
             }
-            villeText.setText("")
         }
 
         magasinText.onItemClickListener = OnItemClickListener { parent, view, position, id ->
@@ -170,7 +159,6 @@ class KpiFIlterFragment : Fragment() {
                 addChipMagasin(parent.getItemAtPosition(position).toString())
                 arrayStoreNew.add(parent.getItemAtPosition(position).toString())
             }
-            magasinText.setText("")
         }
 
         questionnaireText.onItemClickListener = OnItemClickListener { parent, view, position, id ->
@@ -178,11 +166,9 @@ class KpiFIlterFragment : Fragment() {
                 addChipQuestionnaire(parent.getItemAtPosition(position).toString())
                 arrayQuestNew.add(parent.getItemAtPosition(position).toString())
             }
-            questionnaireText.setText("")
         }
 
         valider_kpi.setOnClickListener {
-            Log.i("DateDebut", "${controleDate()}")
             if (!controleDate()) {
                 error_text.visibility = View.VISIBLE
                 date_debut_text.requestFocus()
@@ -217,6 +203,7 @@ class KpiFIlterFragment : Fragment() {
     }
 
     private fun addChipVille(name: String) {
+
         binding.chipGroupVille.addView(createTagChip(requireContext(), name, "ville"))
 
     }
@@ -360,14 +347,15 @@ class KpiFIlterFragment : Fragment() {
 
 
     private fun prepareRequestList() {
+
+        progressUploadDialog.show(fm!!,"ProgressUploadDialog")
+
         //Prepare Arraylist Supervisor ID
         if (arraySupervisorsId.size > 1) {
             arraySupervisorsId.clear()
             arraySupervisorsId.add(userId)
         } else
             arraySupervisorsId.add(userId)
-
-        Log.i("ArrayTankUser", "$arraySupervisorsId")
 
         //Prepare Arraylist Villes
         if (arrayVilleNew.size == 0) {
@@ -376,7 +364,6 @@ class KpiFIlterFragment : Fragment() {
                 arrayVilleNew.add(i)
         }
 
-        Log.i("ArrayTankVille", "$arrayVilleNew")
 
         //Prepare ArrayList Magasins
         if (arrayStoresId.size > 1)
@@ -397,8 +384,6 @@ class KpiFIlterFragment : Fragment() {
             }
         }
 
-        Log.i("ArrayTankStore", "$arrayStoresId")
-
 
         //Prepare ArrayList Questionnaire
         if (arrayQuestIds.size > 1)
@@ -418,7 +403,6 @@ class KpiFIlterFragment : Fragment() {
             }
         }
 
-        Log.i("ArrayTankQuestionnaire", "$arrayQuestIds")
 
         getAnalyseResponse()
 
@@ -430,16 +414,35 @@ class KpiFIlterFragment : Fragment() {
     {
         lifecycleScope.launch(Dispatchers.Main) {
 
-            responseKpi = viewModelKpi.getStatTable("day_début_picker",day_fin_picker,arrayStoresId,arrayQuestIds,arraySupervisorsId,arrayVilleNew)
+            val newArrayVilleNew = ArrayList<String>()
+            //Add special characters to arraylist of strings "%"
+            for(i in arrayVilleNew)
+            {
+                newArrayVilleNew.add("\"$i\"")
+            }
+
+            responseKpi = viewModelKpi.getStatTable(day_debut_picker,day_fin_picker,arrayStoresId,arrayQuestIds,arraySupervisorsId,newArrayVilleNew)
 
             if (responseKpi.responseCode == 200) {
 
+                progressUploadDialog.dismiss()
+                binding.errorTextKpi.visibility = View.GONE
+
+                val intent = Intent(requireActivity(), KpiFinalResultActivity::class.java)
+                intent.putExtra("mainobject","bundle")
+                startActivity(intent)
+                requireActivity().overridePendingTransition(R.anim.right_to_left_activity,R.anim.left_to_right_activity)
 
             } else {
 
+                arraySupervisorsId.clear()
+                arrayStoresId.clear()
+                arrayQuestIds.clear()
+                arrayVilleNew.clear()
+                progressUploadDialog.dismiss()
+                binding.errorTextKpi.visibility = View.VISIBLE
             }
 
-            Log.i("responseKpi","$responseKpi")
 
         }
     }

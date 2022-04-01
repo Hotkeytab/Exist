@@ -19,6 +19,9 @@
         android:theme="@style/Theme.Gtm"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ui.home.kpi.KpiFinalResultActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.home.kpi.piechart.PieChartActivity"
             android:exported="false" />
         <activity
