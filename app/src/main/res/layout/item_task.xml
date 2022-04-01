@@ -54,7 +54,7 @@
                         android:id="@+id/store_icon_blue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@color/purpleMain"
+                        android:backgroundTint="@color/purpleLogin"
                         android:layout_gravity="center"
                         app:cardCornerRadius="@dimen/_5sdp">
 

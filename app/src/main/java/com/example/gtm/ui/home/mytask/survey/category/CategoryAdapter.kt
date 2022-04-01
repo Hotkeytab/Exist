@@ -20,10 +20,19 @@ import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.ui.drawer.DrawerActivity
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_category.*
+import kotlinx.android.synthetic.main.item_question_sous_category.view.*
 import kotlinx.android.synthetic.main.item_sous_category.view.*
+import kotlinx.android.synthetic.main.item_sous_category.view.title_subcateg
+import kotlinx.android.synthetic.main.item_sous_category_good.view.*
+import kotlinx.android.synthetic.main.item_task.view.*
 
 
-class CategoryAdapter(private val listener: CategoryFragment, activity: FragmentActivity,myVal : String,activityDrawer2 : DrawerActivity) :
+class CategoryAdapter(
+    private val listener: CategoryFragment,
+    activity: FragmentActivity,
+    myVal: String,
+    activityDrawer2: DrawerActivity
+) :
     RecyclerView.Adapter<CategoryViewHolder>() {
 
 
@@ -47,7 +56,14 @@ class CategoryAdapter(private val listener: CategoryFragment, activity: Fragment
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         val binding: ItemCategoryBinding =
             ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CategoryViewHolder(binding, listener as CategoryItemListener, activityIns, parent,myValIns,drawerActivity)
+        return CategoryViewHolder(
+            binding,
+            listener as CategoryItemListener,
+            activityIns,
+            parent,
+            myValIns,
+            drawerActivity
+        )
 
     }
 
@@ -68,6 +84,7 @@ class CategoryViewHolder(
     View.OnClickListener {
 
     var isOpenLinear = false
+    var isOpenLinearSC = false
     var addedValues = false
 
     private lateinit var categoryResponse: QuestionCategory
@@ -117,20 +134,23 @@ class CategoryViewHolder(
             var test: HashMap<Int, Survey?>?
             if (!addedValues) {
                 for (j in categoryResponse.questionSubCategories) {
-                    i++
-                     test = drawerActivity.listOfQuestionsPerSc[j.questions[0].questionSubCategoryId]
 
-                    if(test != null && test.size != 0) {
+
+                    i++
+                    test = drawerActivity.listOfQuestionsPerSc[j.questions[0].questionSubCategoryId]
+
+                    if (test != null && test.size != 0) {
                         val inflater =
                             LayoutInflater.from(parent.context)
                                 .inflate(R.layout.item_sous_category_good, null)
 
                         inflater.id = j.id
-
-
-
-
                         inflater.title_subcateg.text = j.name
+
+
+
+
+
                         inflater.setOnClickListener {
                             Log.i("buttonlistener", inflater.id.toString())
 
@@ -141,16 +161,17 @@ class CategoryViewHolder(
                                 "quizObject" to myVal,
                                 "scName" to j.name
                             )
-                            if(!drawerActivity.loading)
-                            parent.findNavController()
-                                .navigate(R.id.action_categoryFragment_to_questionFragment, bundle)
+                            if (!drawerActivity.loading)
+                                parent.findNavController()
+                                    .navigate(
+                                        R.id.action_categoryFragment_to_questionFragment,
+                                        bundle
+                                    )
                         }
                         layout.addView(inflater)
-                    }
 
 
-                    else
-                    {
+                    } else {
                         activityIns.envoyer_questionnaire_button.setBackgroundColor(Color.LTGRAY)
                         activityIns.envoyer_questionnaire_button.tag = "bad"
 
@@ -160,25 +181,60 @@ class CategoryViewHolder(
 
 
                         inflater.id = j.id
-
-
-
-
                         inflater.title_subcateg.text = j.name
-                        inflater.setOnClickListener {
-                            Log.i("buttonlistener", inflater.id.toString())
 
-                            val responsJson: String = Gson().toJson(j)
+                        for (k in j.questions.indices) {
+                            val inflaterQuestion =
+                                LayoutInflater.from(parent.context)
+                                    .inflate(R.layout.item_question_sous_category, null)
+                            inflaterQuestion.id = j.questions[k].id
+                            inflaterQuestion.title_subcateg_question.text = "Question ${k + 1}"
 
-                            val bundle = bundleOf(
-                                "questionObject" to responsJson,
-                                "quizObject" to myVal,
-                                "scName" to j.name
-                            )
-                            if(!drawerActivity.loading)
-                            parent.findNavController()
-                                .navigate(R.id.action_categoryFragment_to_questionFragment, bundle)
+                            inflater.questionLinear.addView(inflaterQuestion)
                         }
+
+                        /*   inflater.setOnClickListener {
+                               Log.i("buttonlistener", inflater.id.toString())
+
+                               val responsJson: String = Gson().toJson(j)
+
+                               val bundle = bundleOf(
+                                   "questionObject" to responsJson,
+                                   "quizObject" to myVal,
+                                   "scName" to j.name
+                               )
+                               if(!drawerActivity.loading)
+                               parent.findNavController()
+                                   .navigate(R.id.action_categoryFragment_to_questionFragment, bundle)
+                           } */
+
+
+                        inflater.setOnClickListener {
+
+
+                            if (!isOpenLinearSC) {
+                                isOpenLinearSC = true
+                                inflater.drop_arrow_sc.setImageResource(R.drawable.ic_baseline_arrow_drop_up_24)
+                                inflater.drop_arrow_sc.setColorFilter(
+                                    ContextCompat.getColor(
+                                        parent.context,
+                                        R.color.purpleLogin
+                                    ), android.graphics.PorterDuff.Mode.MULTIPLY
+                                )
+                                inflater.questionLinear.visibility = View.VISIBLE
+                            } else {
+                                isOpenLinearSC = false
+                                inflater.drop_arrow_sc.setImageResource(R.drawable.ic_baseline_arrow_drop_down_24)
+                                inflater.drop_arrow_sc.setColorFilter(
+                                    ContextCompat.getColor(
+                                        parent.context,
+                                        R.color.purpleLogin
+                                    ), android.graphics.PorterDuff.Mode.MULTIPLY
+                                )
+                                inflater.questionLinear.visibility = View.GONE
+                            }
+                        }
+
                         layout.addView(inflater)
                     }
                 }

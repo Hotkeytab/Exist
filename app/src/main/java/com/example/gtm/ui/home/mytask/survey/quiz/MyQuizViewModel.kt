@@ -16,6 +16,6 @@ class MyQuizViewModel  @Inject constructor(
 ):ViewModel(){
 
     suspend fun getSurvey() = surveyRepository.getSurvey()
-
     suspend fun addVisite(visitPost: ArrayList<VisitPost>)  = surveyRepository.addVisite(visitPost)
+
 }
