@@ -33,6 +33,11 @@
                     />
 
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    />
 
                 <TextView
                     android:id="@+id/title_subcateg_question"
@@ -49,6 +54,21 @@
                     app:autoSizeStepGranularity="2sp"
                     app:autoSizeTextType="uniform"
                     android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/etoile_obli"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/red"
+                    android:textStyle="bold"
+                    android:layout_gravity="top"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    />
 
 
             </LinearLayout>

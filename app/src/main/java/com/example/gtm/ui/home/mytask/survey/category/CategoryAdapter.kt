@@ -189,9 +189,31 @@ class CategoryViewHolder(
                                     .inflate(R.layout.item_question_sous_category, null)
                             inflaterQuestion.id = j.questions[k].id
                             inflaterQuestion.title_subcateg_question.text = "Question ${k + 1}"
+                         /*   if(j.questions[k].imagesRequired || j.questions[k].required)
+                                inflater.etoile_obli.text = "*" */
+
+                            inflaterQuestion.setOnClickListener {
+                                val myObject = j.questions[k]
+                                val responsJson: String = Gson().toJson(myObject)
+                                val bundle = bundleOf(
+                                    "questionObject" to responsJson,
+                                    "empty" to true,
+                                    "quizObject" to myVal,
+                                    "scName" to "${j.name} : Question ${k + 1}"
+                                )
+
+
+                                if (!drawerActivity.loading)
+                                    parent.findNavController()
+                                        .navigate(
+                                            R.id.action_categoryFragment_to_questionNewFragment,
+                                            bundle
+                                        )
+                            }
 
                             inflater.questionLinear.addView(inflaterQuestion)
                         }
+
 
                         /*   inflater.setOnClickListener {
                                Log.i("buttonlistener", inflater.id.toString())

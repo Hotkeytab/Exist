@@ -78,7 +78,6 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
     private var percent = 0
     private var filesNumber = 0
     private var visiteId = 0
-
     var recentPercent = 0
 
 
@@ -132,6 +131,8 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
         val gson = Gson()
         val objectList = gson.fromJson(myVal, QuizData::class.java)
+
+
 
 
         if (objectList != null)

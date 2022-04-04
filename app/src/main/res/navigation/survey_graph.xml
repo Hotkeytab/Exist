@@ -43,6 +43,9 @@
             android:name="myObject"
             app:argType="string"
             android:defaultValue='""' />
+        <action
+            android:id="@+id/action_categoryFragment_to_questionNewFragment"
+            app:destination="@id/questionNewFragment" />
     </fragment>
     <fragment
         android:id="@+id/questionFragment"
@@ -58,4 +61,13 @@
         android:name="com.example.gtm.ui.home.suivie.SuiviePlanningFragment"
         android:label="fragment_suivie_planning"
         tools:layout="@layout/fragment_suivie_planning" />
+    <fragment
+        android:id="@+id/questionNewFragment"
+        android:name="com.example.gtm.ui.home.mytask.survey.questionnew.QuestionNewFragment"
+        android:label="fragment_question_new"
+        tools:layout="@layout/fragment_question_new" >
+        <action
+            android:id="@+id/action_questionNewFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
+    </fragment>
 </navigation>

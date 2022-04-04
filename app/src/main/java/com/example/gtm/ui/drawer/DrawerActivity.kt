@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.gtm.R
+import com.example.gtm.data.entities.remote.SurveyPost
 import com.example.gtm.data.entities.response.UserResponse
 import com.example.gtm.data.entities.response.Visite
 import com.example.gtm.data.entities.ui.Survey
@@ -61,12 +62,14 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         HashMap<String, ArrayList<Visite>>()
     var SetlistaTasksDate: Set<Map.Entry<String, ArrayList<Visite>>>? = null
 
+    //New Question Method
+    var surveyPostArrayList : ArrayList<SurveyPost> = ArrayList<SurveyPost>()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawer)
-
-
 
         sessionManager = SessionManager(this)
 

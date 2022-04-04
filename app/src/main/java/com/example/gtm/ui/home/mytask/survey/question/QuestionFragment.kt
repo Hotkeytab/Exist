@@ -116,6 +116,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
             R.string.app_name.toString(),
             Context.MODE_PRIVATE
         )
+
         userId = sharedPref.getInt("id", 0)
         storeId = sharedPref.getInt("storeId", 0)
         surveyId = sharedPref.getInt("surveyId", 0)
