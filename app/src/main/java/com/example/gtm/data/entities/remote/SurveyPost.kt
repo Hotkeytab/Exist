@@ -6,5 +6,5 @@ data class SurveyPost(
     val visitId: Int,
     val surveyId: Long,
     val average: Double = 0.0,
-    val responses: List<QuestionPost>?
+    val responses: List<QuestionPost?>?
 )

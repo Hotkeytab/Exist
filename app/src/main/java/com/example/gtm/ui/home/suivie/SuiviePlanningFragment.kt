@@ -319,7 +319,6 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
 
 
             if (responseData2.responseCode == 200) {
-                Log.i("newaray","$responseData2")
               listaSurveyResponse = responseData2.data!!.data as ArrayList<DataX>
                 setupRecycleViewPredictionDetail()
                 /*    if (daysFilter.dayFilter == 1)

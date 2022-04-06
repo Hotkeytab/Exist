@@ -16,6 +16,9 @@ import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.gtm.R
+import com.example.gtm.data.entities.custom.QuestionNewPost
+import com.example.gtm.data.entities.custom.UserInf
+import com.example.gtm.data.entities.remote.QuestionPost
 import com.example.gtm.data.entities.remote.SurveyPost
 import com.example.gtm.data.entities.response.UserResponse
 import com.example.gtm.data.entities.response.Visite
@@ -60,11 +63,10 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     var listOfTriDates: ArrayList<String> = ArrayList<String>()
     var HashMaplistaTasksDate: HashMap<String, ArrayList<Visite>> =
         HashMap<String, ArrayList<Visite>>()
-    var SetlistaTasksDate: Set<Map.Entry<String, ArrayList<Visite>>>? = null
+    // var SetlistaTasksDate: Set<Map.Entry<String, ArrayList<Visite>>>? = null
 
     //New Question Method
-    var surveyPostArrayList : ArrayList<SurveyPost> = ArrayList<SurveyPost>()
-
+    var surveyPostArrayList: HashMap<UserInf, QuestionNewPost> = HashMap<UserInf, QuestionNewPost>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -104,27 +106,26 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
                     R.id.task -> {
 
-                       // if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
-                            selectedFragment = BeforeHomeFragment()
+                        // if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
+                        selectedFragment = BeforeHomeFragment()
 
 
-
-                      //  lastTimeClicked = SystemClock.elapsedRealtime()
+                        //  lastTimeClicked = SystemClock.elapsedRealtime()
 
                     }
                     R.id.suivie -> {
-                     //   if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
-                            selectedFragment = SuiviePlanningFragment()
+                        //   if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
+                        selectedFragment = SuiviePlanningFragment()
 
-                   //     lastTimeClicked = SystemClock.elapsedRealtime()
+                        //     lastTimeClicked = SystemClock.elapsedRealtime()
 
                     }
 
                     R.id.kpi -> {
-                     //   if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
-                            selectedFragment = KpiGraphFragment()
-                              //  selectedFragment = KpiFragment()
-                      //  lastTimeClicked = SystemClock.elapsedRealtime()
+                        //   if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
+                        selectedFragment = KpiGraphFragment()
+                        //  selectedFragment = KpiFragment()
+                        //  lastTimeClicked = SystemClock.elapsedRealtime()
                     }
 
                 }
@@ -136,12 +137,9 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                     ).commit()
                 }
             }
-                true
+            true
 
-            }
-
-
-
+        }
 
 
     }
@@ -173,7 +171,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 ).show(fm, "EditProfileFRagment")
             }
             R.id.nav_logout -> {
-              //  sharedPref.edit().clear().apply()
+                //  sharedPref.edit().clear().apply()
                 val intent = Intent(this, AuthActivity::class.java)
                 this.startActivity(intent)
                 this.finish()

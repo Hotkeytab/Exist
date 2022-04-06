@@ -95,7 +95,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
         userId = sharedPref.getInt("id", 0)
         storeId = sharedPref.getInt("storeId", 0)
         surveyId = sharedPref.getInt("surveyId", 0)
-        visiteId = sharedPref.getInt("visiteId",0)
+        visiteId = sharedPref.getInt("visiteId", 0)
 
         requireActivity().bottom_nav.visibility = View.GONE
 
@@ -144,7 +144,34 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
         binding.envoyerQuestionnaireButton.setOnClickListener {
 
-            if (binding.envoyerQuestionnaireButton.tag != "bad") {
+            /*   if (binding.envoyerQuestionnaireButton.tag != "bad") {
+
+                   (activity as DrawerActivity).loading = true
+                   binding.progressBarUpload.visibility = View.VISIBLE
+                   Timer().schedule(1000) {
+                       envoyerQuestionnaire()
+                   }
+               }*/
+
+            //      setupRecycleViewCategory()
+
+
+            if (!searchForIncompleteQuestion()) {
+                setupRecycleViewCategory()
+
+                val snack = Snackbar.make(
+                    requireView(),
+                    "Vous avez raté une question obligatoire",
+                    Snackbar.LENGTH_LONG
+                ).setBackgroundTint(resources.getColor(R.color.red))
+
+                val view: View = snack.view
+                val params = view.layoutParams as FrameLayout.LayoutParams
+                params.gravity = Gravity.CENTER
+                view.layoutParams = params
+                snack.show()
+
+            } else {
 
                 (activity as DrawerActivity).loading = true
                 binding.progressBarUpload.visibility = View.VISIBLE
@@ -152,10 +179,39 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
                     envoyerQuestionnaire()
                 }
             }
+
+
         }
 
         // val objectList = gson.fromJson(json, Array<SomeObject>::class.java).asList()
     }
+
+    /*private fun prepareListOfQuestionsPerSc() {
+
+        val myHashMapFinal : HashMap<Int, HashMap<Int, Survey?>> = HashMap<Int, HashMap<Int, Survey?>>()
+
+        for (i in listaCategory.indices) {
+
+            for (j in listaCategory[i].questionSubCategories.indices) {
+
+                val mySubHashMapFinal : HashMap<Int, Survey?> = HashMap<Int, Survey?>()
+
+                for (k in listaCategory[i].questionSubCategories[j].questions.indices) {
+                    var mySurveyFinal: Survey? = null
+                    (activity as DrawerActivity).surveyPostArrayList.forEach { (v, w) ->
+
+                        if (listaCategory[i].questionSubCategories[j].questions[k].id == v.questionId) {
+                            mySurveyFinal = Survey(listaCategory[i].questionSubCategories[j].questions[k].id, listaCategory[i].questionSubCategories[j].questions[k].coef, w.rate, w.description, w.images)
+                        }
+                    }
+                    mySubHashMapFinal[k] = mySurveyFinal
+                }
+            }
+
+
+            //(activity as DrawerActivity).listOfQuestionsPerSc[i]
+        }
+    } */
 
 
     private fun setupRecycleViewCategory() {
@@ -178,6 +234,29 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
     }
 
 
+    private fun searchForIncompleteQuestion(): Boolean {
+        for (i in listaCategory) {
+            for (j in i.questionSubCategories) {
+                for (k in j.questions) {
+                    if (k.required || k.images || k.imagesRequired) {
+                        var test = false
+                        (activity as DrawerActivity).surveyPostArrayList.forEach { (v, _) ->
+                            if (k.id == v.questionId) {
+                                test = true
+                            }
+                        }
+                        if (!test) {
+                            k.state = 1
+                            return false
+                        }
+                    }
+                }
+            }
+        }
+
+        return true
+    }
+
     @SuppressLint("ResourceAsColor")
     private fun envoyerQuestionnaire() {
 
@@ -189,45 +268,90 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
         // Log.i("mamaafrica","${(activity as DrawerActivity).listOfQuestionsPerSc}")
 
         val listMultipartBody = ArrayList<MultipartBody.Part?>()
-        val listBody = ArrayList<QuestionPost>()
+        val listBody = ArrayList<QuestionPost?>()
         //  filesNumber = bigList
 
-        bigList.forEach { (v, k) ->
 
+        for (i in listaCategory) {
+            for (j in i.questionSubCategories) {
+                for (k in j.questions) {
+                    var questionPostLast: QuestionPost? = null
+                    var rateTest = 0.0
+                    coefTotal += k.coef
+
+                    (activity as DrawerActivity).surveyPostArrayList.forEach { (v, w) ->
+
+                        if (k.id == v.questionId) {
+                            if (w.rate != null)
+                                rateTest = w.rate.toDouble() * 2
+                            else rateTest = 0.0
+
+                            val images = ArrayList<ImagePath?>()
+
+                            if (w.images != null) {
+                                w.images.forEach { i ->
+                                    convertToFile(i, images, listMultipartBody)
+                                }
+                            }
+
+                            questionPostLast =
+                                QuestionPost(w.questionId, w.rate, w.description, images)
+
+                        }
+                    }
+
+                    listBody.add(questionPostLast)
+
+                    average += k.coef * rateTest
+
+                }
+            }
+        }
+
+
+
+      /*  bigList.forEach { (v, k) ->
 
             k.forEach { (l, m) ->
 
 
                 coefTotal += m!!.coef
-                average += m.coef * m.rate
+                if (m.rate == null)
+                    m.rate = 0
+                average += m.coef * m.rate!!
 
                 val images = ArrayList<ImagePath?>()
 
-                if (m?.urls != null) {
+                if (m.urls != null) {
                     m.urls.forEach { i ->
                         convertToFile(i, images, listMultipartBody)
                     }
                 }
 
                 val questionPost =
-                    QuestionPost(m!!.id.toLong(), m.rate.toLong(), m.description, images)
+                    QuestionPost(m.id.toLong(), m.rate, m.description, images)
 
 
 
                 listBody.add(questionPost)
             }
 
-        }
+        } */
 
 
-        val finalAverageBefore : Double = (average / coefTotal)
-        val stringDecimal = (finalAverageBefore.toString()).substring(0,3)
-
-
+        val finalAverageBefore: Double = (average / coefTotal)
+        val stringDecimal = (finalAverageBefore.toString()).substring(0, 3)
 
 
         val qp2 =
-            SurveyPost(userId.toLong(), storeId.toLong(),visiteId, surveyId.toLong(), stringDecimal.toDouble(), listBody)
+            SurveyPost(
+                userId.toLong(),
+                storeId.toLong(),
+                visiteId,
+                surveyId.toLong(),
+                stringDecimal.toDouble(),
+                listBody
+            )
 
 
         val userNewJson = jacksonObjectMapper().writeValueAsString(qp2)
@@ -240,7 +364,6 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
         binding.progressUpload.max = filesNumber * 2
 
         Log.i("filesNumber", "$filesNumber")
-
 
         GlobalScope.launch(Dispatchers.Main) {
             responseData = viewModel.postSurveyResponse(
@@ -316,7 +439,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
             listMultipartBody.add(mbp)
 
-            requireActivity().contentResolver.delete(selectedImageUri,null,null)
+            requireActivity().contentResolver.delete(selectedImageUri, null, null)
 
         }
 
@@ -333,8 +456,6 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
             MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "Title", null)
         return Uri.parse(path)
     }
-
-    
 
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -362,5 +483,10 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
     override fun onFinish(finished: Boolean) {
     }
 
+
+
+    object LastSc {
+        var lsc = 0
+    }
 
 }

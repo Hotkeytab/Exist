@@ -89,6 +89,7 @@ class SuivieDetailViewHolder(
         {
             if(i.survey == item)
             {
+                if(i.responses.isNotEmpty())
                 itemBinding.time.text = extractDate(i.responses[0].createdAt)
                 return
             }

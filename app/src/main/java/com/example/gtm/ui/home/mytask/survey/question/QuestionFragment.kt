@@ -154,7 +154,6 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
 
 
         binding.backFromQuiz.setOnClickListener {
-
             val bundle = bundleOf("quizObject" to myVar2)
             findNavController().navigate(R.id.action_questionFragment_to_categoryFragment, bundle)
         }
@@ -219,7 +218,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
             (activity as DrawerActivity).listOfQuestionsPerSc[questionList[0].questionSubCategoryId]!!.forEach { (k, v) ->
 
                 if (v!!.urls != null)
-                 listaImage[k] = v!!.urls!!
+                    listaImage[k] = v.urls!!
             }
 
             initQuestion()
@@ -355,8 +354,10 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
 
 
         if (listaSurvey[i] != null) {
-            binding.ratingBar.rating = listaSurvey[i]!!.rate
-            binding.editText.setText(listaSurvey[i]!!.description)
+            if (listaSurvey[i]!!.rate != null)
+                binding.ratingBar.rating = listaSurvey[i]!!.rate!!.toFloat()
+            if (listaSurvey[i]!!.description != null)
+                binding.editText.setText(listaSurvey[i]!!.description)
 
             if (listaSurvey[i]!!.urls != null) {
                 if (listaSurvey[i]!!.urls!!.size != 0) {
@@ -393,7 +394,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
                 Survey(
                     idQuestion,
                     questionList[i].coef,
-                    binding.ratingBar.rating * 2,
+                    binding.ratingBar.rating.toLong() * 2,
                     binding.editText.text.toString(),
                     listaImage[i]!!
                 )
@@ -402,7 +403,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
                 Survey(
                     idQuestion,
                     questionList[i].coef,
-                    binding.ratingBar.rating * 2,
+                    binding.ratingBar.rating.toLong() * 2,
                     binding.editText.text.toString(),
                     null
                 )
@@ -550,7 +551,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
                 }
             }
 
-            val questionPost = QuestionPost(v!!.id.toLong(), v.rate.toLong(), v.description, images)
+            val questionPost = QuestionPost(v!!.id.toLong(), v.rate!!.toLong(), v.description, images)
 
 
             listBody.add(questionPost)

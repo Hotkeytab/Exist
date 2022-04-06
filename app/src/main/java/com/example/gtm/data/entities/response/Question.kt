@@ -13,5 +13,6 @@ data class Question(
     val name: String,
     val questionSubCategoryId: Int,
     val required: Boolean,
-    val updatedAt: String
+    val updatedAt: String,
+    var state: Int = -1
 )

@@ -8,14 +8,13 @@
         android:layout_height="wrap_content">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/ourCardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_2sdp"
             app:cardUseCompatPadding="true"
             android:layout_marginBottom="@dimen/_2sdp"
-            android:layout_marginLeft="@dimen/_15sdp"
-            android:layout_marginRight="@dimen/_15sdp"
+            android:layout_marginLeft="@dimen/_35sdp"
+            android:layout_marginRight="@dimen/_35sdp"
             app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
@@ -26,17 +25,22 @@
 
 
                 <ImageView
-                    android:layout_width="@dimen/_20sdp"
-                    android:layout_height="@dimen/_20sdp"
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
                     android:src="@drawable/ic_check_cricle"
                     app:tint="@color/green"
                     android:layout_marginLeft="@dimen/_10sdp"
                     />
 
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    />
 
                 <TextView
-                    android:id="@+id/title_subcateg"
+                    android:id="@+id/title_subcateg_question"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -51,26 +55,25 @@
                     app:autoSizeTextType="uniform"
                     android:layout_weight="1"/>
 
+                <TextView
+                    android:id="@+id/etoile_obli"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/red"
+                    android:textStyle="bold"
+                    android:layout_gravity="top"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    />
+
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-
-        <LinearLayout
-            android:id="@+id/questionLinearGood"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/ourCardview"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginLeft="@dimen/_15sdp"
-            android:layout_marginRight="@dimen/_15sdp"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-
-        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

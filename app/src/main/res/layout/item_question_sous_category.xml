@@ -62,6 +62,7 @@
                     android:textColor="@color/red"
                     android:textStyle="bold"
                     android:layout_gravity="top"
+                    android:layout_marginTop="@dimen/_5sdp"
                     />
 
                 <TextView

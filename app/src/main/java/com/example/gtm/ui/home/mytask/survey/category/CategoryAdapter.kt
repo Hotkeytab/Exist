@@ -172,9 +172,10 @@ class CategoryViewHolder(
 
 
                     } else {
-                        activityIns.envoyer_questionnaire_button.setBackgroundColor(Color.LTGRAY)
-                        activityIns.envoyer_questionnaire_button.tag = "bad"
+                        /*  activityIns.envoyer_questionnaire_button.setBackgroundColor(Color.LTGRAY)
+                          activityIns.envoyer_questionnaire_button.tag = "bad" */
 
+                        var questionFlag = false
                         val inflater =
                             LayoutInflater.from(parent.context)
                                 .inflate(R.layout.item_sous_category, null)
@@ -183,14 +184,40 @@ class CategoryViewHolder(
                         inflater.id = j.id
                         inflater.title_subcateg.text = j.name
 
+                        val sizeQuestions = j.questions.size
+                        var incrementSizeTest = 0
                         for (k in j.questions.indices) {
-                            val inflaterQuestion =
+
+                            var inflaterQuestion =
                                 LayoutInflater.from(parent.context)
                                     .inflate(R.layout.item_question_sous_category, null)
+
+
+                            drawerActivity.surveyPostArrayList.forEach { (v, _) ->
+                                if (j.questions[k].id == v.questionId) {
+                                    inflaterQuestion =
+                                        LayoutInflater.from(parent.context)
+                                            .inflate(
+                                                R.layout.item_question_sous_category_good,
+                                                null
+                                            )
+                                    incrementSizeTest++
+                                }
+                            }
+
                             inflaterQuestion.id = j.questions[k].id
                             inflaterQuestion.title_subcateg_question.text = "Question ${k + 1}"
-                         /*   if(j.questions[k].imagesRequired || j.questions[k].required)
-                                inflater.etoile_obli.text = "*" */
+                            if (j.questions[k].imagesRequired || j.questions[k].required || j.questions[k].images)
+                                inflaterQuestion.etoile_obli.text = "*"
+
+                            if (j.questions[k].state == 1) {
+
+                                inflaterQuestion.title_subcateg_question.setTextColor(Color.RED)
+                                inflaterQuestion.isFocusable = true
+                                inflaterQuestion.isFocusableInTouchMode = true
+                                inflaterQuestion.requestFocus()
+                                questionFlag = true
+                            }
 
                             inflaterQuestion.setOnClickListener {
                                 val myObject = j.questions[k]
@@ -209,7 +236,24 @@ class CategoryViewHolder(
                                             R.id.action_categoryFragment_to_questionNewFragment,
                                             bundle
                                         )
+
+
                             }
+
+
+
+
+
+                            if (sizeQuestions == incrementSizeTest) {
+                                inflater.circle_state.setImageResource(R.drawable.ic_check_cricle)
+                                itemBinding.dropArrow.setColorFilter(
+                                    ContextCompat.getColor(
+                                        parent.context,
+                                        R.color.green
+                                    ), android.graphics.PorterDuff.Mode.MULTIPLY
+                                )
+                            }
+
 
                             inflater.questionLinear.addView(inflaterQuestion)
                         }
@@ -256,6 +300,23 @@ class CategoryViewHolder(
                                 inflater.questionLinear.visibility = View.GONE
                             }
                         }
+
+
+                        if (questionFlag) {
+                            if (!isOpenLinearSC) {
+                                isOpenLinearSC = true
+                                inflater.drop_arrow_sc.setImageResource(R.drawable.ic_baseline_arrow_drop_up_24)
+                                inflater.drop_arrow_sc.setColorFilter(
+                                    ContextCompat.getColor(
+                                        parent.context,
+                                        R.color.purpleLogin
+                                    ), android.graphics.PorterDuff.Mode.MULTIPLY
+                                )
+                                inflater.questionLinear.visibility = View.VISIBLE
+                            }
+
+                        }
+
 
                         layout.addView(inflater)
                     }

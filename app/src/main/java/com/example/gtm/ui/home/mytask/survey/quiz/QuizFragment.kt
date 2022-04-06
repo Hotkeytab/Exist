@@ -3,6 +3,7 @@ package com.example.gtm.ui.home.mytask.survey.quiz
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,15 +12,19 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.gtm.R
+import com.example.gtm.data.entities.response.DataX
 import com.example.gtm.data.entities.response.Quiz
 import com.example.gtm.data.entities.response.QuizData
+import com.example.gtm.data.entities.response.SurveyResponse
 import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.databinding.FragmentQuizBinding
 import com.example.gtm.ui.drawer.DrawerActivity
+import com.example.gtm.ui.home.mytask.MyTaskViewModel
 import com.example.gtm.utils.remote.Internet.InternetCheck
 import com.example.gtm.utils.remote.Internet.InternetCheckDialog
 import com.example.gtm.utils.resources.Resource
@@ -31,6 +36,10 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 @AndroidEntryPoint
@@ -39,12 +48,17 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
     private lateinit var binding: FragmentQuizBinding
     private lateinit var adapterSurvey: QuizAdapter
     private lateinit var responseDataQuiz: Resource<Quiz>
+    private lateinit var responseData2: Resource<SurveyResponse>
+    private var listaSurveyResponse = ArrayList<DataX>()
     private var listaQuiz = ArrayList<QuizData>()
     private val viewModel: MyQuizViewModel by viewModels()
+    private val viewModel2: MyTaskViewModel by viewModels()
     private var storeName: String? = ""
     lateinit var sharedPref: SharedPreferences
     private lateinit var dialogInternet: InternetCheckDialog
     private lateinit var fm: FragmentManager
+    private var userId = 0
+    private lateinit var dateTimeBegin: String
 
 
     override fun onCreateView(
@@ -66,6 +80,7 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
             Context.MODE_PRIVATE
         )
         storeName = sharedPref.getString("storeName", "")
+        userId = sharedPref.getInt("id", 0)
 
         requireActivity().bottom_nav.visibility = View.GONE
         return binding.root
@@ -119,6 +134,13 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
         adapterSurvey.setItems(listaQuiz)
         binding.progressIndicator.visibility = View.GONE
 
+        if(listaQuiz.size == 0)
+        {
+            binding.noquiz.visibility = View.VISIBLE
+        }
+        else
+            binding.noquiz.visibility = View.GONE
+
     }
 
     override fun onClickedQuiz(quiz: QuizData, surveyId: Int) {
@@ -144,7 +166,7 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
     @DelicateCoroutinesApi
     private fun getVisites() {
         binding.progressIndicator.visibility = View.VISIBLE
-        GlobalScope.launch(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.Main) {
 
 
             if (isAdded)
@@ -152,12 +174,67 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
 
             if (responseDataQuiz.responseCode == 200) {
                 listaQuiz = responseDataQuiz.data!!.data as ArrayList<QuizData>
-                setupRecycleViewSurvey()
+
+                getUsedQuiz()
+
+
+
+
+
+
+
+           //     for(i in listaQuiz)
+
+             //   Log.i("OkBraw","${searchForQuiz()}")
+
+
             }
 
         }
     }
 
+
+    private fun searchForQuiz(quizId: Int) : Boolean
+    {
+
+
+        for(i in listaSurveyResponse)
+        {
+            if(i.surveyId == quizId)
+                return true
+        }
+        return false
+    }
+
+
+    private fun getUsedQuiz() {
+        lifecycleScope.launch(Dispatchers.Main) {
+
+            val d = Date()
+
+            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+            dateTimeBegin = simpleDateFormat.format(d.time).toString()
+
+            if (isAdded)
+                responseData2 =
+                    viewModel2.getSurveyResponse(userId.toString(), dateTimeBegin, dateTimeBegin)
+
+
+            if (responseData2.responseCode == 200) {
+                listaSurveyResponse = responseData2.data!!.data as ArrayList<DataX>
+
+
+                 listaQuiz = listaQuiz.filter { list -> !searchForQuiz(list.id) } as ArrayList<QuizData>
+
+                setupRecycleViewSurvey()
+            }
+
+            else
+            {
+                checkInternet()
+            }
+        }
+    }
 
     private fun checkInternet() {
         InternetCheck { internet ->
@@ -174,7 +251,6 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
 
                 dialogInternet.dialog!!.setOnCancelListener {
                     checkInternet()
-
                 }
             }
         }
@@ -187,7 +263,7 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
                 R.string.app_name.toString(),
                 Context.MODE_PRIVATE
             )!!
-        
+
         with(sharedPref.edit()) {
             this?.putString("questionName", questionName)
         }?.commit()
