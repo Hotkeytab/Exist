@@ -175,6 +175,8 @@ class ChoixImageDialogSuivie(
             questionnaire.visibility = View.GONE
         }
 
+
+
     }
 
 

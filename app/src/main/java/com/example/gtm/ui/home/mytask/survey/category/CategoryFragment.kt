@@ -108,6 +108,8 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
 
 
+        Log.i("LastSC","${LastSc.lsc}")
+
         binding.title.text = questionName
 
 

@@ -6,10 +6,6 @@ import android.app.Activity
 import android.content.ContentUris
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.example.gtm.R
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,6 +57,8 @@ import androidx.fragment.app.Fragment
 import android.text.Editable
 
 import android.text.TextWatcher
+import android.view.*
+import android.widget.FrameLayout
 import androidx.fragment.app.FragmentManager
 import com.example.gtm.ui.home.mytask.positionmap.AddPositionMapDialog
 import com.example.gtm.ui.home.mytask.positionmap.AjouterPositionDialog
@@ -70,11 +68,12 @@ import com.example.gtm.utils.remote.Internet.InternetCheckDialog
 import kotlinx.android.synthetic.main.dialog_edit_profile.*
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
+import com.google.android.material.snackbar.Snackbar
 
 
 @AndroidEntryPoint
 class AddVisteDialog(
-
+    var listaTasks2 : ArrayList<Visite>
 
 ) :
     DialogFragment(), AddVisiteAdapter.TaskItemListener {
@@ -89,6 +88,8 @@ class AddVisteDialog(
     lateinit var sharedPref: SharedPreferences
     private lateinit var dialogInternet: InternetCheckDialog
     private lateinit var fm: FragmentManager
+    private var listaTasks = listaTasks2
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -330,8 +331,39 @@ class AddVisteDialog(
 
     private fun checkInternetAddVisite(taskId: Int) {
         InternetCheck { internet ->
-            if (internet)
+            if (internet) {
+
+                var testId = false
+
+                if(listaTasks.size > 0)
+                {
+                    for(i in listaTasks)
+                    {
+                        Log.i("TheBestId","$taskId")
+                        Log.i("TheBestId","${i.id}")
+                       if(i.storeId == taskId)
+                           testId = true
+                    }
+                }
+
+
+                if(!testId)
                 addVisite(taskId)
+                else
+                {
+                    val snack = Snackbar.make(
+                        requireView(),
+                        "Ce magasin existe",
+                        Snackbar.LENGTH_LONG
+                    ).setBackgroundTint(resources.getColor(R.color.red))
+
+                    val view: View = snack.view
+                    val params = view.layoutParams as FrameLayout.LayoutParams
+                    params.gravity = Gravity.CENTER
+                    view.layoutParams = params
+                    snack.show()
+                }
+            }
             else {
 
                 progress_indicator_dialog.visibility = View.INVISIBLE

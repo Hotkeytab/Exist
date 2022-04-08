@@ -214,7 +214,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
 
             binding.fab.setOnClickListener {
 
-                addVisiteDialog = AddVisteDialog()
+                addVisiteDialog = AddVisteDialog(listaTasks)
                 addVisiteDialog.show(fm!!, "add")
 
 
@@ -386,6 +386,8 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
             if (CheckGpsStatus())
             // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
             {
+
+
                 if (visite.pe == 1 && visite.ps == 1)
                     SurveyCheckDialog(
                         this,
@@ -396,7 +398,8 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
                         listaTasks,
                         visite
                     ).show(fm!!, "SurveyDialog")
-                else
+                else {
+                    if(visite.end ==null)
                     ChoixImageDialogSuivie(
                         this,
                         visite.pe,
@@ -407,6 +410,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
                         adapterTask,
                         listaTasks
                     ).show(fm!!, "ChoixImageSuivi")
+                }
 
             } else {
                 showPermissionDeniedGPS()
@@ -513,11 +517,11 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
             interval = 2000
             fastestInterval = 2000
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            maxWaitTime= 2000
+            maxWaitTime = 2000
         }
 
-      /*  val locationRequest = LocationRequest().setInterval(2000).setFastestInterval(2000)
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) */
+        /*  val locationRequest = LocationRequest().setInterval(2000).setFastestInterval(2000)
+              .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) */
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION

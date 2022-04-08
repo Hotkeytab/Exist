@@ -551,7 +551,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
                 }
             }
 
-            val questionPost = QuestionPost(v!!.id.toLong(), v.rate!!.toLong(), v.description, images)
+            val questionPost = QuestionPost(v!!.id.toLong(), v.rate!!.toDouble(), v.description, images)
 
 
             listBody.add(questionPost)

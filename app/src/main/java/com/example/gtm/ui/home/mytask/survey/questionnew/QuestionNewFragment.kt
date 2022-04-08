@@ -191,7 +191,7 @@ class QuestionNewFragment : Fragment(), ImageNewAdapter.ImageItemListener {
             val userInf = UserInf(userId, storeId, visiteId, surveyId, myQuestion!!.id)
             val myQusObject = QuestionNewPost(
                 myQuestion!!.id.toLong(),
-                binding.ratingBar.rating.toLong(),
+                binding.ratingBar.rating.toDouble(),
                 binding.editText.text.toString(),
                 listaImage
             )

@@ -2,9 +2,11 @@ package com.example.gtm.ui.home.mytask.survey.category
 
 import android.graphics.Color
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gtm.databinding.ItemCategoryBinding
@@ -18,6 +20,7 @@ import com.example.gtm.data.entities.response.QuestionCategory
 import com.example.gtm.data.entities.response.QuizData
 import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.ui.drawer.DrawerActivity
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_category.*
 import kotlinx.android.synthetic.main.item_question_sous_category.view.*
@@ -193,7 +196,7 @@ class CategoryViewHolder(
                                     .inflate(R.layout.item_question_sous_category, null)
 
 
-                            drawerActivity.surveyPostArrayList.forEach { (v, _) ->
+                            drawerActivity.surveyPostArrayList.forEach { (v, w) ->
                                 if (j.questions[k].id == v.questionId) {
                                     inflaterQuestion =
                                         LayoutInflater.from(parent.context)
@@ -201,12 +204,19 @@ class CategoryViewHolder(
                                                 R.layout.item_question_sous_category_good,
                                                 null
                                             )
+
+
+
+                                    if(w.rate != null)
+                                    inflaterQuestion.note_sc.text = "${(w.rate*2).toInt()}/10"
+
+
                                     incrementSizeTest++
                                 }
                             }
 
                             inflaterQuestion.id = j.questions[k].id
-                            inflaterQuestion.title_subcateg_question.text = "Question ${k + 1}"
+                            inflaterQuestion.title_subcateg_question.text = "${j.questions[k].name}"
                             if (j.questions[k].imagesRequired || j.questions[k].required || j.questions[k].images)
                                 inflaterQuestion.etoile_obli.text = "*"
 
@@ -219,7 +229,26 @@ class CategoryViewHolder(
                                 questionFlag = true
                             }
 
+
+                            inflaterQuestion.setOnLongClickListener {
+                                val snack = Snackbar.make(
+                                    parent,
+                                    "${j.questions[k].name}",
+                                    Snackbar.LENGTH_LONG
+                                ).setBackgroundTint(parent.resources.getColor(R.color.purpleLogin))
+
+                                val view: View = snack.view
+                                val params = view.layoutParams as FrameLayout.LayoutParams
+                                params.gravity = Gravity.CENTER
+                                view.layoutParams = params
+                                snack.show()
+
+                                return@setOnLongClickListener true
+
+                            }
+
                             inflaterQuestion.setOnClickListener {
+                                CategoryFragment.LastSc.lsc = j.id
                                 val myObject = j.questions[k]
                                 val responsJson: String = Gson().toJson(myObject)
                                 val bundle = bundleOf(
@@ -277,7 +306,6 @@ class CategoryViewHolder(
 
                         inflater.setOnClickListener {
 
-
                             if (!isOpenLinearSC) {
                                 isOpenLinearSC = true
                                 inflater.drop_arrow_sc.setImageResource(R.drawable.ic_baseline_arrow_drop_up_24)
@@ -317,6 +345,17 @@ class CategoryViewHolder(
 
                         }
 
+                        if (CategoryFragment.LastSc.lsc == inflater.id) {
+                            isOpenLinearSC = true
+                            inflater.drop_arrow_sc.setImageResource(R.drawable.ic_baseline_arrow_drop_up_24)
+                            inflater.drop_arrow_sc.setColorFilter(
+                                ContextCompat.getColor(
+                                    parent.context,
+                                    R.color.purpleLogin
+                                ), android.graphics.PorterDuff.Mode.MULTIPLY
+                            )
+                            inflater.questionLinear.visibility = View.VISIBLE
+                        }
 
                         layout.addView(inflater)
                     }
@@ -336,6 +375,7 @@ class CategoryViewHolder(
             itemBinding.constraintMargin.layoutParams = param
             isOpenLinear = false
         }
+
     }
 
     /*    val btnTag = Button(parent.context)
