@@ -2,4 +2,11 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/final_kpi_fragment" />
+    android:id="@+id/final_kpi_fragment"
+    app:startDestination="@id/analyseSuperviseurFragment">
+    <fragment
+        android:id="@+id/analyseSuperviseurFragment"
+        android:name="com.example.gtm.ui.home.kpi.analysesuperviseur.AnalyseSuperviseurFragment"
+        android:label="fragment_analyse_superviseur"
+        tools:layout="@layout/fragment_analyse_superviseur" />
+</navigation>

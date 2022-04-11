@@ -43,6 +43,7 @@ import com.example.gtm.ui.home.suivie.detail.SuiviDetailActivity
 import kotlinx.android.synthetic.main.fragment_kpi_f_ilter.topAppBar
 import kotlinx.android.synthetic.main.fragment_task.*
 import java.text.SimpleDateFormat
+import kotlin.math.roundToInt
 
 
 @AndroidEntryPoint
@@ -74,7 +75,9 @@ class KpiFIlterFragment : Fragment() {
     var day_debut_picker = ""
     var day_fin_picker = ""
     private var fm: FragmentManager? = null
-    private val progressUploadDialog =   ProgressUploadDialog()
+    private val progressUploadDialog = ProgressUploadDialog()
+    // heure_debut = "8:00"
+
 
     val items = listOf(
         "Ariana",
@@ -126,7 +129,7 @@ class KpiFIlterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        progressUploadDialog.show(fm!!,"ProgressUploadDialog")
+        progressUploadDialog.show(fm!!, "ProgressUploadDialog")
 
 
         val mDrawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
@@ -136,7 +139,6 @@ class KpiFIlterFragment : Fragment() {
         }
 
         binding.topAppBar.title = "Analyse Kpi"
-
 
 
         val arrayAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, items)
@@ -172,10 +174,7 @@ class KpiFIlterFragment : Fragment() {
             if (!controleDate()) {
                 error_text.visibility = View.VISIBLE
                 date_debut_text.requestFocus()
-            }
-
-            else
-            {
+            } else {
                 prepareRequestList()
             }
         }
@@ -348,7 +347,7 @@ class KpiFIlterFragment : Fragment() {
 
     private fun prepareRequestList() {
 
-        progressUploadDialog.show(fm!!,"ProgressUploadDialog")
+        progressUploadDialog.show(fm!!, "ProgressUploadDialog")
 
         //Prepare Arraylist Supervisor ID
         if (arraySupervisorsId.size > 1) {
@@ -360,7 +359,7 @@ class KpiFIlterFragment : Fragment() {
         //Prepare Arraylist Villes
         if (arrayVilleNew.size == 0) {
 
-            for(i in items)
+            for (i in items)
                 arrayVilleNew.add(i)
         }
 
@@ -409,29 +408,39 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
-
-    private fun getAnalyseResponse()
-    {
+    private fun getAnalyseResponse() {
         lifecycleScope.launch(Dispatchers.Main) {
 
             val newArrayVilleNew = ArrayList<String>()
             //Add special characters to arraylist of strings "%"
-            for(i in arrayVilleNew)
-            {
+            for (i in arrayVilleNew) {
                 newArrayVilleNew.add("\"$i\"")
             }
 
-            responseKpi = viewModelKpi.getStatTable(day_debut_picker,day_fin_picker,arrayStoresId,arrayQuestIds,arraySupervisorsId,newArrayVilleNew)
+            responseKpi = viewModelKpi.getStatTable(
+                day_debut_picker,
+                day_fin_picker,
+                arrayStoresId,
+                arrayQuestIds,
+                arraySupervisorsId,
+                newArrayVilleNew
+            )
 
             if (responseKpi.responseCode == 200) {
 
                 progressUploadDialog.dismiss()
                 binding.errorTextKpi.visibility = View.GONE
 
+                listaKpi = responseKpi.data!!.data as ArrayList<DataXXX>
+                Log.i("myListKpi", "${calculerMoyenneQuestionnaire()}")
+
                 val intent = Intent(requireActivity(), KpiFinalResultActivity::class.java)
-                intent.putExtra("mainobject","bundle")
+                intent.putExtra("mainobject", "bundle")
                 startActivity(intent)
-                requireActivity().overridePendingTransition(R.anim.right_to_left_activity,R.anim.left_to_right_activity)
+                requireActivity().overridePendingTransition(
+                    R.anim.right_to_left_activity,
+                    R.anim.left_to_right_activity
+                )
 
             } else {
 
@@ -445,6 +454,71 @@ class KpiFIlterFragment : Fragment() {
 
 
         }
+    }
+
+
+    private fun calculerVisitesPlanifies(): Int {
+        var cvp = 0
+
+        for (i in listaKpi) {
+            if (i.planned)
+                cvp++
+        }
+
+        return cvp
+    }
+
+
+    private fun calculerVisitesNonPlanifies(): Int {
+        var cvnp = 0
+
+        for (i in listaKpi) {
+            if (!i.planned)
+                cvnp++
+        }
+
+        return cvnp
+    }
+
+
+    private fun calculerVisitesRealises(): Int {
+        var cvr = 0
+        for (i in listaKpi) {
+            if (i.surveyResponses.isNotEmpty()) {
+                cvr++
+            }
+        }
+
+        return cvr
+    }
+
+    private fun calculerQuestionnairesRealise(): Int {
+        val arrayIdQuest = ArrayList<Int>()
+        for (i in listaKpi) {
+
+            for (j in i.surveyResponses) {
+                arrayIdQuest.add(j.surveyId)
+            }
+        }
+        return arrayIdQuest.size
+    }
+
+    private fun calculerMoyenneQuestionnaire(): Double {
+        var avr = 0.0
+        var iterateAvr = 0
+        for (i in listaKpi) {
+            for (j in i.surveyResponses) {
+                avr += j.average
+                iterateAvr++
+            }
+        }
+
+        val finalTest = (avr / iterateAvr)
+
+        return if (finalTest != 0.0)
+            (finalTest * 100.0).roundToInt() / 100.0
+        else
+            0.0
     }
 
 

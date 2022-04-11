@@ -47,13 +47,13 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/title"
+                android:id="@+id/title_chart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginRight="@dimen/_15sdp"
                 android:gravity="center"
-                android:text="Analyse Kpi"
+                android:text="Analyses Supérviseur"
                 android:textColor="@color/white"
                 android:textStyle="bold" />
 
@@ -93,6 +93,63 @@
                 android:layout_weight="1" />
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/image_table_stats_card"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                app:cardCornerRadius="@dimen/_4sdp"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintTop_toBottomOf="@+id/date_text">
+
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+
+                        >
+
+                        <TextView
+                            android:id="@+id/table_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="Analyses\nSupérviseur"
+                            android:textStyle="bold"
+                            android:textColor="@color/purpleLogin"/>
+
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/image_table_stats"
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:src="@drawable/outline_table_rows_24"
+                        app:tint="@color/purpleLogin" />
+
+                </LinearLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+
+            <androidx.cardview.widget.CardView
                 android:id="@+id/image_kpi_stats_card"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_60sdp"
@@ -125,7 +182,7 @@
                             android:layout_weight="1"
                             android:gravity="center"
                             android:hint="PieChart"
-                            android:textColorHint="@color/purpleLogin"
+                            android:textColorHint="@color/clear_grey"
                             android:textStyle="bold" />
 
 
@@ -136,61 +193,6 @@
                         android:layout_width="@dimen/_40sdp"
                         android:layout_height="@dimen/_40sdp"
                         android:src="@drawable/outline_pie_chart_24"
-                        app:tint="@color/purpleLogin" />
-
-                </LinearLayout>
-
-
-            </androidx.cardview.widget.CardView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/image_table_stats_card"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_60sdp"
-                android:layout_marginLeft="@dimen/_10sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:layout_marginRight="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_10sdp"
-                app:cardCornerRadius="@dimen/_4sdp"
-                app:cardUseCompatPadding="true"
-                app:layout_constraintTop_toBottomOf="@+id/date_text">
-
-                <LinearLayout
-
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="@dimen/_5sdp"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-
-                        >
-
-                        <TextView
-                            android:id="@+id/table_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:hint="Analyses\nSupérvisuer"
-                            android:textStyle="bold" />
-
-
-                    </LinearLayout>
-
-                    <ImageView
-                        android:id="@+id/image_table_stats"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_40sdp"
-                        android:src="@drawable/outline_table_rows_24"
                         app:tint="@color/clear_grey" />
 
                 </LinearLayout>
@@ -206,21 +208,31 @@
         </LinearLayout>
 
 
-
     </LinearLayout>
 
 
-   <!-- <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nav_kpi_fragments"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardview_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainlinear"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainlinear">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_kpi_analyse_fragments"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_margin="@dimen/_10sdp"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/final_kpi_graph" /> -->
+        app:navGraph="@navigation/final_kpi_graph" />
+
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
