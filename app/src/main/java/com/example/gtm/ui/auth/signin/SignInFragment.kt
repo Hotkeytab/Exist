@@ -157,7 +157,8 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
                                 binding.password.error = "Erreur Connexion "
                             }
 
-                        } else if(responseDataUser != null) {
+                        }
+                        else if(responseDataUser != null) {
 
                             if(responseDataUser!!.responseCode == 401) {
                                 binding.signinButton.isEnabled = true
@@ -261,11 +262,9 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
                     "Internet check"
                 )
                 fm.executePendingTransactions();
-
                 dialog.dialog!!.setOnCancelListener {
                     checkInternet()
                 }
-
 
             }
         }

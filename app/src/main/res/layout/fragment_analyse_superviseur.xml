@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.home.kpi.analysesuperviseur.AnalyseSuperviseurFragment">
 
 
@@ -41,6 +42,7 @@
                             android:layout_width="@dimen/_40sdp"
                             android:layout_height="@dimen/_40sdp"
                             android:layout_gravity="center"
+                            app:tint="@color/green"
                             android:src="@drawable/outline_query_stats_24" />
 
                         <TextView
@@ -67,12 +69,13 @@
                     android:layout_marginBottom="@dimen/_10sdp">
 
                     <TextView
+                        android:id="@+id/performanceText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="100%"
-                        android:textColor="@color/purpleLogin"
+                        android:text="0%"
+                        android:textColor="@color/green"
                         android:textStyle="bold" />
 
                 </androidx.cardview.widget.CardView>
@@ -105,6 +108,7 @@
                             android:layout_width="@dimen/_40sdp"
                             android:layout_height="@dimen/_40sdp"
                             android:layout_gravity="center"
+                            app:tint="@color/red"
                             android:src="@drawable/outline_watch_later_24" />
 
                         <TextView
@@ -130,12 +134,13 @@
                     android:layout_marginBottom="@dimen/_10sdp">
 
                     <TextView
+                        android:id="@+id/moyenne_retard_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="100%"
-                        android:textColor="@color/purpleLogin"
+                        android:text="0"
+                        android:textColor="@color/red"
                         android:textStyle="bold" />
 
                 </androidx.cardview.widget.CardView>
@@ -168,6 +173,7 @@
                         <ImageView
                             android:layout_width="@dimen/_40sdp"
                             android:layout_height="@dimen/_40sdp"
+                            app:tint="@color/purpleLogin"
                             android:src="@drawable/outline_av_timer_24" />
 
                         <TextView
@@ -194,11 +200,12 @@
                     android:layout_marginBottom="@dimen/_10sdp">
 
                     <TextView
+                        android:id="@+id/moyenne_derniers_pointage_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="100%"
+                        android:text="0"
                         android:textColor="@color/purpleLogin"
                         android:textStyle="bold" />
 
@@ -232,6 +239,7 @@
                         <ImageView
                             android:layout_width="@dimen/_40sdp"
                             android:layout_height="@dimen/_40sdp"
+                            app:tint="@color/purpleLogin"
                             android:src="@drawable/outline_store_24" />
 
                         <TextView
@@ -257,11 +265,12 @@
                     android:layout_marginBottom="@dimen/_10sdp">
 
                     <TextView
+                        android:id="@+id/visites_planifie_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="100%"
+                        android:text="0"
                         android:textColor="@color/purpleLogin"
                         android:textStyle="bold" />
 
@@ -294,6 +303,7 @@
                         <ImageView
                             android:layout_width="@dimen/_40sdp"
                             android:layout_height="@dimen/_40sdp"
+                            app:tint="@color/green"
                             android:src="@drawable/outline_add_business_24" />
 
                         <TextView
@@ -319,12 +329,13 @@
                     android:layout_marginBottom="@dimen/_10sdp">
 
                     <TextView
+                        android:id="@+id/visites_non_planifie_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="100%"
-                        android:textColor="@color/purpleLogin"
+                        android:text="0"
+                        android:textColor="@color/green"
                         android:textStyle="bold" />
 
                 </androidx.cardview.widget.CardView>
@@ -356,6 +367,7 @@
                         <ImageView
                             android:layout_width="@dimen/_40sdp"
                             android:layout_height="@dimen/_40sdp"
+                            app:tint="@color/green"
                             android:src="@drawable/outline_check_circle_outline_24" />
 
                         <TextView
@@ -382,12 +394,13 @@
                     android:layout_marginBottom="@dimen/_10sdp">
 
                     <TextView
+                        android:id="@+id/visites_realise_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="100%"
-                        android:textColor="@color/purpleLogin"
+                        android:text="0"
+                        android:textColor="@color/green"
                         android:textStyle="bold" />
 
                 </androidx.cardview.widget.CardView>
@@ -420,6 +433,7 @@
                         <ImageView
                             android:layout_width="@dimen/_40sdp"
                             android:layout_height="@dimen/_40sdp"
+                            app:tint="@color/green"
                             android:src="@drawable/outline_fact_check_24" />
 
                         <TextView
@@ -445,12 +459,13 @@
                     android:layout_marginBottom="@dimen/_10sdp">
 
                     <TextView
+                        android:id="@+id/questionnaire_realise_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="100%"
-                        android:textColor="@color/purpleLogin"
+                        android:text="0"
+                        android:textColor="@color/green"
                         android:textStyle="bold" />
 
                 </androidx.cardview.widget.CardView>
@@ -482,6 +497,7 @@
                         <ImageView
                             android:layout_width="@dimen/_40sdp"
                             android:layout_height="@dimen/_40sdp"
+                            app:tint="@color/purpleLogin"
                             android:src="@drawable/outline_summarize_24" />
 
                         <TextView
@@ -508,11 +524,12 @@
                     android:layout_marginBottom="@dimen/_10sdp">
 
                     <TextView
+                        android:id="@+id/moyenne_questionnaire_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="100%"
+                        android:text="0"
                         android:textColor="@color/purpleLogin"
                         android:textStyle="bold" />
 
@@ -547,6 +564,7 @@
                     <ImageView
                         android:layout_width="@dimen/_40sdp"
                         android:layout_height="@dimen/_40sdp"
+                        app:tint="@color/purpleLogin"
                         android:src="@drawable/outline_collections_24" />
 
                     <TextView
@@ -573,9 +591,10 @@
                 android:layout_marginBottom="@dimen/_10sdp">
 
                 <TextView
+                    android:id="@+id/nombre_photo_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="100%"
+                    android:text="0"
                     android:textStyle="bold"
                     android:textColor="@color/purpleLogin"
                     android:layout_gravity="center"

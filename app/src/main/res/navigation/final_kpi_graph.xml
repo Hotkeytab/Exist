@@ -8,5 +8,18 @@
         android:id="@+id/analyseSuperviseurFragment"
         android:name="com.example.gtm.ui.home.kpi.analysesuperviseur.AnalyseSuperviseurFragment"
         android:label="fragment_analyse_superviseur"
-        tools:layout="@layout/fragment_analyse_superviseur" />
+        tools:layout="@layout/fragment_analyse_superviseur" >
+        <action
+            android:id="@+id/action_analyseSuperviseurFragment_to_pieChartLastFragment"
+            app:destination="@id/pieChartLastFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pieChartLastFragment"
+        android:name="com.example.gtm.ui.home.kpi.piechartfragment.PieChartLastFragment"
+        android:label="fragment_pie_chart_last"
+        tools:layout="@layout/fragment_pie_chart_last" >
+        <action
+            android:id="@+id/action_pieChartLastFragment_to_analyseSuperviseurFragment"
+            app:destination="@id/analyseSuperviseurFragment" />
+    </fragment>
 </navigation>

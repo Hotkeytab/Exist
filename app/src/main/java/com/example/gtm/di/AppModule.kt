@@ -46,8 +46,8 @@ object AppModule {
         val encodeInterceptors = EncodeInterceptors()
         logIntercept.setLevel(HttpLoggingInterceptor.Level.BODY)
 
-        OkHttpClient.Builder()
 
+        OkHttpClient.Builder()
          //   .addInterceptor(encodeInterceptors)
             .addInterceptor(authInterceptor)
             .addInterceptor(logIntercept)

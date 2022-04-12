@@ -3,7 +3,6 @@ package com.example.gtm.ui.home.kpi.kpifilter
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -14,35 +13,34 @@ import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.gtm.R
 import com.example.gtm.databinding.FragmentKpiFIlterBinding
-import com.example.gtm.databinding.FragmentKpiGraphBinding
 import com.example.gtm.ui.home.mytask.addvisite.AddVisiteDialogViewModel
 import com.example.gtm.ui.home.mytask.survey.quiz.MyQuizViewModel
 import com.example.gtm.utils.resources.Resource
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.dialog_add_visite.*
 import kotlinx.android.synthetic.main.dialog_add_visite.progress_indicator
 import kotlinx.android.synthetic.main.fragment_kpi_f_ilter.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import android.widget.AdapterView
 
 import android.widget.AdapterView.OnItemClickListener
+import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
+import com.example.gtm.data.entities.custom.KpiStats
 import com.example.gtm.data.entities.response.*
 import com.example.gtm.ui.home.kpi.KpiFinalResultActivity
-import com.example.gtm.ui.home.suivie.detail.SuiviDetailActivity
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_kpi_f_ilter.topAppBar
-import kotlinx.android.synthetic.main.fragment_task.*
 import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.math.roundToInt
 
 
@@ -432,10 +430,14 @@ class KpiFIlterFragment : Fragment() {
                 binding.errorTextKpi.visibility = View.GONE
 
                 listaKpi = responseKpi.data!!.data as ArrayList<DataXXX>
-                Log.i("myListKpi", "${calculerMoyenneQuestionnaire()}")
+
+                val myObject : KpiStats = prepareKpiObject()
+
+                val myObjectJson: String = Gson().toJson(myObject)
+
 
                 val intent = Intent(requireActivity(), KpiFinalResultActivity::class.java)
-                intent.putExtra("mainobject", "bundle")
+                intent.putExtra("kpiObject", myObjectJson)
                 startActivity(intent)
                 requireActivity().overridePendingTransition(
                     R.anim.right_to_left_activity,
@@ -454,6 +456,81 @@ class KpiFIlterFragment : Fragment() {
 
 
         }
+    }
+
+
+
+    private fun prepareKpiObject(): KpiStats
+    {
+        val moyenneRetard = calculerMoyenneRetard()
+        val moyenneDernierPointage = calculerMoyenneDernierPointage()
+        val visitesPlanifie = calculerVisitesPlanifies()
+        val visitesNonPlanifie = calculerVisitesNonPlanifies()
+        val visiteRealise = calculerVisitesRealises()
+        val questionnaireRealise = calculerQuestionnairesRealise()
+        val moyenneQuestionnaire = calculerMoyenneQuestionnaire()
+        val nombrePhotos = calculerNombrePhotos()
+        val performance = (calculerPerformance(visiteRealise,visitesPlanifie) * 100).toInt()
+
+        return KpiStats(moyenneRetard,moyenneDernierPointage,visitesPlanifie,visitesNonPlanifie,visiteRealise,questionnaireRealise, moyenneQuestionnaire ,nombrePhotos,performance)
+
+    }
+
+
+    private fun calculerPerformance(done: Int, total: Int): Double {
+        if (done == 0)
+            return 0.0
+        if (total == 0)
+            return 1.0
+
+
+        return ((done.toDouble() / total) * 100.0).roundToInt() / 100.0
+    }
+
+
+    private fun calculerMoyenneRetard(): Long {
+        var totalSeconds = 0
+        var incrementCalcul = 0
+        for (i in listaKpi) {
+            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            val date: Date = format.parse(i.start)
+
+            val hours = date.hours + 1
+            val minutes = date.minutes
+            val seconds = date.seconds
+
+            if (hours >= 8) {
+                totalSeconds += ((hours - 8) * 3600) + (minutes * 60) + seconds
+                Log.i("totalSeconds", "$totalSeconds")
+                incrementCalcul++
+            }
+        }
+
+        if (totalSeconds != 0 && incrementCalcul != 0)
+            return ((totalSeconds / incrementCalcul) / 60).toLong()
+        return 0
+    }
+
+
+    private fun calculerMoyenneDernierPointage(): String {
+        var totalSeconds = 0
+        var numberTime = 0
+
+
+        for (i in listaKpi) {
+            if (i.end != null) {
+                val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                val date: Date = format.parse(i.end)
+                totalSeconds += fromDateToSeconds(date.hours + 1, date.minutes, date.seconds)
+                numberTime++
+            }
+        }
+
+        if (totalSeconds != 0 && numberTime != 0) {
+            val finalTime: Long = (totalSeconds / numberTime).toLong()
+            return fromSecondsToDate(finalTime)
+        }
+        return "0"
     }
 
 
@@ -515,11 +592,52 @@ class KpiFIlterFragment : Fragment() {
 
         val finalTest = (avr / iterateAvr)
 
-        return if (finalTest != 0.0)
+        return if (avr != 0.0 && iterateAvr != 0)
             (finalTest * 100.0).roundToInt() / 100.0
         else
             0.0
     }
 
 
+    private fun calculerNombrePhotos(): Int {
+        var cnp = 0
+
+        for (i in listaKpi) {
+            for (j in i.surveyResponses) {
+                for (k in j.responses) {
+                    cnp += k.responsePictures.size
+                }
+            }
+        }
+
+        return cnp
+    }
+
+
+    private fun fromDateToSeconds(hours: Int, minutes: Int, seconds: Int): Int {
+        return seconds + (minutes * 60) + (hours * 3600)
+    }
+
+    private fun fromSecondsToDate(scds: Long): String {
+        val hours = scds / 3600
+        var rest = scds % 3600
+        val minutes = rest / 60
+        rest %= 60
+
+        var finalHours = ""
+        var finalMinutes = ""
+
+        if (hours < 10)
+            finalHours = "$hours"
+        else
+            finalHours = "$hours"
+
+        if (minutes < 10)
+            finalMinutes = "0$minutes"
+        else
+            finalMinutes = "$minutes"
+
+        return "$finalHours:$finalMinutes"
+
+    }
 }
