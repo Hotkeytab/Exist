@@ -2,45 +2,42 @@ package com.example.gtm.ui.home.kpi.piechart
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import com.example.gtm.R
+import com.example.gtm.data.entities.custom.QuestionNewPost
+import com.example.gtm.data.entities.custom.UserInf
 import com.example.gtm.databinding.FragmentKpiBinding
-import com.example.gtm.databinding.FragmentMapBinding
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.jjoe64.graphview.series.DataPoint
 import dagger.hilt.android.AndroidEntryPoint
-import com.jjoe64.graphview.series.LineGraphSeries
-import kotlinx.android.synthetic.main.fragment_kpi.*
-import com.jjoe64.graphview.series.BarGraphSeries
-import kotlin.math.abs
+import com.github.mikephil.charting.data.BarData
+
+import com.github.mikephil.charting.data.BarDataSet
+
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.data.PieData
+
+import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.animation.Easing
 
 import com.github.mikephil.charting.formatter.PercentFormatter
 
-import com.github.mikephil.charting.data.PieData
-
-import com.github.mikephil.charting.data.PieDataSet
-
 import com.github.mikephil.charting.utils.ColorTemplate
-
-import com.github.mikephil.charting.data.PieEntry
-
-
+import kotlinx.android.synthetic.main.activity_pie_chart_last.*
 
 
 @AndroidEntryPoint
 class KpiFragment : Fragment() {
 
     private lateinit var binding: FragmentKpiBinding
+    private lateinit var pieChartLastActivity: PieChartLastActivity
+    private var entries: ArrayList<PieEntry> = ArrayList()
+    private var etatGroup = 0
 
 
     override fun onCreateView(
@@ -48,28 +45,71 @@ class KpiFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentKpiBinding.inflate(inflater,container,false)
+        binding = FragmentKpiBinding.inflate(inflater, container, false)
 
+        pieChartLastActivity = activity as PieChartLastActivity
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+
         setupPieChart()
+        preparePieChartData()
         loadPieChartData()
+
+
+        pieChartLastActivity.par_magasin_cardview.setOnClickListener {
+            if (etatGroup == 1) {
+                etatGroup = 0
+                pieChartLastActivity.image_table_stats.setColorFilter(Color.argb(255, 0, 0, 0))
+                pieChartLastActivity.image_kpi_stats.setColorFilter(Color.argb(255, 220, 220, 220))
+                pieChartLastActivity.pie_chart_text.setHintTextColor(resources.getColor(R.color.clear_grey))
+                pieChartLastActivity.table_text.setTextColor(resources.getColor(R.color.purpleLogin))
+                binding.piechart.centerText = "Par\nMagasin"
+                preparePieChartData()
+            }
+
+
+        }
+
+        pieChartLastActivity.par_ville_card.setOnClickListener {
+
+            if (etatGroup == 0) {
+                etatGroup = 1
+                pieChartLastActivity.image_kpi_stats.setColorFilter(Color.argb(255, 0, 0, 0))
+                pieChartLastActivity.image_table_stats.setColorFilter(
+                    Color.argb(
+                        255,
+                        220,
+                        220,
+                        220
+                    )
+                )
+                pieChartLastActivity.pie_chart_text.setHintTextColor(resources.getColor(R.color.purpleLogin))
+                pieChartLastActivity.table_text.setTextColor(resources.getColor(R.color.clear_grey))
+                binding.piechart.centerText = "Par\nVille"
+                preparePieChartData()
+            }
+
+        }
+
     }
 
 
+    //SetupPieChart Design
     private fun setupPieChart() {
-        binding.activityPiechart.isDrawHoleEnabled = true
-        binding.activityPiechart.setUsePercentValues(true)
-        binding.activityPiechart.setEntryLabelTextSize(12f)
-        binding.activityPiechart.setEntryLabelColor(Color.BLACK)
-        binding.activityPiechart.centerText = "Questionnaires par ville"
-        binding.activityPiechart.setCenterTextSize(24f)
-        binding.activityPiechart.description.isEnabled = false
-        val l: Legend = binding.activityPiechart.legend
+        binding.piechart.isDrawHoleEnabled = true
+        binding.piechart.setUsePercentValues(false)
+        binding.piechart.setEntryLabelTextSize(12f)
+        binding.piechart.setEntryLabelColor(Color.BLACK)
+        binding.piechart.centerText = "Par\nMagasin"
+        binding.piechart.setCenterTextSize(24f)
+        binding.piechart.description.isEnabled = false
+        val l: Legend = binding.piechart.legend
         l.verticalAlignment = Legend.LegendVerticalAlignment.TOP
         l.horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
         l.orientation = Legend.LegendOrientation.VERTICAL
@@ -78,11 +118,53 @@ class KpiFragment : Fragment() {
     }
 
 
+    //Prepare Entry Arraylist
+    private fun preparePieChartData() {
+        //clear PieEntry Arraylist
+        entries.clear()
+
+        //Prepare entry arraylist with store ( par magasin )
+        if (etatGroup == 0) {
+
+            if (pieChartLastActivity.magasinHashMap.isEmpty()) {
+                binding.nodatachart.visibility = View.VISIBLE
+                binding.piechart.visibility = View.GONE
+            } else {
+
+                binding.nodatachart.visibility = View.GONE
+                binding.piechart.visibility = View.VISIBLE
+                for (i in pieChartLastActivity.magasinHashMap) {
+                    entries.add(PieEntry(i.value.toFloat(), i.key))
+                }
+                loadPieChartData()
+            }
+        }
+        //Prepare entry arraylist with ville ( par ville )
+        else {
+            if (pieChartLastActivity.villeHashMap.isEmpty()) {
+                binding.nodatachart.visibility = View.VISIBLE
+                binding.piechart.visibility = View.GONE
+            } else {
+                binding.nodatachart.visibility = View.GONE
+                binding.piechart.visibility = View.VISIBLE
+                for (i in pieChartLastActivity.villeHashMap) {
+                    entries.add(PieEntry(i.value.toFloat(), i.key))
+                }
+
+                loadPieChartData()
+            }
+        }
+
+
+    }
+
+
+    //Load PieCHartData with Data
     private fun loadPieChartData() {
-        val entries: ArrayList<PieEntry> = ArrayList()
-        entries.add(PieEntry(0.3f, "Gabès"))
-        entries.add(PieEntry(0.15f, "Arianna"))
-        entries.add(PieEntry(0.10f, "Sfax"))
+
+        /* entries.add(PieEntry(7f, "MG"))
+         entries.add(PieEntry(6f, "Monoprix"))
+         entries.add(PieEntry(2.9f, "Géant")) */
         val colors: ArrayList<Int> = ArrayList()
         for (color in ColorTemplate.MATERIAL_COLORS) {
             colors.add(color)
@@ -90,16 +172,23 @@ class KpiFragment : Fragment() {
         for (color in ColorTemplate.VORDIPLOM_COLORS) {
             colors.add(color)
         }
-        val dataSet = PieDataSet(entries, "Questionnaires par ville")
+
+        var dataSet = PieDataSet(entries, "Par Magasin")
+        if (etatGroup == 1)
+            dataSet = PieDataSet(entries, "Par Ville")
         dataSet.colors = colors
         val data = PieData(dataSet)
         data.setDrawValues(true)
-        data.setValueFormatter(PercentFormatter(binding.activityPiechart))
+
+        //Activate PercentFormatter
+        //data.setValueFormatter(PercentFormatter(binding.piechart))
+
+
         data.setValueTextSize(12f)
         data.setValueTextColor(Color.BLACK)
-        binding.activityPiechart.data = data
-        binding.activityPiechart.invalidate()
-        binding.activityPiechart.animateY(1400, Easing.EaseInOutQuad)
+        binding.piechart.data = data
+        binding.piechart.invalidate() // refresh pie chart
+        binding.piechart.animateY(1400, Easing.EaseInOutQuad)
     }
 
 

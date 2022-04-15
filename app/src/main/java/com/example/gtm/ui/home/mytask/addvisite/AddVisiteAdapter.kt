@@ -90,12 +90,21 @@ class TaskViewHolder(
         this.visiteResponse = item
 
 
+        if(item.storePictures.isNotEmpty())
         Glide.with(itemBinding.root)
             .load(item.storePictures[0].path)
             .placeholder(R.drawable.outline_storefront_24)
             .skipMemoryCache(false)
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .into(itemBinding.storeimageblackwhite)
+
+        else
+            Glide.with(itemBinding.root)
+                .load(R.drawable.logo_exist)
+                .skipMemoryCache(false)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .into(itemBinding.storeimageblackwhite)
+
 
         itemBinding.name.text = item.name
         itemBinding.place.text = item.governorate

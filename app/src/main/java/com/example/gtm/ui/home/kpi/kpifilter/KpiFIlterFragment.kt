@@ -3,6 +3,7 @@ package com.example.gtm.ui.home.kpi.kpifilter
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -29,18 +30,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 import android.widget.AdapterView.OnItemClickListener
-import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
 import com.example.gtm.data.entities.custom.KpiStats
+import com.example.gtm.data.entities.custom.chart.ChartResponse
+import com.example.gtm.data.entities.custom.chart.DataChart
 import com.example.gtm.data.entities.response.*
 import com.example.gtm.ui.home.kpi.KpiFinalResultActivity
+import com.example.gtm.ui.home.kpi.piechart.PieChartLastActivity
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_kpi_f_ilter.topAppBar
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.collections.HashSet
 import kotlin.math.roundToInt
 
 
@@ -55,7 +59,9 @@ class KpiFIlterFragment : Fragment() {
     private var listaKpi = ArrayList<DataXXX>()
     private lateinit var responseDataQuiz: Resource<Quiz>
     private lateinit var responseKpi: Resource<AnalyseKpi>
+    private lateinit var responseChart: Resource<ChartResponse>
     private var listaQuiz = ArrayList<QuizData>()
+    private var listaChar = ArrayList<DataChart>()
     private val viewModelQuestionnaire: MyQuizViewModel by viewModels()
     private val mapStore: HashMap<String, Int> = HashMap<String, Int>()
     private var arrayStore = ArrayList<String>()
@@ -74,7 +80,14 @@ class KpiFIlterFragment : Fragment() {
     var day_fin_picker = ""
     private var fm: FragmentManager? = null
     private val progressUploadDialog = ProgressUploadDialog()
+    var valueMagasinMap: HashMap<String, Double> = HashMap<String, Double>()
+    var valueVilleMap: HashMap<String, Double> = HashMap<String, Double>()
+    var magasinNameSet: HashSet<String> = HashSet<String>()
+    var villeNameSet: HashSet<String> = HashSet<String>()
+
+
     // heure_debut = "8:00"
+    private var etatFragment = 0
 
 
     val items = listOf(
@@ -114,20 +127,23 @@ class KpiFIlterFragment : Fragment() {
 
         fm = childFragmentManager
 
+
+        clearData()
+
+        // Get User ID From SharedPref
         sharedPref = requireContext().getSharedPreferences(
             R.string.app_name.toString(),
             Context.MODE_PRIVATE
         )
         userId = sharedPref.getInt("id", 0)
 
+
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-        progressUploadDialog.show(fm!!, "ProgressUploadDialog")
 
 
         val mDrawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
@@ -170,12 +186,44 @@ class KpiFIlterFragment : Fragment() {
 
         valider_kpi.setOnClickListener {
             if (!controleDate()) {
+                binding.questionnaireErrorText.visibility = View.GONE
                 error_text.visibility = View.VISIBLE
                 date_debut_text.requestFocus()
+            } else if (etatFragment == 1 && (arrayQuestNew.size != 1)) {
+                error_text.visibility = View.GONE
+                binding.questionnaireErrorText.visibility = View.VISIBLE
+                binding.questionnaireErrorText.requestFocus()
             } else {
+                error_text.visibility = View.GONE
+                binding.questionnaireErrorText.visibility = View.GONE
                 prepareRequestList()
             }
         }
+
+
+        binding.imageTableStatsCard.setOnClickListener {
+
+            if (etatFragment == 1) {
+                etatFragment = 0
+                binding.imageTableStats.setColorFilter(Color.argb(255, 0, 0, 0))
+                binding.imageKpiStats.setColorFilter(Color.argb(255, 220, 220, 220))
+                binding.pieChartText.setHintTextColor(resources.getColor(R.color.clear_grey))
+                binding.tableText.setTextColor(resources.getColor(R.color.purpleLogin))
+            }
+        }
+
+
+        binding.imageKpiStatsCard.setOnClickListener {
+
+            if (etatFragment == 0) {
+                etatFragment = 1
+                binding.imageKpiStats.setColorFilter(Color.argb(255, 0, 0, 0))
+                binding.imageTableStats.setColorFilter(Color.argb(255, 220, 220, 220))
+                binding.pieChartText.setHintTextColor(resources.getColor(R.color.purpleLogin))
+                binding.tableText.setTextColor(resources.getColor(R.color.clear_grey))
+            }
+        }
+
 
     }
 
@@ -284,6 +332,7 @@ class KpiFIlterFragment : Fragment() {
 
     private fun getStores() {
 
+        progressUploadDialog.show(fm!!, "ProgressUploadDialog")
         lifecycleScope.launch(Dispatchers.Main) {
 
 
@@ -298,7 +347,6 @@ class KpiFIlterFragment : Fragment() {
 
 
             } else {
-
 
                 getStores()
 
@@ -345,7 +393,7 @@ class KpiFIlterFragment : Fragment() {
 
     private fun prepareRequestList() {
 
-        progressUploadDialog.show(fm!!, "ProgressUploadDialog")
+        //   progressUploadDialog.show(fm!!, "ProgressUploadDialog")
 
         //Prepare Arraylist Supervisor ID
         if (arraySupervisorsId.size > 1) {
@@ -400,13 +448,149 @@ class KpiFIlterFragment : Fragment() {
             }
         }
 
+        if (etatFragment == 0) {
 
-        getAnalyseResponse()
+            getAnalyseResponse()
+        } else {
+
+            getAnalyseChart()
+
+
+        }
+
+
+    }
+
+
+    private fun getAnalyseChart() {
+
+        progressUploadDialog.show(fm!!, "ProgressUploadDialog")
+
+        lifecycleScope.launch(Dispatchers.Main) {
+
+            val newArrayVilleNew = ArrayList<String>()
+            //Add special characters to arraylist of strings "%"
+            for (i in arrayVilleNew) {
+                newArrayVilleNew.add("\"$i\"")
+            }
+
+            responseChart = viewModelKpi.getStatChart(
+                arrayStoresId,
+                arrayQuestIds[0],
+                day_debut_picker,
+                day_fin_picker,
+                arraySupervisorsId,
+                newArrayVilleNew
+            ) as Resource<ChartResponse>
+
+
+
+            if (responseChart.responseCode == 200) {
+
+                progressUploadDialog.dismiss()
+
+                listaChar = responseChart.data?.data as ArrayList<DataChart>
+                extractStore()
+                extractVille()
+
+
+                val intent = Intent(requireActivity(), PieChartLastActivity::class.java)
+                Log.i("nodatachartbefore","$valueVilleMap $valueMagasinMap")
+                intent.putExtra("villeMap", valueVilleMap)
+                intent.putExtra("magasinMap", valueMagasinMap)
+                startActivity(intent)
+                requireActivity().overridePendingTransition(
+                    R.anim.right_to_left_activity,
+                    R.anim.left_to_right_activity
+                )
+
+            } else {
+                progressUploadDialog.dismiss()
+            }
+
+
+        }
+
+    }
+
+
+    // Get Unique Name of every Store
+    private fun extractStore() {
+        for (i in listaChar) {
+            magasinNameSet.add(i.store.name)
+        }
+
+        extractAverageForStore()
+    }
+
+
+    // Create HAShmap of magasin -> average
+    private fun extractAverageForStore() {
+        var increment = 0
+        var average = 0.0
+        var totalAverage = 0.0
+
+        for (i in magasinNameSet) {
+
+            for (j in listaChar) {
+                if (i == j.store.name) {
+                    increment++
+                    average += j.average
+                }
+
+
+            }
+            totalAverage = average / increment
+
+            valueMagasinMap[i] = totalAverage
+
+        }
+
+    }
+
+
+    // Get Unique Name of every Store
+    private fun extractVille() {
+        for (i in listaChar) {
+            villeNameSet.add(i.store.governorate)
+        }
+
+        extractAverageForVille()
+
+    }
+
+
+    // Create HAShmap of magasin -> average
+    private fun extractAverageForVille() {
+
+        var increment = 0
+        var average = 0.0
+        var totalAverage = 0.0
+
+        for (i in villeNameSet) {
+
+            for (j in listaChar) {
+                if (i == j.store.governorate) {
+                    increment++
+                    average += j.average
+                }
+
+
+            }
+            totalAverage = average / increment
+
+            valueVilleMap[i] = totalAverage
+
+
+        }
+
+        Log.i("extractVille", "$valueVilleMap")
 
     }
 
 
     private fun getAnalyseResponse() {
+        progressUploadDialog.show(fm!!, "ProgressUploadDialog")
         lifecycleScope.launch(Dispatchers.Main) {
 
             val newArrayVilleNew = ArrayList<String>()
@@ -431,10 +615,11 @@ class KpiFIlterFragment : Fragment() {
 
                 listaKpi = responseKpi.data!!.data as ArrayList<DataXXX>
 
-                val myObject : KpiStats = prepareKpiObject()
+                val myObject: KpiStats = prepareKpiObject()
 
                 val myObjectJson: String = Gson().toJson(myObject)
 
+                //  if (etatFragment == 0) {
 
                 val intent = Intent(requireActivity(), KpiFinalResultActivity::class.java)
                 intent.putExtra("kpiObject", myObjectJson)
@@ -443,6 +628,17 @@ class KpiFIlterFragment : Fragment() {
                     R.anim.right_to_left_activity,
                     R.anim.left_to_right_activity
                 )
+                //  } else {
+
+                /*    val intent = Intent(requireActivity(), PieChartLastActivity::class.java)
+                    intent.putExtra("kpiObject", myObjectJson)
+                    startActivity(intent)
+                    requireActivity().overridePendingTransition(
+                        R.anim.right_to_left_activity,
+                        R.anim.left_to_right_activity
+                    )
+
+                } */
 
             } else {
 
@@ -459,9 +655,7 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
-
-    private fun prepareKpiObject(): KpiStats
-    {
+    private fun prepareKpiObject(): KpiStats {
         val moyenneRetard = calculerMoyenneRetard()
         val moyenneDernierPointage = calculerMoyenneDernierPointage()
         val visitesPlanifie = calculerVisitesPlanifies()
@@ -470,9 +664,19 @@ class KpiFIlterFragment : Fragment() {
         val questionnaireRealise = calculerQuestionnairesRealise()
         val moyenneQuestionnaire = calculerMoyenneQuestionnaire()
         val nombrePhotos = calculerNombrePhotos()
-        val performance = (calculerPerformance(visiteRealise,visitesPlanifie) * 100).toInt()
+        val performance = (calculerPerformance(visiteRealise, visitesPlanifie) * 100).toInt()
 
-        return KpiStats(moyenneRetard,moyenneDernierPointage,visitesPlanifie,visitesNonPlanifie,visiteRealise,questionnaireRealise, moyenneQuestionnaire ,nombrePhotos,performance)
+        return KpiStats(
+            moyenneRetard,
+            moyenneDernierPointage,
+            visitesPlanifie,
+            visitesNonPlanifie,
+            visiteRealise,
+            questionnaireRealise,
+            moyenneQuestionnaire,
+            nombrePhotos,
+            performance
+        )
 
     }
 
@@ -640,4 +844,13 @@ class KpiFIlterFragment : Fragment() {
         return "$finalHours:$finalMinutes"
 
     }
+
+
+    private fun clearData() {
+        valueMagasinMap.clear()
+        valueVilleMap.clear()
+        villeNameSet.clear()
+        magasinNameSet.clear()
+    }
+
 }

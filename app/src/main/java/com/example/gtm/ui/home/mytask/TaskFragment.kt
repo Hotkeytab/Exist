@@ -270,7 +270,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
 
     override fun onClickedTask(taskId: Int, distance: String, visite2: Visite, theDistance: Float) {
 
-        if (theDistance < 250) {
+        if (theDistance < 10000) {
             visite = visite2
             askForPermissionsDialog()
             sharedPref =

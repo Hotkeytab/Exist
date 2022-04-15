@@ -82,33 +82,7 @@ class AnalyseSuperviseurFragment : Fragment() {
         } */
 
 
-        kpiActivity.image_table_stats_card.setOnClickListener {
 
-            if (kpiActivity.etatFragment == 1) {
-                kpiActivity.etatFragment = 0
-                kpiActivity.image_table_stats.setColorFilter(Color.argb(255, 0, 0, 0))
-                kpiActivity.image_kpi_stats.setColorFilter(Color.argb(255, 220, 220, 220))
-                kpiActivity.pie_chart_text.setHintTextColor(resources.getColor(R.color.clear_grey))
-                kpiActivity.table_text.setTextColor(resources.getColor(R.color.purpleLogin))
-                kpiActivity.title_chart.text = "Analyses Supérviseur"
-                findNavController().navigate(R.id.action_pieChartLastFragment_to_analyseSuperviseurFragment)
-            }
-        }
-
-
-
-        kpiActivity.image_kpi_stats_card.setOnClickListener {
-
-            if(kpiActivity.etatFragment == 0) {
-                kpiActivity.etatFragment = 1
-                kpiActivity.image_kpi_stats.setColorFilter(Color.argb(255, 0, 0, 0))
-                kpiActivity.image_table_stats.setColorFilter(Color.argb(255, 220, 220, 220))
-                kpiActivity.pie_chart_text.setHintTextColor(resources.getColor(R.color.purpleLogin))
-                kpiActivity.table_text.setTextColor(resources.getColor(R.color.clear_grey))
-                kpiActivity.title_chart.text = "PieChart"
-                findNavController().navigate(R.id.action_analyseSuperviseurFragment_to_pieChartLastFragment)
-            }
-        }
 
     }
 

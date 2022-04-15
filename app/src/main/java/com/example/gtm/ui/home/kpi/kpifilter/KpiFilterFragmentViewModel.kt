@@ -16,4 +16,5 @@ class KpiFilterFragmentViewModel  @Inject constructor(
 
     suspend fun getStatTable(from: String,to: String,stores:ArrayList<Int>,surveyId:ArrayList<Int>,supervisors:ArrayList<Int>,governorates:ArrayList<String>) = chartRepository.getStatTable(from,to,stores,surveyId,supervisors,governorates)
 
+    suspend fun getStatChart(stores:ArrayList<Int>,surveyId:Int,from: String,to: String,supervisors:ArrayList<Int>,governorates:ArrayList<String>) = chartRepository.getStatChart(stores,surveyId,from,to,supervisors,governorates)
 }
