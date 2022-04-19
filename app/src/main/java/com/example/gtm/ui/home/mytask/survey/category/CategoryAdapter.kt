@@ -102,7 +102,9 @@ class CategoryViewHolder(
 
         itemBinding.title.text = item.name
 
+        //Expand Category
         expandColapse()
+
         itemBinding.topCardv.setOnClickListener {
             expandColapse()
         }
@@ -121,9 +123,13 @@ class CategoryViewHolder(
         var i = 0
 
 
+        //If Expanded ?
         if (!isOpenLinear) {
 
+            //Expanded = true
             isOpenLinear = true
+
+            //Prepare Expanded Design
             itemBinding.dropArrow.setImageResource(R.drawable.ic_baseline_arrow_drop_up_24)
             itemBinding.dropArrow.setColorFilter(
                 ContextCompat.getColor(
@@ -132,6 +138,8 @@ class CategoryViewHolder(
                 ), android.graphics.PorterDuff.Mode.MULTIPLY
             );
             itemBinding.testLinear.visibility = View.VISIBLE
+
+            //Get layout to Add SUbCategories to category expanded
             val layout = itemBinding.testLinear
             layout.orientation = LinearLayout.VERTICAL
             var test: HashMap<Int, Survey?>?
@@ -155,7 +163,6 @@ class CategoryViewHolder(
 
 
                         inflater.setOnClickListener {
-                            Log.i("buttonlistener", inflater.id.toString())
 
                             val responsJson: String = Gson().toJson(j)
 
@@ -175,9 +182,6 @@ class CategoryViewHolder(
 
 
                     } else {
-                        /*  activityIns.envoyer_questionnaire_button.setBackgroundColor(Color.LTGRAY)
-                          activityIns.envoyer_questionnaire_button.tag = "bad" */
-
                         var questionFlag = false
                         val inflater =
                             LayoutInflater.from(parent.context)
@@ -288,22 +292,6 @@ class CategoryViewHolder(
                         }
 
 
-                        /*   inflater.setOnClickListener {
-                               Log.i("buttonlistener", inflater.id.toString())
-
-                               val responsJson: String = Gson().toJson(j)
-
-                               val bundle = bundleOf(
-                                   "questionObject" to responsJson,
-                                   "quizObject" to myVal,
-                                   "scName" to j.name
-                               )
-                               if(!drawerActivity.loading)
-                               parent.findNavController()
-                                   .navigate(R.id.action_categoryFragment_to_questionFragment, bundle)
-                           } */
-
-
                         inflater.setOnClickListener {
 
                             if (!isOpenLinearSC) {
@@ -378,13 +366,6 @@ class CategoryViewHolder(
 
     }
 
-    /*    val btnTag = Button(parent.context)
-    btnTag.layoutParams = LinearLayout.LayoutParams(
-        LinearLayout.LayoutParams.WRAP_CONTENT,
-        LinearLayout.LayoutParams.MATCH_PARENT
-    )
-    btnTag.text = "Button " + (j + 1 + i * 4)
-    btnTag.id = j + 1 + i * 4*/
 
 
 }

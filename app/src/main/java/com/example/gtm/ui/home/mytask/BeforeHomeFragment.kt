@@ -12,11 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class BeforeHomeFragment : Fragment() {
 
-
     private lateinit var binding: BeforeHomeBinding
-    override fun onStart() {
-        super.onStart()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,17 +23,6 @@ class BeforeHomeFragment : Fragment() {
 
         return binding.root
     }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-    }
-
-
-
-
-
-
 
 
 }

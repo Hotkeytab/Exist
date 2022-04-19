@@ -88,8 +88,6 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     override fun onStart() {
         super.onStart()
 
-        DrawerActivity.trackState.currentOne = "suivie planning"
-
         if (isAdded && activity != null) {
             askForPermissions()
         }

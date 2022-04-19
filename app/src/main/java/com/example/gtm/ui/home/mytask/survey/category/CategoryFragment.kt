@@ -87,6 +87,10 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentCategoryBinding.inflate(inflater, container, false)
+
+
+
+        //Get Data From SharedPref
         sharedPref = requireContext().getSharedPreferences(
             R.string.app_name.toString(),
             Context.MODE_PRIVATE
@@ -107,12 +111,11 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
         super.onViewCreated(view, savedInstanceState)
 
 
-
-        Log.i("LastSC","${LastSc.lsc}")
-
+        //Set Title
         binding.title.text = questionName
 
 
+        //Override onBack Bottom Button Pressed
         val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true /* enabled by default */) {
                 override fun handleOnBackPressed() {
@@ -123,41 +126,36 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
 
+        //Top Back Button
         binding.backFromQuiz.setOnClickListener {
             if (!((activity as DrawerActivity).loading))
                 findNavController().navigate(R.id.action_categoryFragment_to_quizFragment)
         }
 
+        //Get Store Object with ALl Responses Inside
         myVal = arguments?.getString("quizObject")
 
 
+        //Convert Object from Json to Object
         val gson = Gson()
         val objectList = gson.fromJson(myVal, QuizData::class.java)
 
 
 
-
+        //Get ArrayList From Object
         if (objectList != null)
             listaCategory = objectList.questionCategories as ArrayList<QuestionCategory>
 
 
+        //Change Button Tag and SetUpRecycleView
         binding.envoyerQuestionnaireButton.tag = "good"
         setupRecycleViewCategory()
 
+
+        //Send Questions Results
         binding.envoyerQuestionnaireButton.setOnClickListener {
 
-            /*   if (binding.envoyerQuestionnaireButton.tag != "bad") {
-
-                   (activity as DrawerActivity).loading = true
-                   binding.progressBarUpload.visibility = View.VISIBLE
-                   Timer().schedule(1000) {
-                       envoyerQuestionnaire()
-                   }
-               }*/
-
-            //      setupRecycleViewCategory()
-
-
+            //Search for Incomplete Obligat Questions
             if (!searchForIncompleteQuestion()) {
                 setupRecycleViewCategory()
 
@@ -185,37 +183,10 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
         }
 
-        // val objectList = gson.fromJson(json, Array<SomeObject>::class.java).asList()
     }
 
-    /*private fun prepareListOfQuestionsPerSc() {
 
-        val myHashMapFinal : HashMap<Int, HashMap<Int, Survey?>> = HashMap<Int, HashMap<Int, Survey?>>()
-
-        for (i in listaCategory.indices) {
-
-            for (j in listaCategory[i].questionSubCategories.indices) {
-
-                val mySubHashMapFinal : HashMap<Int, Survey?> = HashMap<Int, Survey?>()
-
-                for (k in listaCategory[i].questionSubCategories[j].questions.indices) {
-                    var mySurveyFinal: Survey? = null
-                    (activity as DrawerActivity).surveyPostArrayList.forEach { (v, w) ->
-
-                        if (listaCategory[i].questionSubCategories[j].questions[k].id == v.questionId) {
-                            mySurveyFinal = Survey(listaCategory[i].questionSubCategories[j].questions[k].id, listaCategory[i].questionSubCategories[j].questions[k].coef, w.rate, w.description, w.images)
-                        }
-                    }
-                    mySubHashMapFinal[k] = mySurveyFinal
-                }
-            }
-
-
-            //(activity as DrawerActivity).listOfQuestionsPerSc[i]
-        }
-    } */
-
-
+    //Set Up RecycleView for Questions
     private fun setupRecycleViewCategory() {
 
         adapterCategory =
@@ -232,10 +203,10 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
     }
 
     override fun onClickedCategory(categoryId: Int) {
-        //  findNavController().navigate(R.id.action_categoryFragment_to_sousCategoryFragment)
     }
 
 
+    //Search for Incomplete Oblig QUestions
     private fun searchForIncompleteQuestion(): Boolean {
         for (i in listaCategory) {
             for (j in i.questionSubCategories) {
@@ -259,19 +230,17 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
         return true
     }
 
+
+    //Send Final REsponses Service
     @SuppressLint("ResourceAsColor")
     private fun envoyerQuestionnaire() {
 
 
         var coefTotal = 0.0
         var average = 0.0
-        val bigList: HashMap<Int, HashMap<Int, Survey?>> =
-            (activity as DrawerActivity).listOfQuestionsPerSc
-        // Log.i("mamaafrica","${(activity as DrawerActivity).listOfQuestionsPerSc}")
 
         val listMultipartBody = ArrayList<MultipartBody.Part?>()
         val listBody = ArrayList<QuestionPost?>()
-        //  filesNumber = bigList
 
 
         for (i in listaCategory) {
@@ -312,34 +281,6 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
 
 
-      /*  bigList.forEach { (v, k) ->
-
-            k.forEach { (l, m) ->
-
-
-                coefTotal += m!!.coef
-                if (m.rate == null)
-                    m.rate = 0
-                average += m.coef * m.rate!!
-
-                val images = ArrayList<ImagePath?>()
-
-                if (m.urls != null) {
-                    m.urls.forEach { i ->
-                        convertToFile(i, images, listMultipartBody)
-                    }
-                }
-
-                val questionPost =
-                    QuestionPost(m.id.toLong(), m.rate, m.description, images)
-
-
-
-                listBody.add(questionPost)
-            }
-
-        } */
-
 
         val finalAverageBefore: Double = (average / coefTotal)
         val stringDecimal = (finalAverageBefore.toString()).substring(0, 3)
@@ -365,7 +306,6 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
         filesNumber = listMultipartBody.size
         binding.progressUpload.max = filesNumber * 2
 
-        Log.i("filesNumber", "$filesNumber")
 
         GlobalScope.launch(Dispatchers.Main) {
             responseData = viewModel.postSurveyResponse(
@@ -403,6 +343,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
     }
 
 
+    //Convert ALl Bmp Images to files
     private fun convertToFile(
         image: Image,
         images: ArrayList<ImagePath?>?,
@@ -425,12 +366,10 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
             val body = ProgressRequestBody(file, "image", this)
 
-            //val body = UploadRequestBody(file, "image", this)
 
             val outputStream = FileOutputStream(file)
             inputStream.copyTo(outputStream)
 
-            val newTrim = file.name.trim()
 
             images!!.add(ImagePath(file.name))
 
@@ -451,6 +390,8 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
     }
 
 
+
+    //GetImageUri from Images
     private fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
         val bytes = ByteArrayOutputStream()
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
@@ -460,6 +401,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
     }
 
 
+    //Show Progress Update %
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onProgressUpdate(percentage: Int) {
 

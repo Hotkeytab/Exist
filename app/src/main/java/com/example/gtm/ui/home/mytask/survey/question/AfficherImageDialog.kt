@@ -60,7 +60,6 @@ class AfficherImageDialog(
         super.onViewCreated(view, savedInstanceState)
 
         afficher_image.setImageBitmap(listaImage[i]!![position].url)
-        Log.i("imageposition", position.toString())
 
         return_from_dialog.setOnClickListener {
             dismiss()

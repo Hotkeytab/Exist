@@ -109,8 +109,6 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
             listaSurvey =
                 (activity as DrawerActivity).listOfQuestionsPerSc[questionList[0].questionSubCategoryId]!!
 
-        /*(activity as DrawerActivity).lastTimeClicked = 1
-        Log.i("lastTime","${(activity as DrawerActivity).lastTimeClicked}") */
 
         sharedPref = requireContext().getSharedPreferences(
             R.string.app_name.toString(),
@@ -318,7 +316,6 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
                 initQuestion()
                 setQuestion()
 
-                Log.i("listasurvey", "$listaSurvey")
             }
         }
 
@@ -430,43 +427,6 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
         listMultipartBody: ArrayList<MultipartBody.Part?>
     ): MultipartBody.Part? {
 
-
-        /*    val images: ArrayList<ImagePath?>? = null
-
-
-            survey!!.urls!!.forEach { i ->
-
-                val selectedImageUri = getImageUri(requireContext(), i.url)
-
-                if (selectedImageUri != null) {
-                    val parcelFileDescriptor =
-                        requireActivity().contentResolver.openFileDescriptor(selectedImageUri, "r", null)
-
-
-                    val inputStream = FileInputStream(parcelFileDescriptor!!.fileDescriptor)
-
-                    val file = File(
-                        requireActivity().cacheDir,
-                        requireActivity().contentResolver.getFileName(selectedImageUri)
-                    )
-
-                    images!!.add(ImagePath(file.name))
-                    val body = UploadRequestBody(file, "image", this)
-
-                    val outputStream = FileOutputStream(file)
-                    inputStream.copyTo(outputStream)
-
-                    MultipartBody.Part.createFormData(
-                        file.name, file.name,
-                        body
-                    )
-
-
-                }
-
-                Log.i("bassass","$images")
-            }*/
-
         val selectedImageUri = getImageUri(requireContext(), image.url)
 
         if (selectedImageUri != null) {
@@ -546,7 +506,6 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
 
             if (v?.urls != null) {
                 v.urls.forEach { i ->
-                    Log.i("uploaded", "BeforeCalled")
                     convertToFile(i, images, listMultipartBody)
                 }
             }
@@ -566,7 +525,6 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
             0.0,
             listBody
         )
-        Log.i("kamehameha", "$qp2")
 
         val userNewJson = jacksonObjectMapper().writeValueAsString(qp2)
         val bodyJson = RequestBody.create(
@@ -594,7 +552,6 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
     private fun nextCategory() {
         (activity as DrawerActivity).listOfQuestionsPerSc[questionList[i].questionSubCategoryId] =
             listaSurvey
-        Log.i("questionlist", "$questionList")
         val bundle = bundleOf("quizObject" to myVar2)
         findNavController().navigate(R.id.action_questionFragment_to_categoryFragment, bundle)
 
@@ -609,15 +566,12 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
     }
 
     override fun onProgressUpdate(percentage: Int) {
-        Log.i("upload", "$percentage")
     }
 
     override fun onError() {
-        Log.i("upload", "Error")
     }
 
     override fun onFinish(finished: Boolean) {
-        Log.i("finished", "$finished")
     }
 
 

@@ -37,7 +37,7 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
     private lateinit var binding: FragmentSignInBinding
     private val viewModel: SignInFragmentViewModel by viewModels()
     private lateinit var responseData: Resource<SignInResponse>
-    private  var responseDataUser: Resource<UserResponse>? = null
+    private var responseDataUser: Resource<UserResponse>? = null
     lateinit var sharedPref: SharedPreferences
     private lateinit var sessionManager: SessionManager
     private lateinit var dialog: InternetCheckDialog
@@ -50,20 +50,18 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
     ): View {
         binding = FragmentSignInBinding.inflate(inflater, container, false)
 
-
+        //If Fragment is Added
         if (isAdded) {
 
             sessionManager = SessionManager(requireContext())
-
             fm = requireActivity().supportFragmentManager
-
             dialog = InternetCheckDialog()
 
-
-
-
+            //Fill SignIn Editexts with sharedPref
             initSignIn()
 
+
+            //Init All Editexts Animations
             val animationLeftToRight =
                 AnimationUtils.loadAnimation(requireContext(), R.anim.left_to_right)
 
@@ -73,15 +71,15 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
             val animationBottomToTop =
                 AnimationUtils.loadAnimation(requireContext(), R.anim.bottom_to_top)
 
+            //Start Animation
             animationSignin(animationLeftToRight, animationRightToLeft, animationBottomToTop)
 
 
 
+            //SignIn Button Click Listener
             binding.signinButton.setOnClickListener {
-                // signInOffline()
                 binding.signinButton.isEnabled = false
                 checkInternet()
-
             }
 
 
@@ -91,99 +89,93 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
     }
 
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-
-    }
-
-
-    private fun signInOffline() {
-        val intent = Intent(activity, DrawerActivity::class.java)
-        activity?.startActivity(intent)
-        activity?.finish()
-    }
-
+    //SignIn function
     @DelicateCoroutinesApi
     private fun signIn() {
 
+        //If Username is empty
         if (binding.username.editText!!.trimStringEditText().isEmpty()) {
             clearError()
             binding.username.error = "Username is Empty"
             binding.signinButton.isEnabled = true
+            //If password is empty
         } else if (binding.password.editText!!.trimStringEditText().isEmpty()) {
             clearError()
             binding.password.error = "Password is Empty"
             binding.signinButton.isEnabled = true
         } else {
 
+            //Activate Progress Indicator
             binding.progressIndicator.visibility = View.VISIBLE
 
 
+            //Call CheckInternet function
             InternetCheck { internet ->
+                //If Internet is Good
                 if (internet) {
                     val sinInObject = SignInPost(
                         binding.username.editText!!.trimStringEditText(),
                         binding.password.editText!!.trimStringEditText()
                     )
 
-                if (isAdded) {
-                    GlobalScope.launch(Dispatchers.Main) {
-                        responseData = viewModel.login(sinInObject)
-                        if (responseData.responseCode == 200) {
-                            rememberMe()
-                            sessionManager.saveToken(responseData.data!!.token)
-                            responseDataUser =
-                                viewModel.getUser(binding.username.editText!!.trimStringEditText())
-                            if (responseDataUser!!.responseCode == 200) {
-                                sharedPref =
-                                    requireActivity().getSharedPreferences(
-                                        R.string.app_name.toString(),
-                                        Context.MODE_PRIVATE
-                                    )!!
-                                with(sharedPref.edit()) {
-                                    this?.putInt("id", responseDataUser!!.data!!.data.id)
-                                }?.commit()
-                                val intent = Intent(activity, DrawerActivity::class.java)
-                                activity?.startActivity(intent)
-                                activity?.finish()
-                            }
+                    //If fragment is Added
+                    if (isAdded) {
+                        //Launch Couroutine
+                        GlobalScope.launch(Dispatchers.Main) {
+                            responseData = viewModel.login(sinInObject)
+                            //If response is good
+                            if (responseData.responseCode == 200) {
+                                //Save Login Infos
+                                rememberMe()
+                                sessionManager.saveToken(responseData.data!!.token)
+                                //Fetch DataUser
+                                responseDataUser =
+                                    viewModel.getUser(binding.username.editText!!.trimStringEditText())
+                                if (responseDataUser!!.responseCode == 200) {
+                                    sharedPref =
+                                        requireActivity().getSharedPreferences(
+                                            R.string.app_name.toString(),
+                                            Context.MODE_PRIVATE
+                                        )!!
+                                    with(sharedPref.edit()) {
+                                        this?.putInt("id", responseDataUser!!.data!!.data.id)
+                                    }?.commit()
+                                    //Start Intent after everything is good
+                                    val intent = Intent(activity, DrawerActivity::class.java)
+                                    activity?.startActivity(intent)
+                                    activity?.finish()
+                                } else {
+                                    binding.signinButton.isEnabled = true
+                                    binding.progressIndicator.visibility = View.INVISIBLE
+                                    clearError()
+                                    binding.password.error = "Erreur Connexion "
+                                }
 
-                            else
-                            {
+                                //Password is wrong
+                            } else if (responseDataUser != null) {
+
+                                if (responseDataUser!!.responseCode == 401) {
+                                    binding.signinButton.isEnabled = true
+                                    binding.progressIndicator.visibility = View.INVISIBLE
+                                    clearError()
+                                    binding.password.error =
+                                        "Mot de passe ou nom d'utilisateur Erroné "
+                                    //Connection Problems
+                                } else {
+                                    binding.signinButton.isEnabled = true
+                                    binding.progressIndicator.visibility = View.INVISIBLE
+                                    clearError()
+                                    binding.password.error = "Erreur Connexion "
+                                }
+                                //Connection Problems
+                            } else {
                                 binding.signinButton.isEnabled = true
                                 binding.progressIndicator.visibility = View.INVISIBLE
                                 clearError()
-                                binding.password.error = "Erreur Connexion "
+                                binding.password.error = "Erreur Connexion"
                             }
-
-                        }
-                        else if(responseDataUser != null) {
-
-                            if(responseDataUser!!.responseCode == 401) {
-                                binding.signinButton.isEnabled = true
-                                binding.progressIndicator.visibility = View.INVISIBLE
-                                clearError()
-                                binding.password.error = "Mot de passe ou nom d'utilisateur Erroné "
-                            }
-                            else
-                            {
-                                binding.signinButton.isEnabled = true
-                                binding.progressIndicator.visibility = View.INVISIBLE
-                                clearError()
-                                binding.password.error = "Erreur Connexion "
-                            }
-                        }
-
-                        else
-                        {
-                            binding.signinButton.isEnabled = true
-                            binding.progressIndicator.visibility = View.INVISIBLE
-                            clearError()
-                            binding.password.error = "Erreur Connexion"
                         }
                     }
-                }
 
 
                 }
@@ -191,6 +183,8 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
         }
     }
 
+
+    //Animate Signin editexts
     private fun animationSignin(
         leftToRight: Animation,
         rightToLeft: Animation,
@@ -202,12 +196,16 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
         binding.signuplinear.animation = bottomTopTop
     }
 
+    //Clear SignIn errors
     private fun clearError() {
         binding.username.error = null
         binding.password.error = null
     }
 
+    //Remember me function
     private fun rememberMe() {
+
+        //If remember me is checked
         if (binding.remembermebox.isChecked) {
             sharedPref =
                 context?.getSharedPreferences(R.string.app_name.toString(), Context.MODE_PRIVATE)!!
@@ -228,7 +226,7 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
 
     }
 
-
+    //Fill SignIn Editexts with sharedPref
     private fun initSignIn() {
         sharedPref = requireContext().getSharedPreferences(
             R.string.app_name.toString(),
@@ -245,23 +243,33 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
         }
     }
 
+    //OnDismissDialog (check internet dialog)
     override fun onDismiss(p0: DialogInterface?) {
         signIn()
     }
 
 
+    //Check Internet
     private fun checkInternet() {
         InternetCheck { internet ->
+            //If Internet Good
             if (internet)
                 signIn()
+
+            //If There is no Internet
             else {
 
+                //Progress bar invisible
                 binding.progressIndicator.visibility = View.INVISIBLE
+
+                //Show Internet check Dialog
                 dialog.show(
                     fm,
                     "Internet check"
                 )
-                fm.executePendingTransactions();
+                fm.executePendingTransactions()
+
+                //Dialog cancel listener
                 dialog.dialog!!.setOnCancelListener {
                     checkInternet()
                 }

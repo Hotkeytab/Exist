@@ -144,7 +144,6 @@ class SurveyCheckDialog(
                         false,
                         "entrée"
                     )
-                    Log.i("mypostid", "$visitePost")
                     val arayListVsitePost = ArrayList<VisitPost>()
                     arayListVsitePost.add(visitePost)
                     responseAdd = viewModelQuiz.addVisite(arayListVsitePost)

@@ -15,7 +15,5 @@ class SignInFragmentViewModel @Inject constructor(
 
 ) : ViewModel() {
     suspend fun login(signinObject: SignInPost) = authRepository.login(signinObject)
-
     suspend fun getUser(username: String) = userRepository.getUser(username)
-
 }

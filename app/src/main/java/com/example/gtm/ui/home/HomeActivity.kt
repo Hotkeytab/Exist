@@ -24,8 +24,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
 
+    //Override onBackPressed function
     override fun onBackPressed() {
-        print("TODO")
     }
 
 

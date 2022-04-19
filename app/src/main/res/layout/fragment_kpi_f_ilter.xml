@@ -5,6 +5,11 @@
     tools:context=".ui.home.kpi.kpifilter.KpiFIlterFragment">
 
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swiperefreshlayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -34,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:indeterminate="true"
                 android:visibility="invisible"
-                app:layout_constraintTop_toBottomOf="@+id/appbar"/>
+                app:layout_constraintTop_toBottomOf="@+id/appbar" />
 
 
             <androidx.cardview.widget.CardView
@@ -64,7 +69,8 @@
                             android:id="@+id/hiddenfocus"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:visibility="gone"/>
+                            android:visibility="gone" />
+
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                             android:layout_width="match_parent"
@@ -136,22 +142,21 @@
                         </com.google.android.material.textfield.TextInputLayout>
 
 
-
-
                         <TextView
                             android:id="@+id/questionnaire_error_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginTop="@dimen/_15sdp"
-                            android:maxLines="2"
-                            android:textColor="@color/red"
-                            android:textAlignment="center"
                             android:focusable="true"
                             android:focusableInTouchMode="true"
+                            android:maxLines="2"
                             android:text="Choisissez un seul Questionnaire"
+                            android:textAlignment="center"
+                            android:textColor="@color/red"
                             android:textStyle="bold"
-                            android:visibility="gone"/>
+                            android:visibility="gone" />
+
                         <com.google.android.material.chip.ChipGroup
                             android:id="@+id/chipGroupQuestionnaire"
                             android:layout_width="match_parent"
@@ -166,10 +171,11 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginTop="@dimen/_15sdp"
-                            android:text="Date début"
-                            android:textStyle="bold"
                             android:focusable="true"
-                            android:focusableInTouchMode="true"/>
+                            android:focusableInTouchMode="true"
+                            android:text="Date début"
+                            android:textStyle="bold" />
+
                         <TextView
                             android:id="@+id/error_text"
                             android:layout_width="wrap_content"
@@ -177,11 +183,11 @@
                             android:layout_gravity="center"
                             android:layout_marginTop="@dimen/_15sdp"
                             android:maxLines="2"
-                            android:textColor="@color/red"
-                            android:textAlignment="center"
                             android:text="La date début doit être\n inférieur à la date fin"
+                            android:textAlignment="center"
+                            android:textColor="@color/red"
                             android:textStyle="bold"
-                            android:visibility="gone"/>
+                            android:visibility="gone" />
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/date_debut_card"
@@ -228,81 +234,81 @@
 
                         </androidx.cardview.widget.CardView>
 
-                    <!--  <TextView
-                            android:id="@+id/text_type_analyse"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="@dimen/_15sdp"
-                            android:text="Type d'analyse"
-                            android:textStyle="bold" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="32dp"
-                            android:layout_marginTop="20dp"
-                            android:layout_marginEnd="32dp"
-                            android:orientation="horizontal">
-
-                            <TextView
+                        <!--  <TextView
+                                android:id="@+id/text_type_analyse"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1" />
+                                android:layout_gravity="center"
+                                android:layout_marginTop="@dimen/_15sdp"
+                                android:text="Type d'analyse"
+                                android:textStyle="bold" />
 
-                            <androidx.cardview.widget.CardView
-                                android:id="@+id/card_kpi_stats"
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                app:cardCornerRadius="@dimen/_4sdp"
-                                app:cardUseCompatPadding="true">
+                                android:layout_marginStart="32dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginEnd="32dp"
+                                android:orientation="horizontal">
 
-                                <ImageView
-                                    android:id="@+id/image_kpi_stats"
-                                    android:layout_width="@dimen/_40sdp"
-                                    android:layout_height="@dimen/_40sdp"
-                                    android:src="@drawable/ic_baseline_bar_chart_24"
-                                    app:tint="@color/clear_grey" />
-                            </androidx.cardview.widget.CardView>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1" />
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/card_kpi_stats"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:cardCornerRadius="@dimen/_4sdp"
+                                    app:cardUseCompatPadding="true">
 
-                            <androidx.cardview.widget.CardView
-                                android:id="@+id/card_table_stats"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:cardCornerRadius="@dimen/_4sdp"
-                                app:cardUseCompatPadding="true">
+                                    <ImageView
+                                        android:id="@+id/image_kpi_stats"
+                                        android:layout_width="@dimen/_40sdp"
+                                        android:layout_height="@dimen/_40sdp"
+                                        android:src="@drawable/ic_baseline_bar_chart_24"
+                                        app:tint="@color/clear_grey" />
+                                </androidx.cardview.widget.CardView>
 
-                                <ImageView
-                                    android:id="@+id/image_table_stats"
-                                    android:layout_width="@dimen/_40sdp"
-                                    android:layout_height="@dimen/_40sdp"
-                                    android:src="@drawable/outline_table_rows_24"
-                                    app:tint="@color/purpleLogin" />
-                            </androidx.cardview.widget.CardView>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1" />
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/card_table_stats"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:cardCornerRadius="@dimen/_4sdp"
+                                    app:cardUseCompatPadding="true">
 
-                        </LinearLayout>
+                                    <ImageView
+                                        android:id="@+id/image_table_stats"
+                                        android:layout_width="@dimen/_40sdp"
+                                        android:layout_height="@dimen/_40sdp"
+                                        android:src="@drawable/outline_table_rows_24"
+                                        app:tint="@color/purpleLogin" />
+                                </androidx.cardview.widget.CardView>
 
-                        -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1" />
+
+                            </LinearLayout>
+
+                            -->
 
                         <TextView
                             android:id="@+id/error_text_kpi"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/red"
                             android:layout_gravity="center"
                             android:layout_marginTop="@dimen/_5sdp"
                             android:text="Erreur connexion, réssayer plus tard"
-                            android:visibility="gone"/>
+                            android:textColor="@color/red"
+                            android:visibility="gone" />
 
 
                         <LinearLayout
@@ -355,8 +361,8 @@
                                                 android:layout_weight="1"
                                                 android:gravity="center"
                                                 android:text="Analyses\nSupérviseur"
-                                                android:textStyle="bold"
-                                                android:textColor="@color/purpleLogin"/>
+                                                android:textColor="@color/purpleLogin"
+                                                android:textStyle="bold" />
 
 
                                         </LinearLayout>
@@ -452,7 +458,6 @@
                             android:textColor="@color/purpleLogin" />
 
 
-
                     </LinearLayout>
 
                 </androidx.core.widget.NestedScrollView>
@@ -462,7 +467,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
 </layout>

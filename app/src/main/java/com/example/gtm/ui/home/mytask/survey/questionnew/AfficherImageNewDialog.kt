@@ -48,8 +48,10 @@ class AfficherImageNewDialog(
     override fun onStart() {
         super.onStart()
 
-        val width = (resources.displayMetrics.widthPixels).toInt()
-        val height = (resources.displayMetrics.heightPixels).toInt()
+        //Prepare Dialog Size
+        val width = (resources.displayMetrics.widthPixels)
+        val height = (resources.displayMetrics.heightPixels)
+
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog!!.window?.setLayout(width, height)
     }
@@ -57,12 +59,15 @@ class AfficherImageNewDialog(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Show Image from Lista Array Image
         afficher_image.setImageBitmap(listaImage!![position].url)
 
+        //Close Dialog
         return_from_dialog.setOnClickListener {
             dismiss()
         }
 
+        //Navigate to Previous Image
         left_arrow.setOnClickListener {
             if (position != 0 && listaImage.size != 1) {
                 position--
@@ -70,6 +75,7 @@ class AfficherImageNewDialog(
             }
         }
 
+        //Navigate to Next Image
         right_arrow.setOnClickListener {
             if (listaImage.size - 1 != position && listaImage.size != 1) {
                 position++
@@ -78,13 +84,13 @@ class AfficherImageNewDialog(
 
         }
 
+        //Delete Current Image
         delete.setOnClickListener {
             if (listaImage.size == 1) {
                 listaImage.removeAt(0)
                 linearImage.visibility = View.VISIBLE
                 plus_image.visibility = View.GONE
                 adapterImage.setItems(listaImage)
-                //recycle_view.visibility = View.GONE
                 dismiss()
 
             } else if (listaImage.size > 1) {

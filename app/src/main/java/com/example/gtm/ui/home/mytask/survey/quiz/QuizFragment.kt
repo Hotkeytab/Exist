@@ -69,12 +69,16 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
         binding = FragmentQuizBinding.inflate(inflater, container, false)
 
 
+        //Init Internet dialog
         dialogInternet = InternetCheckDialog()
         fm = requireActivity().supportFragmentManager
 
-        DrawerActivity.trackState.currentOne = "quiz fragment"
 
+        //Init Hashmap of questions per sous category
         (activity as DrawerActivity).listOfQuestionsPerSc = HashMap<Int, HashMap<Int, Survey?>>()
+
+
+        //Get Data from SHared Pref
         sharedPref = requireContext().getSharedPreferences(
             R.string.app_name.toString(),
             Context.MODE_PRIVATE
@@ -82,6 +86,7 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
         storeName = sharedPref.getString("storeName", "")
         userId = sharedPref.getInt("id", 0)
 
+        //Hide Bottom Nav Bar
         requireActivity().bottom_nav.visibility = View.GONE
         return binding.root
     }
@@ -90,8 +95,6 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        // This callback will only be called when MyFragment is at least Started.
         // This callback will only be called when MyFragment is at least Started.
         val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true /* enabled by default */) {
@@ -102,17 +105,20 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
 
+        //Back from QuizFragment to Home
         binding.backFromQuiz.setOnClickListener {
             findNavController().navigate(R.id.action_quizFragment_to_taskFragment)
         }
 
+        //Set Title
         binding.title.text = storeName
 
+        //Check Intrent if Good then Get List of Quiz
         checkInternet()
 
 
+        //Swipe Down Refresh Page
         binding.swiperefreshlayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
-
             getVisites()
             swiperefreshlayout.isRefreshing = false
         })
@@ -120,6 +126,8 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
     }
 
 
+
+    //Set Up recycleView Quiz
     private fun setupRecycleViewSurvey() {
 
         adapterSurvey = QuizAdapter(this, requireActivity())
@@ -143,6 +151,8 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
 
     }
 
+
+    //OnClicked Quiz inside RecycleView
     override fun onClickedQuiz(quiz: QuizData, surveyId: Int) {
 
         val responsJson: String = Gson().toJson(quiz)
@@ -163,6 +173,8 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
 
     }
 
+
+    //Get Quizs
     @DelicateCoroutinesApi
     private fun getVisites() {
         binding.progressIndicator.visibility = View.VISIBLE
@@ -175,17 +187,13 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
             if (responseDataQuiz.responseCode == 200) {
                 listaQuiz = responseDataQuiz.data!!.data as ArrayList<QuizData>
 
+                //Here  there is no service to know if quiz is already answered or not  so , to know if you answered
+                //the quiz , I had to get the responses of all quizs and then to check every id in response object
+                // to see if the quizId exist or not.
+                // It could be much easier and performant if the backend developer did this task in the server
+                // if every quiz is answered or not.
+
                 getUsedQuiz()
-
-
-
-
-
-
-
-           //     for(i in listaQuiz)
-
-             //   Log.i("OkBraw","${searchForQuiz()}")
 
 
             }
@@ -242,7 +250,6 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
                 getVisites()
             else {
 
-                //  progress_indicator_dialog.visibility = View.INVISIBLE
                 dialogInternet.show(
                     fm,
                     "Internet check"

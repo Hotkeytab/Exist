@@ -44,6 +44,7 @@ class AnalyseSuperviseurFragment : Fragment() {
     ): View {
         binding = FragmentAnalyseSuperviseurBinding.inflate(inflater, container, false)
 
+        //Get Instance of KpiFinalResultActivity
         kpiActivity = (activity as KpiFinalResultActivity)
 
         return binding.root
@@ -52,18 +53,21 @@ class AnalyseSuperviseurFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Init Animation From Right to Left
         val animationRightToLeft =
             AnimationUtils.loadAnimation(requireContext(), R.anim.right_to_left_kpi)
 
 
-
+        //Start Animation for all Cards
         animateResults(animationRightToLeft)
-        prepareStats()
 
+        //Fill Cards with Stats Results
+        prepareStats()
 
     }
 
 
+    //Start Animation for all Cards
     private fun animateResults(rightToLeft: Animation) {
 
         binding.performance.animation = rightToLeft
@@ -75,17 +79,9 @@ class AnalyseSuperviseurFragment : Fragment() {
         binding.questionnaireRealise.animation = rightToLeft
         binding.moyenneQuestionnaire.animation = rightToLeft
         binding.nombrePhoto.animation = rightToLeft
-
-
-        /*kpiActivity.image_kpi_stats_card.setOnClickListener {
-            findNavController().navigate(R.id.action_analyseSuperviseurFragment_to_pieChartLastFragment)
-        } */
-
-
-
-
     }
 
+    //Fill Cards with Stats Results
     private fun prepareStats() {
         binding.performanceText.text = "${kpiActivity.kpiStatsObject?.performance}%"
         binding.moyenneRetardText.text = "${kpiActivity.kpiStatsObject?.moyenneRetard}\nMinutes"

@@ -60,6 +60,9 @@ import com.example.gtm.ui.home.suivie.ChoixImageDialogSuivie
 import kotlinx.android.synthetic.main.dialog_add_visite.*
 import kotlinx.android.synthetic.main.fragment_task.swiperefreshlayout
 
+// In this fragment , I had to do many filters because the backend service is giving me wrong results
+// For example : if I ask for  getVisite() Between 6th April and 10th April , the service will give me
+// Results Between 5th April and 11th April , that's why I had to filter and verify data before showing it
 
 @AndroidEntryPoint
 class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
@@ -71,7 +74,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     private var listaTasks = ArrayList<Visite>()
     lateinit var sharedPref: SharedPreferences
     private lateinit var responseData: Resource<VisiteResponse>
-    private lateinit var responseTime: Resource<TimeClass>
     private val viewModel: MyTaskViewModel by viewModels()
     private var userId = 0
     private lateinit var dateTimeBegin: String
@@ -90,12 +92,13 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     override fun onStart() {
         super.onStart()
 
-        DrawerActivity.trackState.currentOne = "planning du jour"
-
+        //If Fragment is Added and Activity not null
         if (isAdded && activity != null) {
-
+            //Set Location Fused Listener
             LocationValueListener.locationOn = true
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
+            //Ask Permission GPS
             askForPermissions()
         }
 
@@ -110,14 +113,17 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
         binding = FragmentTaskBinding.inflate(inflater, container, false)
 
 
-
+        //If Fragment is Added and activity is not null
         if (isAdded && activity != null) {
 
-
+            //Get Current Date
             d = Date()
 
+            //Init ChildFragmentManager
             fm = childFragmentManager
 
+
+            //Init UserID
             sharedPref = requireContext().getSharedPreferences(
                 R.string.app_name.toString(),
                 Context.MODE_PRIVATE
@@ -125,6 +131,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
             userId = sharedPref.getInt("id", 0)
 
 
+            //Get Time Begin Date and Time End Date
             val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
             dateTimeBegin = simpleDateFormat.format(d.time).toString()
             dateTimeEnd = simpleDateFormat.format(d.time).toString()
@@ -141,7 +148,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
 
 
         // This callback will only be called when MyFragment is at least Started.
-        // This callback will only be called when MyFragment is at least Started.
         val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true /* enabled by default */) {
                 override fun handleOnBackPressed() {
@@ -151,24 +157,35 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
 
 
 
+        //If Fragment is Added and activity not null
         if (isAdded && activity != null) {
+            //Get Drawer Layout instance
             val mDrawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
+
             //Top Bar
             topAppBar.setNavigationOnClickListener {
                 mDrawerLayout.openDrawer(Gravity.LEFT)
             }
 
+            //Make Bottom Nav Visible
             requireActivity().bottom_nav.visibility = View.VISIBLE
 
 
+            //init Nav Controller
             navController = NavHostFragment.findNavController(this)
 
+
+            //Correct Top Date Filters
             correctFilters()
 
-
+            //SetToday Filter and updateUI
             setTodayLight()
+
+
+            //Set Top Date filters and correct UI
             setTopDate()
 
+            //Day Card Click Listener
             binding.dayfiltercard.setOnClickListener {
                 daysFilter.dayFilter = 1
                 daysFilter.weekFilter = 0
@@ -178,6 +195,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
                 binding.progressIndicator.visibility = View.VISIBLE
                 getVisites()
             }
+            //Week Card Click Listener
             binding.weekfilterward.setOnClickListener {
                 daysFilter.dayFilter = 0
                 daysFilter.weekFilter = 1
@@ -188,6 +206,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
 
             }
 
+            //Month Card Click Listener
             binding.montherfiltercard.setOnClickListener {
                 daysFilter.dayFilter = 0
                 daysFilter.weekFilter = 0
@@ -200,25 +219,31 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
 
 
 
+            //Next Date Button Listener
             binding.nextDate.setOnClickListener {
                 nextDate()
             }
+
+            //previous Date Button Listener
             binding.previousDate.setOnClickListener {
                 previousDate()
             }
 
+            //Current day Button Listener
             binding.today.setOnClickListener {
                 setToday()
             }
 
 
+            //Add Visite Button Listener
             binding.fab.setOnClickListener {
 
+                //Init Visite Dialog and SHow it
                 addVisiteDialog = AddVisteDialog(listaTasks)
                 addVisiteDialog.show(fm!!, "add")
-
-
                 fm!!.executePendingTransactions()
+
+                //Add Visite Dialog onCLose Listener
                 addVisiteDialog.dialog!!.setOnDismissListener {
                     getVisites()
                 }
@@ -228,8 +253,9 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
 
 
         }
-        binding.swiperefreshlayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
 
+        //onSwipeDown Listener
+        binding.swiperefreshlayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
             getVisites()
             swiperefreshlayout.isRefreshing = false
         })
@@ -244,13 +270,12 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
         return super.onOptionsItemSelected(item)
     }
 
 
+    //Set Lista Visite RecycleView
     private fun setupRecycleViewPredictionDetail() {
-
 
         adapterTask = TaskAdapter(this, requireActivity(), activity as DrawerActivity, listaTasks)
         binding.taskRecycleview.isMotionEventSplittingEnabled = false
@@ -261,18 +286,22 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
             false
         )
         binding.taskRecycleview.adapter = adapterTask
-        // (activity as DrawerActivity).listOfTriDates = ArrayList<String>()
-        Log.i("triggered", "triggered")
         adapterTask.setItems(listaTasks)
-
 
     }
 
+
+
+    //OnClicked Visite
     override fun onClickedTask(taskId: Int, distance: String, visite2: Visite, theDistance: Float) {
 
-        if (theDistance < 10000) {
+        if (theDistance < 250) {
             visite = visite2
+
+            //Ask for GPS Permission
             askForPermissionsDialog()
+
+            //Put StoreId in sharedPref
             sharedPref =
                 requireContext().getSharedPreferences(
                     R.string.app_name.toString(),
@@ -284,22 +313,28 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
         }
     }
 
+
+    //Get All Visites for the current User
     @DelicateCoroutinesApi
     private fun getVisites() {
         lifecycleScope.launch(Dispatchers.Main) {
 
-
+            //If Fragment is not detached
             if (!isDetached) {
 
+                //If fragment is  Added
                 if (isAdded) {
+
+                    //Get response Data of ALl Visite
                     responseData =
                         viewModel.getVisites(userId.toString(), dateTimeBegin, dateTimeEnd)
 
 
+                    //If response Good
                     if (responseData.responseCode == 200) {
+
+                        //Ftech Lista Visites
                         listaTasks = responseData.data!!.data as ArrayList<Visite>
-                        /* listaTasks[0].store.lat = 22.3
-                     listaTasks[0].store.lng = 22.3*/
 
                         if (daysFilter.dayFilter == 1)
                             listaTasks =
@@ -317,6 +352,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
                         else
                             binding.novisit.visibility = View.GONE
 
+                        //Sort by Distance
                         if (daysFilter.dayFilter == 1)
                             listaTasks.sortBy { list ->
                                 list.store.calculateDistance(
@@ -325,11 +361,12 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
                                 )
                             }
 
+                        //Sort by Date
                         if (daysFilter.weekFilter == 1 || daysFilter.monthFilter == 1) {
                             Collections.sort(listaTasks, SortByDate())
-                            //  transformListToHashMapDate()
                         }
 
+                        //If Fragment is Added and activity isn't null
                         if (isAdded && activity != null)
                             setupRecycleViewPredictionDetail()
                         binding.progressIndicator.visibility = View.GONE
@@ -342,6 +379,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     }
 
 
+    //test if Permission (Gps) Is Allowed
     fun isPermissionsAllowed(): Boolean {
         return ContextCompat.checkSelfPermission(
             requireContext(),
@@ -349,6 +387,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    //Ask for Permission Gps
     fun askForPermissions(): Boolean {
         if (!isPermissionsAllowed()) {
             if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -358,11 +397,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
             }
             return false
         } else {
-            Log.i("PERMISSIONBITCH", "4")
-            if (CheckGpsStatus())
-            // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
-            {
-                Log.i("PERMISSIONBITCH", "5")
+            if (CheckGpsStatus()) {
                 setUpLocationListener()
 
             } else {
@@ -372,6 +407,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
         return true
     }
 
+    //SHow the Dialog of Ask Permissions( Like GPS)
     fun askForPermissionsDialog(): Boolean {
         if (!isPermissionsAllowed()) {
             if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -382,7 +418,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
             }
             return false
         } else {
-            Log.i("PERMISSIONBITCH", "4")
             if (CheckGpsStatus())
             // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
             {
@@ -399,17 +434,17 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
                         visite
                     ).show(fm!!, "SurveyDialog")
                 else {
-                    if(visite.end ==null)
-                    ChoixImageDialogSuivie(
-                        this,
-                        visite.pe,
-                        visite.ps,
-                        navController,
-                        visite,
-                        requireView(),
-                        adapterTask,
-                        listaTasks
-                    ).show(fm!!, "ChoixImageSuivi")
+                    if (visite.end == null)
+                        ChoixImageDialogSuivie(
+                            this,
+                            visite.pe,
+                            visite.ps,
+                            navController,
+                            visite,
+                            requireView(),
+                            adapterTask,
+                            listaTasks
+                        ).show(fm!!, "ChoixImageSuivi")
                 }
 
             } else {
@@ -420,6 +455,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     }
 
 
+    //SHow DIalog Permission Denied
     private fun showPermissionDeniedDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle("Autorisation refusée")
@@ -438,6 +474,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     }
 
 
+    //Show Denied GPS
     private fun showPermissionDeniedGPS() {
         AlertDialog.Builder(requireContext())
             .setTitle("Autorisation GPS")
@@ -491,6 +528,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     }
 
 
+    //Check GPS Status if Activated or not
     fun CheckGpsStatus(): Boolean {
         locationManager =
             requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -499,15 +537,16 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     }
 
 
+    //Sort by Date internal Class
     internal class SortByDate : Comparator<Visite?> {
         override fun compare(p0: Visite?, p1: Visite?): Int {
             return p0!!.day.compareTo(p1!!.day)
         }
     }
 
+    //SetUpLocation Listener
     private fun setUpLocationListener() {
 
-        Log.i("PERMISSIONBITCH", "7")
         if (listaTasks.size == 0)
             binding.progressIndicator.visibility = View.VISIBLE
         // for getting the current location update after every 2 seconds with high accuracy
@@ -540,7 +579,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
                 override fun onLocationResult(locationResult: LocationResult) {
                     super.onLocationResult(locationResult)
 
-                    Log.i("PERMISSIONBITCH", "6")
                     if (!LocationValueListener.locationOn) {
                         fusedLocationClient.removeLocationUpdates(this)
                     }
@@ -558,24 +596,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
                             }
                         } else
                             askForPermissions()
-                        /*  if (location != null) {
-                              val distanceTest = distance(
-                                  location.latitude.toFloat(),
-                                  location.longitude.toFloat(),
-                                  latIn.toFloat(),
-                                  longIn.toFloat()
-                              )
-                              Log.i("HAHAH", "$distanceTest")
-                              if (distanceTest > 1 && distanceTest < 150) {
-                                  fusedLocationClient.removeLocationUpdates(this)
-                                  dismiss()
-                                  //    SurveyListDialog().show(requireActivity().supportFragmentManager,"survey list dialog")
-                                  navControllerIn.navigate(R.id.action_taskFragment_to_quizFragment)
-                              } else {
-                                  dismiss()
-                              }
-                          }*/
-
                     }
 
                 }
@@ -586,6 +606,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     }
 
 
+    //Calculate Distance from Lat and Lng
     fun distance(lat_a: Float, lng_a: Float, lat_b: Float, lng_b: Float): Float {
         val earthRadius = 3958.75
         val latDiff = Math.toRadians((lat_b - lat_a).toDouble())
@@ -600,8 +621,8 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     }
 
 
+    //Compare Date Between Dates
     private fun compareDatesDay(simpleDate: String): Boolean {
-
 
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         val date: Date = format.parse(simpleDate)
@@ -621,6 +642,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     }
 
 
+    //Compare Dates Between Months
     private fun compareDatesMonth(simpleDate: String): Boolean {
 
 
@@ -644,6 +666,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     }
 
 
+    //Correct top filters in UI
     private fun correctFilters() {
         setFilters(binding.dayfiltercard, binding.dayfiltertext, daysFilter.dayFilter)
         setFilters(binding.weekfilterward, binding.weektextfilter, daysFilter.weekFilter)
@@ -651,6 +674,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     }
 
 
+    //Set Filters in UI
     @SuppressLint("ResourceAsColor")
     private fun setFilters(cardview: CardView, textView: TextView, filter: Int) {
         if (filter == 1) {
@@ -668,6 +692,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     }
 
 
+    //Set Top Date in UI After change
     private fun setTopDate() {
 
         if (daysFilter.dayFilter == 1) {
@@ -676,7 +701,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
             val dayOfTheWeek = sdf.format(d)
             val dayOfTheWeek2 = sdf2.format(d)
             binding.topAppBar.title = "$dayOfTheWeek $dayOfTheWeek2"
-            Log.i("repeat", "2")
 
         } else if (daysFilter.weekFilter == 1) {
 
@@ -740,6 +764,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     }
 
 
+    //Next Date Function After click
     private fun nextDate() {
         if (daysFilter.dayFilter == 1) {
             val cal = Calendar.getInstance()
@@ -769,6 +794,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
         }
     }
 
+    //Previous Date function after click
     private fun previousDate() {
         if (daysFilter.dayFilter == 1) {
             val cal = Calendar.getInstance()
@@ -800,6 +826,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     }
 
 
+    //Set Today function
     private fun setToday() {
         daysFilter.dayFilter = 1
         daysFilter.weekFilter = 0
@@ -815,6 +842,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
         getVisites()
     }
 
+    //SetToday Color after changing date
     private fun setTodayLight() {
         daysFilter.dayFilter = 1
         daysFilter.weekFilter = 0
@@ -830,6 +858,7 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
     }
 
 
+    //Get day of current week
     private fun dayOfWeek(): Int {
         val calendar = Calendar.getInstance()
         calendar.time = d
@@ -839,70 +868,6 @@ class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,
             day - 2
         else
             6
-    }
-
-
-    private fun transformListToHashMapDate() {
-        Log.i("myhashmap", "${(listaTasks.size)}")
-        var exist = false
-
-        if (listaTasks.size != 0) {
-
-
-            for (i in listaTasks) {
-
-                exist = false
-
-                if ((activity as DrawerActivity).HashMaplistaTasksDate.size == 0) {
-                    val tempAray = ArrayList<Visite>()
-                    tempAray.add(i)
-                    (activity as DrawerActivity).HashMaplistaTasksDate.put(
-                        i.day,
-                        tempAray
-                    )
-                } else {
-
-                    (activity as DrawerActivity).HashMaplistaTasksDate.forEach { (v, k) ->
-                        if (i.day == v) {
-                            k.add(i)
-                            exist = true
-                        }
-                    }
-
-                    if (!exist) {
-                        val tempAray = ArrayList<Visite>()
-                        tempAray.add(i)
-                        (activity as DrawerActivity).HashMaplistaTasksDate.put(i.day, tempAray)
-                    }
-                }
-            }
-
-        }
-
-        sortHashMapVisite()
-        /* (activity as DrawerActivity).HashMaplistaTasksDate.forEach { (v,k) ->
-             Log.i("myhashmap","$v")
-             Log.i("myhashmap","$k")
-         }*/
-        //  Log.i("myhashmap", "${(activity as DrawerActivity).HashMaplistaTasksDate}")
-    }
-
-
-    private fun sortHashMapVisite() {
-        val entries: Set<Map.Entry<String, ArrayList<Visite>>> =
-            (activity as DrawerActivity).HashMaplistaTasksDate.entries
-
-        val sorted: TreeMap<String, ArrayList<Visite>> =
-            TreeMap((activity as DrawerActivity).HashMaplistaTasksDate)
-
-        val mappings: Set<Map.Entry<String, ArrayList<Visite>>> = sorted.entries
-
-        mappings.forEach { (k, v) ->
-            Log.i("myhashmap", "$k")
-            Log.i("myhashmap", "$v")
-        }
-
-
     }
 
 

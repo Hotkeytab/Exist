@@ -36,7 +36,6 @@ class PositionMapDialog(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-     //   dialog!!.window!!.setBackgroundDrawableResource(R.drawable.corned_white_purple)
 
         return inflater.inflate(R.layout.fragment_position_map, container, false)
     }

@@ -61,28 +61,32 @@ class QuestionNewFragment : Fragment(), ImageNewAdapter.ImageItemListener {
         binding = FragmentQuestionNewBinding.inflate(inflater, container, false)
 
 
-        Log.i("myQuestionPlz", "${(activity as DrawerActivity).surveyPostArrayList.size}")
 
+        //Init Dialog Internet with Fragment Manager
         dialogInternet = InternetCheckDialog()
         fm = requireActivity().supportFragmentManager
 
+        //Hide Bottom Nav
         requireActivity().bottom_nav.visibility = View.GONE
 
+        //Get Passed Params and Objects
         val myVal = arguments?.getString("questionObject")
         myVar2 = arguments?.getString("quizObject")
         emptyQuestion = arguments?.getBoolean("empty")!!
 
+        //Convert Json String to Question Object
         val gson = Gson()
         myQuestion = gson.fromJson(myVal, Question::class.java)
 
+        //Get sous category name
         scName = arguments?.getString("scName")
 
 
+        //Get Data From Shared Preferences
         sharedPref = requireContext().getSharedPreferences(
             R.string.app_name.toString(),
             Context.MODE_PRIVATE
         )
-
         userId = sharedPref.getInt("id", 0)
         storeId = sharedPref.getInt("storeId", 0)
         surveyId = sharedPref.getInt("surveyId", 0)
@@ -94,8 +98,12 @@ class QuestionNewFragment : Fragment(), ImageNewAdapter.ImageItemListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        //Init Question With Default Value
         initQuestion()
 
+
+        //Call back override function
         val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true /* enabled by default */) {
                 override fun handleOnBackPressed() {
@@ -110,6 +118,7 @@ class QuestionNewFragment : Fragment(), ImageNewAdapter.ImageItemListener {
 
 
 
+        //Add photo to Question as a response ( this only show when you don't have images in recycleview)
         binding.addphoto.setOnClickListener {
             ChoixImageNewDialog(
                 show_image,
@@ -122,6 +131,7 @@ class QuestionNewFragment : Fragment(), ImageNewAdapter.ImageItemListener {
         }
 
 
+        //Add photo to Question as a response( this only show if you have at least one image in recycleview)
         binding.plusImage.setOnClickListener {
             ChoixImageNewDialog(
                 show_image,
@@ -134,6 +144,7 @@ class QuestionNewFragment : Fragment(), ImageNewAdapter.ImageItemListener {
         }
 
 
+        //Back from Question to list Category
         binding.backFromQuiz.setOnClickListener {
             val bundle = bundleOf("quizObject" to myVar2)
             findNavController().navigate(
@@ -142,12 +153,14 @@ class QuestionNewFragment : Fragment(), ImageNewAdapter.ImageItemListener {
             )
         }
 
+        //Save question with It's Response
         binding.terminer.setOnClickListener {
             finish()
         }
     }
 
 
+    //Init Selected Question with Default values
     private fun initQuestion() {
         binding.bfTitle.text = "$scName"
         binding.precedent.visibility = View.GONE
@@ -170,23 +183,20 @@ class QuestionNewFragment : Fragment(), ImageNewAdapter.ImageItemListener {
         binding.questionContenu.text = myQuestion!!.name
 
 
+        //Set RecycleView of Question Images
         setupRecycleViewQuestion()
+
+        //Search for Question if it already exists in our arraylist ( local)
         searchForQuestion()
     }
 
 
-    private fun clearInit() {
-        binding.ratingBar.rating = 0f
-        binding.editText.setText("")
-        binding.editText.hint = "Laisser une remarque..."
-        binding.cameraLinear.visibility = View.VISIBLE
-        binding.plusImage.visibility = View.GONE
-    }
 
-
+    //Save Question Locally
     private fun finish() {
 
 
+        //If ControleSaisie good then
         if (controleSaisie()) {
             val userInf = UserInf(userId, storeId, visiteId, surveyId, myQuestion!!.id)
             val myQusObject = QuestionNewPost(
@@ -207,6 +217,8 @@ class QuestionNewFragment : Fragment(), ImageNewAdapter.ImageItemListener {
     }
 
 
+
+    //Setup RecycleView Question Images
     private fun setupRecycleViewQuestion() {
 
         adapterNewImage = ImageNewAdapter(this, requireActivity())
@@ -220,6 +232,7 @@ class QuestionNewFragment : Fragment(), ImageNewAdapter.ImageItemListener {
         binding.myPhotoRecycle.adapter = adapterNewImage
     }
 
+    //On Image ( Inside RecycleView ) Selected
     override fun onClickedImage(position: Int) {
         AfficherImageNewDialog(
             position,
@@ -232,6 +245,7 @@ class QuestionNewFragment : Fragment(), ImageNewAdapter.ImageItemListener {
     }
 
 
+    //Check if obligatory field is empty or not
     private fun controleSaisie(): Boolean {
 
         //Image Obligatoire ou non
@@ -255,6 +269,7 @@ class QuestionNewFragment : Fragment(), ImageNewAdapter.ImageItemListener {
     }
 
 
+    //search for Question locally , if exist then we fill it
     private fun searchForQuestion() {
         (activity as DrawerActivity).surveyPostArrayList.forEach { (v, w) ->
             if(v.questionId == myQuestion!!.id)

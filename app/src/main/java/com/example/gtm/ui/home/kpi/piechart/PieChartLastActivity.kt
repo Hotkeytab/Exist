@@ -33,8 +33,5 @@ class PieChartLastActivity : AppCompatActivity() {
         magasinHashMap = intent.getSerializableExtra("magasinMap") as HashMap<String, Double>
 
 
-
-        Log.i("nodatachart","$villeHashMap $magasinHashMap")
-
     }
 }

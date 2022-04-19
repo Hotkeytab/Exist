@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 import android.widget.AdapterView.OnItemClickListener
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.gtm.data.entities.custom.KpiStats
 import com.example.gtm.data.entities.custom.chart.ChartResponse
 import com.example.gtm.data.entities.custom.chart.DataChart
@@ -39,7 +40,9 @@ import com.example.gtm.data.entities.response.*
 import com.example.gtm.ui.home.kpi.KpiFinalResultActivity
 import com.example.gtm.ui.home.kpi.piechart.PieChartLastActivity
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.fragment_kpi_f_ilter.swiperefreshlayout
 import kotlinx.android.synthetic.main.fragment_kpi_f_ilter.topAppBar
+import kotlinx.android.synthetic.main.fragment_task.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -128,6 +131,7 @@ class KpiFIlterFragment : Fragment() {
         fm = childFragmentManager
 
 
+        //Clear Editexts From Data
         clearData()
 
         // Get User ID From SharedPref
@@ -146,24 +150,29 @@ class KpiFIlterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
+        //Get Instance of Drawer Layout
         val mDrawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
+
         //Top Bar
         topAppBar.setNavigationOnClickListener {
             mDrawerLayout.openDrawer(Gravity.LEFT)
         }
 
+        //Set Fragment Title
         binding.topAppBar.title = "Analyse Kpi"
 
 
+        //Prepare Adapter of Ville
         val arrayAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, items)
         binding.villeText.setAdapter(arrayAdapter)
 
-
+        //Get Questionnaires + Get Stores
         getStores()
 
 
 
         villeText.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+            //if ville doesnt exist in the groupList then add it
             if (!checkForChips(arrayVilleNew, parent.getItemAtPosition(position).toString())) {
                 addChipVille(parent.getItemAtPosition(position).toString())
                 arrayVilleNew.add(parent.getItemAtPosition(position).toString())
@@ -171,6 +180,7 @@ class KpiFIlterFragment : Fragment() {
         }
 
         magasinText.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+            //if magasin doesnt exist in the groupList then add it
             if (!checkForChips(arrayStoreNew, parent.getItemAtPosition(position).toString())) {
                 addChipMagasin(parent.getItemAtPosition(position).toString())
                 arrayStoreNew.add(parent.getItemAtPosition(position).toString())
@@ -178,21 +188,28 @@ class KpiFIlterFragment : Fragment() {
         }
 
         questionnaireText.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+            //if questionnaire doesn't exist in the groupList then add it
             if (!checkForChips(arrayQuestNew, parent.getItemAtPosition(position).toString())) {
                 addChipQuestionnaire(parent.getItemAtPosition(position).toString())
                 arrayQuestNew.add(parent.getItemAtPosition(position).toString())
             }
         }
 
+
+
+        //Valider Button Listener
         valider_kpi.setOnClickListener {
+            //if EndDate >= StartDate
             if (!controleDate()) {
                 binding.questionnaireErrorText.visibility = View.GONE
                 error_text.visibility = View.VISIBLE
                 date_debut_text.requestFocus()
+                //There must be at least one questionnaire if you want to get piechart
             } else if (etatFragment == 1 && (arrayQuestNew.size != 1)) {
                 error_text.visibility = View.GONE
                 binding.questionnaireErrorText.visibility = View.VISIBLE
                 binding.questionnaireErrorText.requestFocus()
+                //Prepare for Analyse superviseur
             } else {
                 error_text.visibility = View.GONE
                 binding.questionnaireErrorText.visibility = View.GONE
@@ -201,6 +218,7 @@ class KpiFIlterFragment : Fragment() {
         }
 
 
+        //Choose Analyses Superviseur Option
         binding.imageTableStatsCard.setOnClickListener {
 
             if (etatFragment == 1) {
@@ -213,6 +231,7 @@ class KpiFIlterFragment : Fragment() {
         }
 
 
+        //Choose PieChart Option
         binding.imageKpiStatsCard.setOnClickListener {
 
             if (etatFragment == 0) {
@@ -225,9 +244,19 @@ class KpiFIlterFragment : Fragment() {
         }
 
 
+        //SwipeDown Refresh
+        binding.swiperefreshlayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
+
+            getStores()
+            swiperefreshlayout.isRefreshing = false
+        })
+
+
     }
 
 
+
+    //Check if the chip exists in the array
     private fun checkForChips(ourArray: ArrayList<String>, name: String): Boolean {
 
         for (i in ourArray) {
@@ -238,6 +267,7 @@ class KpiFIlterFragment : Fragment() {
         return false
     }
 
+    //Remove chip from array
     private fun removeChip(ourArray: ArrayList<String>, name: String) {
         for (i in ourArray) {
             if (i == name) {
@@ -247,16 +277,19 @@ class KpiFIlterFragment : Fragment() {
         }
     }
 
+    //Add ville chip to grouplayout
     private fun addChipVille(name: String) {
 
         binding.chipGroupVille.addView(createTagChip(requireContext(), name, "ville"))
 
     }
 
+    //Add magasin chip to grouplayout
     private fun addChipMagasin(name: String) {
         binding.chipGroupMagasin.addView(createTagChip(requireContext(), name, "magasin"))
     }
 
+    //Add questionnaire chip to grouplayout
     private fun addChipQuestionnaire(name: String) {
         binding.chipGroupQuestionnaire.addView(
             createTagChip(
@@ -267,6 +300,7 @@ class KpiFIlterFragment : Fragment() {
         )
     }
 
+    //End Date must be >= to Start Date
     private fun controleDate(): Boolean {
         day_debut_picker =
             "${date_debut_picker.year}-${(date_debut_picker.month + 1)}-${date_debut_picker.dayOfMonth}"
@@ -284,6 +318,7 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
+    //Create chip with animation
     private fun createTagChip(context: Context, chipName: String, tagNow: String): Chip {
         return Chip(context).apply {
             val myView = this
@@ -330,24 +365,30 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
+    //Get Questionnaires + Get Stores
     private fun getStores() {
 
-        progressUploadDialog.show(fm!!, "ProgressUploadDialog")
+        if (!fm!!.isDestroyed)
+            progressUploadDialog.show(fm!!, "ProgressUploadDialog")
         lifecycleScope.launch(Dispatchers.Main) {
 
 
             responseDataStores = viewModel.getStores()
 
             if (responseDataStores.responseCode == 200) {
-                progress_indicator.visibility = View.GONE
+                if (progress_indicator != null)
+                    progress_indicator.visibility = View.GONE
                 listaDataXX = responseDataStores.data!!.data as ArrayList<DataXX>
                 getSubListStore()
                 getQuestionnaires()
-                progressUploadDialog.dismiss()
+
+                if (fm != null && !fm!!.isDestroyed)
+                    progressUploadDialog.dismiss()
 
 
             } else {
 
+                progressUploadDialog.dismiss()
                 getStores()
 
             }
@@ -355,22 +396,26 @@ class KpiFIlterFragment : Fragment() {
         }
     }
 
+    //Get List of Questionnaire Service
     private fun getQuestionnaires() {
         lifecycleScope.launch(Dispatchers.Main) {
 
-            responseDataQuiz = viewModelQuestionnaire.getSurvey()
+            if (isAdded) {
+                responseDataQuiz = viewModelQuestionnaire.getSurvey()
 
-            if (responseDataQuiz.responseCode == 200) {
-                listaQuiz = responseDataQuiz.data!!.data as ArrayList<QuizData>
-                getSubListQuestionnaire()
-                progressUploadDialog.dismiss()
-            } else {
-                getQuestionnaires()
+                if (responseDataQuiz.responseCode == 200) {
+                    listaQuiz = responseDataQuiz.data!!.data as ArrayList<QuizData>
+                    getSubListQuestionnaire()
+                    progressUploadDialog.dismiss()
+                } else {
+                    getQuestionnaires()
+                }
             }
 
         }
     }
 
+    //Convert List of Store to Map storeName -> storeId
     private fun getSubListStore() {
         for (i in listaDataXX) {
             mapStore[i.name + "\n" + i.governorate + "\n" + i.address] = i.id
@@ -381,6 +426,7 @@ class KpiFIlterFragment : Fragment() {
 
     }
 
+    //Convert List of Questionnaire to Map quizName -> quizId
     private fun getSubListQuestionnaire() {
         for (i in listaQuiz) {
             mapQuest[i.name] = i.id
@@ -393,7 +439,6 @@ class KpiFIlterFragment : Fragment() {
 
     private fun prepareRequestList() {
 
-        //   progressUploadDialog.show(fm!!, "ProgressUploadDialog")
 
         //Prepare Arraylist Supervisor ID
         if (arraySupervisorsId.size > 1) {
@@ -495,7 +540,6 @@ class KpiFIlterFragment : Fragment() {
 
 
                 val intent = Intent(requireActivity(), PieChartLastActivity::class.java)
-                Log.i("nodatachartbefore","$valueVilleMap $valueMagasinMap")
                 intent.putExtra("villeMap", valueVilleMap)
                 intent.putExtra("magasinMap", valueMagasinMap)
                 startActivity(intent)
@@ -584,7 +628,6 @@ class KpiFIlterFragment : Fragment() {
 
         }
 
-        Log.i("extractVille", "$valueVilleMap")
 
     }
 
@@ -705,7 +748,6 @@ class KpiFIlterFragment : Fragment() {
 
             if (hours >= 8) {
                 totalSeconds += ((hours - 8) * 3600) + (minutes * 60) + seconds
-                Log.i("totalSeconds", "$totalSeconds")
                 incrementCalcul++
             }
         }

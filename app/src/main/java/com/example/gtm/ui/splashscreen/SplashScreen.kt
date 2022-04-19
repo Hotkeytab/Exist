@@ -27,7 +27,7 @@ class SplashScreen : AppCompatActivity() {
     }
 
 
-    //Splashscreen duration Then to Login
+    //Splashscreen duration Then to LoginActivity
     private fun toLogin() {
         Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this, AuthActivity::class.java)

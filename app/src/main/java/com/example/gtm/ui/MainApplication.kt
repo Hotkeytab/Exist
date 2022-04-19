@@ -13,7 +13,8 @@ class MainApplication : Application() {
 
         if(BuildConfig.DEBUG)
         {
-            Timber.plant(Timber.DebugTree())
+            // I didn't use Timber
+            //Timber.plant(Timber.DebugTree())
         }
     }
 }

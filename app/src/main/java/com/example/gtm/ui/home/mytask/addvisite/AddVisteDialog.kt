@@ -102,11 +102,10 @@ class AddVisteDialog(
     override fun onStart() {
         super.onStart()
         val width = (resources.displayMetrics.widthPixels * 0.85).toInt()
-        val height = (resources.displayMetrics.heightPixels * 0.65).toInt()
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        //  dialog!!.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         dialog!!.window?.setLayout(width, WindowManager.LayoutParams.WRAP_CONTENT)
 
+        //Get User ID From Shared Preferences
         sharedPref = requireContext().getSharedPreferences(
             R.string.app_name.toString(),
             Context.MODE_PRIVATE
@@ -117,9 +116,11 @@ class AddVisteDialog(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Init Dialog Internet Check Connection
         dialogInternet = InternetCheckDialog()
         fm = requireActivity().supportFragmentManager
 
+        //Check Internet IF good then we call get Stores Service
         checkInternetGetStore()
 
 
@@ -127,6 +128,8 @@ class AddVisteDialog(
             dialog!!.dismiss()
         }
 
+
+        //Advanced Search for Stores
         search_text.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
 
@@ -150,13 +153,16 @@ class AddVisteDialog(
         })
 
 
+        //Swipe Down For Refresh
         swiperefreshlayout.setOnRefreshListener(OnRefreshListener {
-
             checkInternetGetStore()
             swiperefreshlayout.isRefreshing = false
         })
     }
 
+
+
+    //On Store Clicked
     override fun onClickedTask(
         taskId: Int,
         lat: Double?,
@@ -165,6 +171,8 @@ class AddVisteDialog(
         store: DataXX
     ) {
 
+
+        //If Store lat or Store lng is null then we have to fill position manually
         if (lat == null || lng == null) {
 
             AjouterPositionDialog(name, store).show(
@@ -183,11 +191,14 @@ class AddVisteDialog(
     }
 
 
+    //Add Visite with New Store
     private fun addVisite(taskId: Int) {
+        //Make DIalog Not canceable ( you cannot close it)
         dialog!!.setCancelable(false)
         cancel.isEnabled = false
         progress_indicator.visibility = View.VISIBLE
 
+        //Launch Add Visite Couroutine
         GlobalScope.launch(Dispatchers.Main) {
             val visitePost = VisitPost(null, getDateNow(), 0, taskId, userId, false, null)
             val arayListViste = ArrayList<VisitPost>()
@@ -209,6 +220,9 @@ class AddVisteDialog(
         }
     }
 
+
+
+    //Get Current Date
     private fun getDateNow(): String {
 
         val sdf = SimpleDateFormat("yyyy-MM-dd")
@@ -218,6 +232,7 @@ class AddVisteDialog(
     }
 
 
+    //Get All Stores
     private fun getStores() {
         progress_indicator.visibility = View.VISIBLE
 
@@ -226,14 +241,10 @@ class AddVisteDialog(
 
             responseDataStores = viewModel.getStores()
 
+            //If Response is Good
             if (responseDataStores.responseCode == 200) {
                 progress_indicator.visibility = View.GONE
                 listaDataXX = responseDataStores.data!!.data as ArrayList<DataXX>
-              //  listaDataXX[0].lng = null
-             //   listaDataXX.add(listaDataXX[0])
-              //  listaDataXX.add(listaDataXX[0])
-              //  listaDataXX.add(listaDataXX[0])
-
                 setupRecycleViewPredictionDetail()
             } else {
                 if (progress_indicator != null)
@@ -244,6 +255,7 @@ class AddVisteDialog(
     }
 
 
+    //Set RecycleView of all stores
     private fun setupRecycleViewPredictionDetail() {
 
         adapterAddVisite = AddVisiteAdapter(this)
@@ -260,19 +272,21 @@ class AddVisteDialog(
 
     }
 
+    //If List of stores.size >3 then show the search bar
     private fun checkForResearch() {
         if (listaDataXX.size > 3)
             search_bar.visibility = View.VISIBLE
     }
 
 
+    //Filter research algorithm
     private fun filterResearch(name: String, editTextName: String): Boolean {
         var patternRegex = ""
         var patternRegex2 = ""
         var count = 0
         var count2 = 0
 
-        var editTextName2 = editTextName.replace('e', 'é')
+        val editTextName2 = editTextName.replace('e', 'é')
         val chunks = editTextName2.toUpperCase().split("\\s+".toRegex())
 
 
@@ -294,10 +308,6 @@ class AddVisteDialog(
             count2++
         }
 
-
-        /*  var patternRegex2 = "^(M.+)\\s+(G.)"
-          Log.i("chunks", "$patternRegex2")
-          Log.i("chunks", "$patternRegex")*/
         val regexFilter = Regex(patternRegex)
         val regexFilter2 = Regex(patternRegex2)
 
@@ -305,6 +315,8 @@ class AddVisteDialog(
     }
 
 
+
+    //Check for internet , if all good then getSTore service
     private fun checkInternetGetStore() {
         InternetCheck { internet ->
             if (internet)
@@ -329,6 +341,7 @@ class AddVisteDialog(
 
 
 
+    //Check for internet if all good then add visite with new store
     private fun checkInternetAddVisite(taskId: Int) {
         InternetCheck { internet ->
             if (internet) {
@@ -339,8 +352,6 @@ class AddVisteDialog(
                 {
                     for(i in listaTasks)
                     {
-                        Log.i("TheBestId","$taskId")
-                        Log.i("TheBestId","${i.id}")
                        if(i.storeId == taskId)
                            testId = true
                     }

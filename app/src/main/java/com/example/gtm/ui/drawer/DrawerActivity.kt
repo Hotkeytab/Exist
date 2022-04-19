@@ -47,7 +47,6 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private val uiAnimations = UiAnimations(this)
     private lateinit var fm: FragmentManager
     private val viewModel: DrawerActivityViewModel by viewModels()
     lateinit var sharedPref: SharedPreferences
@@ -55,41 +54,29 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     private lateinit var sessionManager: SessionManager
     private lateinit var user: User
     private var picture: String? = null
-    private var defaultInterval: Int = 500
-    private var lastTimeClicked: Long = 0
     var listOfQuestionsPerSc = HashMap<Int, HashMap<Int, Survey?>>()
-    var envoyerTest = true
     var loading = false
     var listOfTriDates: ArrayList<String> = ArrayList<String>()
     var HashMaplistaTasksDate: HashMap<String, ArrayList<Visite>> =
         HashMap<String, ArrayList<Visite>>()
-    // var SetlistaTasksDate: Set<Map.Entry<String, ArrayList<Visite>>>? = null
-
-    //New Question Method
     var surveyPostArrayList: HashMap<UserInf, QuestionNewPost> = HashMap<UserInf, QuestionNewPost>()
-
+    var nowFragment = 0
+    var lastFragment = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawer)
 
         sessionManager = SessionManager(this)
-
         fm = this.supportFragmentManager
-
-        val mDrawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
         val mNavigationView = findViewById<NavigationView>(R.id.nav_view)
-
-
         mNavigationView.setNavigationItemSelectedListener(this)
 
-
+        //Get Profile Service
         getProfile()
 
-        //Hide Nav Bar
-        // uiAnimations.hideNavBar()
 
-
+        //Init the first fragment
         supportFragmentManager.beginTransaction().replace(
             R.id.nav_acceuil_fragment,
             BeforeHomeFragment()
@@ -100,15 +87,13 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             var selectedFragment: Fragment? = null
 
 
-            if (progress_indicator.visibility == View.GONE) {
                 when (it.itemId) {
-
 
                     R.id.task -> {
 
                         // if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
                         selectedFragment = BeforeHomeFragment()
-
+                        nowFragment = 1
 
                         //  lastTimeClicked = SystemClock.elapsedRealtime()
 
@@ -116,7 +101,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                     R.id.suivie -> {
                         //   if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
                         selectedFragment = SuiviePlanningFragment()
-
+                        nowFragment = 2
                         //     lastTimeClicked = SystemClock.elapsedRealtime()
 
                     }
@@ -124,6 +109,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                     R.id.kpi -> {
                         //   if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
                         selectedFragment = KpiGraphFragment()
+                        nowFragment = 3
                         //  selectedFragment = KpiFragment()
                         //  lastTimeClicked = SystemClock.elapsedRealtime()
                     }
@@ -131,25 +117,41 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 }
 
                 if (selectedFragment != null) {
-                    supportFragmentManager.beginTransaction().replace(
-                        R.id.nav_acceuil_fragment,
-                        selectedFragment
-                    ).commit()
+
+                    if (checkForFragment())
+                        supportFragmentManager.beginTransaction().replace(
+                            R.id.nav_acceuil_fragment,
+                            selectedFragment
+                        ).commit()
                 }
-            }
+
             true
 
         }
 
-
     }
 
 
+    //Check if selectedFragment is the currentFragment
+    private fun checkForFragment(): Boolean {
+        if (nowFragment == lastFragment)
+            return false
+        else {
+            lastFragment = nowFragment
+            return true
+        }
+    }
+
+
+
+    //Side Nav Bar Menu Item Listener
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
 
         when (item.itemId) {
+            //Go to Profile Section
             R.id.nav_profile -> {
+                //Fill Profile Info
                 user.first_name = firstname_only.text.toString()
                 user.last_name = lastname_only.text.toString()
                 user.email = email_profile.text.toString()
@@ -158,6 +160,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 if (picture == null)
                     picture = ""
 
+                //Show Profile Detail Profile
                 EditProfileDialog(
                     user,
                     picture!!,
@@ -170,6 +173,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                     profile_picture
                 ).show(fm, "EditProfileFRagment")
             }
+            //Logout Button
             R.id.nav_logout -> {
                 //  sharedPref.edit().clear().apply()
                 val intent = Intent(this, AuthActivity::class.java)
@@ -181,6 +185,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     }
 
 
+    //Get Profile Service
     @DelicateCoroutinesApi
     private fun getProfile() {
 
@@ -190,8 +195,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         )
         val username = sharedPref.getString("username", "")
 
-
-
+        //Get User Couroutine
         GlobalScope.launch(Dispatchers.Main) {
             responseData = viewModel.getUser(username!!)
             if (responseData.responseCode == 200) {
@@ -208,12 +212,13 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                     responseData.data!!.data.password
                 )
                 picture = responseData.data!!.data.profile_picture
-            } else {
-                Log.i("User", "${responseData}")
             }
         }
     }
 
+
+
+    // Save User to SharedPref
     private fun saveUser(
         firstname: String,
         lastname: String,
@@ -254,8 +259,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             roleId
         )
 
-        Log.i("userfinal", "$user")
-
+        //Load User To UI
         firstname_only.text = firstname
         lastname_only.text = lastname
         name_lastname.text = "$firstname $lastname"
@@ -266,19 +270,6 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             .load(picture)
             .transform(CircleCrop())
             .into(profile_picture)
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-        //  sharedPref.edit().clear().apply()
-    }
-
-
-    object trackState {
-        var lastOne = ""
-        var currentOne = ""
-
     }
 
 }

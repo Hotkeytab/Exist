@@ -26,7 +26,7 @@ class SupprimerVisiteDialog(
     positionVisite2: Int,
     taskAdapter2: TaskAdapter,
     items2: ArrayList<Visite>,
-    items3 : ArrayList<Visite>
+    items3: ArrayList<Visite>
 ) :
     DialogFragment() {
 
@@ -48,32 +48,21 @@ class SupprimerVisiteDialog(
 
     override fun onStart() {
         super.onStart()
-
-        val width = (resources.displayMetrics.widthPixels * 0.99).toInt()
-        val height = (resources.displayMetrics.heightPixels * 0.88).toInt()
         dialog!!.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         dialog!!.window!!.setWindowAnimations(R.style.AnimationsForMapDialogSwipe)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        //Accept to Delete Visite
         accept.setOnClickListener {
             progress_bar.visibility = View.VISIBLE
             accept.isEnabled = false
             cancel_button.isEnabled = false
             dialog!!.setCancelable(false)
-
-
-            /*  items.removeAt(positionVisite)
-              taskAdapter.notifyDataSetChanged()
-              taskAdapter.notifyItemRemoved(positionVisite)*/
-
 
             lifecycleScope.launch(Dispatchers.Main) {
                 response = viewModel.deleteVisite(visiteId)
@@ -82,7 +71,6 @@ class SupprimerVisiteDialog(
                     progress_bar.visibility = View.GONE
                     items.removeAt(positionVisite)
                     items4.removeAt(positionVisite)
-                   // taskAdapter.notifyItemRemoved(positionVisite)
                     taskAdapter.notifyDataSetChanged()
                     dialog!!.dismiss()
                 } else {
@@ -93,7 +81,6 @@ class SupprimerVisiteDialog(
 
                 }
             }
-
 
 
         }

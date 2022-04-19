@@ -167,16 +167,9 @@ class PieChartActivity() : DemoBase(), OnSeekBarChangeListener,
     }
 
     override fun onValueSelected(e: Entry, h: Highlight) {
-        if (e == null) return
-        Log.i(
-            "VAL SELECTED",
-            "Value: " + e.y + ", index: " + h.x
-                    + ", DataSet index: " + h.dataSetIndex
-        )
     }
 
     override fun onNothingSelected() {
-        Log.i("PieChart", "nothing selected")
     }
 
     override fun onStartTrackingTouch(seekBar: SeekBar) {}

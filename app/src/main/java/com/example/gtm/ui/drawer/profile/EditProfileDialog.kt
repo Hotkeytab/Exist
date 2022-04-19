@@ -80,16 +80,13 @@ class EditProfileDialog(
     ): View? {
         dialog!!.window!!.setBackgroundDrawableResource(R.drawable.corned_white_purple)
 
-
+        //Init dialogInternet
         dialogInternet = InternetCheckDialog()
         return inflater.inflate(R.layout.dialog_edit_profile, container, false)
     }
 
     override fun onStart() {
         super.onStart()
-
-        val width = (resources.displayMetrics.widthPixels * 0.85).toInt()
-        val height = (resources.displayMetrics.heightPixels * 0.6).toInt()
         dialog!!.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         dialog!!.window!!.setWindowAnimations(R.style.AnimationsForDialog)
     }
@@ -109,6 +106,8 @@ class EditProfileDialog(
         submit.setOnClickListener {
             checkInternet()
         }
+
+        //Prepare Profile And Set All EditTexts
         initProfile()
     }
 
@@ -126,11 +125,14 @@ class EditProfileDialog(
     }
 
 
+    //Change Profile Informations
     @DelicateCoroutinesApi
     private fun changeProfile() {
 
         progress_indicator_dialog.visibility = View.VISIBLE
 
+
+        //if profile image isn't null prepare the image as a file
         if (selectedImageUri != null) {
             val parcelFileDescriptor =
                 requireActivity().contentResolver.openFileDescriptor(selectedImageUri!!, "r", null)
@@ -150,6 +152,7 @@ class EditProfileDialog(
 
         }
 
+        //Prepare User Object
         val userNew = User(
             userIn.id,
             firstname_dialog.editText?.text.toString(),
@@ -161,6 +164,8 @@ class EditProfileDialog(
             userIn.gender,
             userIn.roleId
         )
+
+        //Prepare ChangeProfile Couroutine
         GlobalScope.launch(Dispatchers.Main) {
 
             val userNewJson = jacksonObjectMapper().writeValueAsString(userNew)
@@ -169,6 +174,7 @@ class EditProfileDialog(
                 userNewJson
             )
 
+            //Test if username and lastname are valid
             if (firstname_dialog.editText?.isValidName() == true && lastname_dialog.editText?.isValidName() == true && email_dialog.editText?.isValidEmail() == true && phone_edit_dialog.editText?.isNumeric() == true) {
                 val objectSend: MultipartBody.Part?
 
@@ -179,11 +185,12 @@ class EditProfileDialog(
                         "file", file?.name,
                         body!!
                     )
+                //Get Response EditProfile
                 responseData =
                     viewModelIn.changeProfile(objectSend, bodyJson) as Resource<EditProfileResponse>
 
-                Log.i("anaconda", "$responseData")
 
+                //If response is good
                 if (responseData.responseCode == 201) {
 
                     progress_indicator_dialog.visibility = View.INVISIBLE
@@ -203,6 +210,7 @@ class EditProfileDialog(
     }
 
 
+    //Choose Image from Gallery
     private fun openImageChoser() {
         Intent(Intent.ACTION_PICK).also {
             it.type = "image/*"
@@ -216,6 +224,8 @@ class EditProfileDialog(
         const val REQUEST_CODE_PICK_IMAGE = 101
     }
 
+
+    //Load Profile Image onActivityResult
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -239,16 +249,18 @@ class EditProfileDialog(
 
     }
 
+    //On Image Progress Listener
     override fun onProgressUpdate(percentage: Int) {
-        print("ok")
     }
 
 
-
+    //Check if Internet is Good
     private fun checkInternet() {
+        //Internet is good
         InternetCheck { internet ->
             if (internet)
                 changeProfile()
+            //Internet is bad
             else {
 
                 progress_indicator_dialog.visibility = View.INVISIBLE
@@ -258,6 +270,7 @@ class EditProfileDialog(
                 )
                 fm.executePendingTransactions();
 
+                //onCancel or onDestroy InternetDialog
                 dialogInternet.dialog!!.setOnCancelListener {
                     checkInternet()
                 }

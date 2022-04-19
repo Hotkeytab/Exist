@@ -87,9 +87,7 @@ class TaskViewHolder(
 
 
     private lateinit var visiteResponse: Visite
-    private lateinit var dialog: PositionMapDialog
     lateinit var sharedPref: SharedPreferences
-    private val REQUEST_CODE = 2
     private var finalDistance = ""
     private var theDistance = 0f
 
@@ -104,11 +102,13 @@ class TaskViewHolder(
 
 
 
+        //Set UI If Planned
         if (!item.planned)
             itemBinding.deleteVisite.visibility = View.VISIBLE
 
 
 
+        //Update UI If Pointage Start Good
         if (item.start != null) {
             itemBinding.pointageEntreCircleGreen.visibility = View.VISIBLE
             itemBinding.arrive.visibility = View.VISIBLE
@@ -121,6 +121,7 @@ class TaskViewHolder(
             itemBinding.pointageEntreCircleRed.visibility = View.VISIBLE
         }
 
+        //Update Ui if Pointage End Good
         if (item.end != null) {
             itemBinding.pointageSortieCircleRed.visibility = View.GONE
             itemBinding.depart.visibility = View.VISIBLE
@@ -133,14 +134,17 @@ class TaskViewHolder(
         }
 
 
+        //Show Date of Visite
         showDate()
 
 
+        //Update Visite UI
         itemBinding.name.text = item.store.name
         itemBinding.place.text = item.store.governorate + ", " + item.store.address
 
 
 
+        //Calculate Distance
          theDistance = distance(
             LocationValueListener.myLocation.latitude.toFloat(),
             LocationValueListener.myLocation.longitude.toFloat(),
@@ -150,6 +154,7 @@ class TaskViewHolder(
 
 
 
+        //If Distance Good set Item Clickable
         if (theDistance < 250) {
 
             finalDistance = theDistance.toInt().toString() + " m"
@@ -191,6 +196,7 @@ class TaskViewHolder(
 
 
 
+        //SHow Map Position Item
         itemBinding.showMap.setOnClickListener {
 
             if (!StaticMapClicked.mapIsRunning) {
@@ -205,6 +211,7 @@ class TaskViewHolder(
 
         }
 
+        //Delete Added Visite
         itemBinding.deleteVisite.setOnClickListener {
 
             SupprimerVisiteDialog(item.id, adapterPosition,taskAdapter,items,items2)
@@ -240,7 +247,6 @@ class TaskViewHolder(
 
 
     override fun onClick(v: View?) {
-        Log.i("Clicked", "${visiteResponse.storeId}")
         putStoreName(visiteResponse.store.name)
         putVisiteId(visiteResponse.id)
         listener.onClickedTask(
@@ -255,6 +261,7 @@ class TaskViewHolder(
     }
 
 
+    //calculate Distance
     fun distance(lat_a: Float, lng_a: Float, lat_b: Float, lng_b: Float): Float {
         val earthRadius = 3958.75
         val latDiff = Math.toRadians((lat_b - lat_a).toDouble())
@@ -270,6 +277,7 @@ class TaskViewHolder(
 
 
 
+    //Add  An Hour to the current date because backend developer as always doesn't want  to send GMT Form
     private fun testDay(day : String) : String
     { //Normal Date Format
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -278,6 +286,8 @@ class TaskViewHolder(
         format.applyPattern("HH:mm:ss")
         return format.format(date)
     }
+
+    //Show Date and Update UI
     private fun showDate() {
         //Normal Date Format
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -285,12 +295,8 @@ class TaskViewHolder(
         format.applyPattern("dd-MM-yyyy")
         val dateformat = format.format(date)
 
-        // checkForDay(dateformat)
 
         if (daysFilter.weekFilter == 1 || daysFilter.monthFilter == 1) {
-            // activityDrawer.HashMaplistaTasksDate.forEach { (k, v) ->
-
-            // if(visiteResponse.day == k && (v.size == 1 || visiteResponse == v[0])) {
 
             //Formidable Date Format
             val sdf = SimpleDateFormat("EEEE")
@@ -302,42 +308,13 @@ class TaskViewHolder(
             val finalDay = "$dayOfTheWeek $dayOfTheWeek2"
             itemBinding.dateText.visibility = View.VISIBLE
             itemBinding.dateText.text = finalDay
-            //}
-
-            // }
         }
 
     }
 
 
-    private fun checkForDay(day: String): Boolean {
-
-        var test = true
-
-        if (activityDrawer.listOfTriDates.size == 0) {
-            activityDrawer.listOfTriDates.add(day)
-            Log.i("showaray", "false1")
-            return true
-        } else {
-            for (i in activityDrawer.listOfTriDates) {
-                if (day == i) {
-                    test = false
-                    Log.i("showaray", "false2")
-                    Log.i("showaray", "$day")
-                    Log.i("showaray", "$i")
-                    Log.i("showaray", "${activityDrawer.listOfTriDates}")
-                }
-            }
-        }
-        if (test) {
-            Log.i("showaray", "false3")
-            activityDrawer.listOfTriDates.add(day)
-        }
-        return test
-    }
-
+    //Put Store Name in SHaredPref
     private fun putStoreName(storeName: String) {
-        Log.i("storename", storeName)
         sharedPref =
             parent.context.getSharedPreferences(
                 R.string.app_name.toString(),
@@ -348,6 +325,7 @@ class TaskViewHolder(
         }?.commit()
     }
 
+    //Put VisitID in sharedPref
     private fun putVisiteId(visiteId: Int) {
         sharedPref =
             parent.context.getSharedPreferences(

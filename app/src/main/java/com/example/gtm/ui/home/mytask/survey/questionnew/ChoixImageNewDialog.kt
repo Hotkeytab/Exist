@@ -73,8 +73,6 @@ class ChoixImageNewDialog(
     override fun onStart() {
         super.onStart()
 
-        val width = (resources.displayMetrics.widthPixels * 0.85).toInt()
-        val height = (resources.displayMetrics.heightPixels * 0.6).toInt()
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog!!.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
@@ -97,6 +95,7 @@ class ChoixImageNewDialog(
                     arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 1
                 )
             } else {
+                //Open Gallery to get Image
                 openGallery()
             }
         }
@@ -108,12 +107,15 @@ class ChoixImageNewDialog(
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
+    //Capture Photo Camera
     private fun capturePhoto() {
         val capturedImage = File(requireActivity().externalCacheDir, "My_Captured_Photo.jpg")
         if (capturedImage.exists()) {
             capturedImage.delete()
         }
+        //Create new file from captured Image
         capturedImage.createNewFile()
+        //get new Uri from captured image that turned into file
         uri = if (Build.VERSION.SDK_INT >= 24) {
             FileProvider.getUriForFile(
                 requireContext(), BuildConfig.APPLICATION_ID + ".provider",
@@ -128,12 +130,14 @@ class ChoixImageNewDialog(
         startActivityForResult(intent, CAPTURE_PHOTO)
     }
 
+    //Open Gallery instead of Capture Camera
     private fun openGallery() {
         val intent = Intent("android.intent.action.GET_CONTENT")
         intent.type = "image/*"
         startActivityForResult(intent, CHOOSE_PHOTO)
     }
 
+    //Render Select Image if Path exists
     private fun renderImage(imagePath: String?) {
         if (imagePath != null) {
             val bitmap = BitmapFactory.decodeFile(imagePath)
@@ -152,6 +156,7 @@ class ChoixImageNewDialog(
         }
     }
 
+    //Get Seleected Image Path
     @SuppressLint("Range")
     private fun getImagePath(uri: Uri?, selection: String?): String {
         var path: String? = null
@@ -165,6 +170,8 @@ class ChoixImageNewDialog(
         return path!!
     }
 
+
+    //This function is for api 19 Kitkat version
     @TargetApi(19)
     private fun handleImageOnKitkat(data: Intent?) {
         var imagePath: String? = null
@@ -195,6 +202,7 @@ class ChoixImageNewDialog(
         renderImage(imagePath)
     }
 
+    //Handle After Permission
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantedResults: IntArray
     ) {
@@ -211,6 +219,7 @@ class ChoixImageNewDialog(
         }
     }
 
+    //Handle AFter choose Image
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
