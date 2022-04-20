@@ -43,19 +43,24 @@ class CategoryDetailFragment : Fragment(), CategoryDetailAdapter.CategoryDetailI
 
 
 
+        //Get Quiz Object as String from passed arguments
         myVal = arguments?.getString("quizObject")
 
+
+        //Get QUestion Name from shared pref
         sharedPref = requireContext().getSharedPreferences(
             R.string.app_name.toString(),
             Context.MODE_PRIVATE
         )
         questionName = sharedPref.getString("questionName", "")
 
+        //Init myVal if null
         if (myVal == null)
             myVal = ""
 
 
 
+        //COnvert myVal Json to QUizData Object
         val gson = Gson()
         val objectList = gson.fromJson(myVal, QuizData::class.java)
 
@@ -69,8 +74,11 @@ class CategoryDetailFragment : Fragment(), CategoryDetailAdapter.CategoryDetailI
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //set Title text
         binding.title.text = questionName
 
+
+        //Back to previous fragment
         binding.backFromQuiz.setOnClickListener {
             findNavController().navigate(R.id.action_categoryDetailFragment_to_suivieDetailFragment)
         }

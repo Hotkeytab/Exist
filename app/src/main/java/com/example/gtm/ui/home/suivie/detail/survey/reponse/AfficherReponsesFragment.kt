@@ -43,17 +43,21 @@ class AfficherReponsesFragment : Fragment(), ImageAfficherReponseAdapter.ImageIt
         binding = FragmentAfficherReponsesBinding.inflate(inflater, container, false)
 
 
+        //Get sous category from arguments
         scName = arguments?.getString("scName")
 
+        //Get question Object from arguments
         val myVal = arguments?.getString("questionObject")
+
+        //Get Quiz Object from arguments
         myVar2 = arguments?.getString("quizObject")
 
+        //Convert Json Object to QuestionSubCategory Object
         val gson = Gson()
         val objectList = gson.fromJson(myVal, QuestionSubCategory::class.java)
+
+        //Fetch question Array from Object
         questionArray = objectList.questions as ArrayList<Question>
-
-
-        Log.i("questionArray", "$questionArray")
 
         return binding.root
     }
@@ -62,16 +66,19 @@ class AfficherReponsesFragment : Fragment(), ImageAfficherReponseAdapter.ImageIt
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Animation
         leftAnimation = AnimationUtils.loadAnimation(
             requireContext(),
             R.anim.right_to_left_animation_forquestion
         )
 
+        //Animation
         rightAnimation = AnimationUtils.loadAnimation(
             requireContext(),
             R.anim.left_to_right_animation_forquestion
         )
 
+        //Back to previous fragment with object as json string
         binding.backFromQuiz.setOnClickListener {
             val bundle = bundleOf("quizObject" to myVar2)
             findNavController().navigate(
@@ -81,22 +88,24 @@ class AfficherReponsesFragment : Fragment(), ImageAfficherReponseAdapter.ImageIt
         }
 
 
+        //Prepare buttons of Questions
         setQuestion()
 
+
+        //Next Question
         binding.suivant.setOnClickListener {
-
             suivantQuestion()
-
         }
 
+
+        //Previous Question
         binding.precedent.setOnClickListener {
             precedentQuestion()
-
         }
 
 
+        //Save Question
         binding.terminer.setOnClickListener {
-
             val bundle = bundleOf("quizObject" to myVar2)
             findNavController().navigate(
                 R.id.action_afficherReponsesFragment_to_categoryDetailFragment,
@@ -107,6 +116,7 @@ class AfficherReponsesFragment : Fragment(), ImageAfficherReponseAdapter.ImageIt
     }
 
 
+    //Next QUestion
     private fun suivantQuestion() {
         if (l < questionArray.size) {
             binding.cardviewContent.animation = leftAnimation
@@ -121,6 +131,7 @@ class AfficherReponsesFragment : Fragment(), ImageAfficherReponseAdapter.ImageIt
 
     }
 
+    //Previous QUestion
     private fun precedentQuestion() {
         if (l > 0) {
             binding.cardviewContent.animation = rightAnimation
@@ -134,6 +145,7 @@ class AfficherReponsesFragment : Fragment(), ImageAfficherReponseAdapter.ImageIt
         }
     }
 
+    //Prepare buttons of Questions
     private fun setQuestion() {
         //Disable suivant or precedent
         if (l == 0) {
@@ -164,15 +176,17 @@ class AfficherReponsesFragment : Fragment(), ImageAfficherReponseAdapter.ImageIt
         binding.title.text = "Question ${l + 1}"
 
 
-
+        //Get Question name from ArrayList
         binding.questionContenu.text = questionArray[l].name
 
 
+        //Search of QUestion's responses from arraylist of all responses
         searchForResponse()
 
     }
 
 
+    //Search of QUestion's responses from arraylist of all responses
     private fun searchForResponse() {
 
 
@@ -208,6 +222,7 @@ class AfficherReponsesFragment : Fragment(), ImageAfficherReponseAdapter.ImageIt
         binding.myPhotoRecycle.adapter = adapterImage
         adapterImage.setItems(imagesArray)
     }
+
     override fun onClickedImage(position: Int) {
     }
 

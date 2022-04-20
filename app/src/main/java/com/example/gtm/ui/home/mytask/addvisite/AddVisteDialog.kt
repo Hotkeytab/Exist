@@ -124,6 +124,7 @@ class AddVisteDialog(
         checkInternetGetStore()
 
 
+        //Close dialog set on click listener
         cancel.setOnClickListener {
             dialog!!.dismiss()
         }
@@ -184,6 +185,7 @@ class AddVisteDialog(
         } else {
 
 
+            //Repeat Add Visite service until internet is good
             checkInternetAddVisite(taskId)
 
 
@@ -200,12 +202,17 @@ class AddVisteDialog(
 
         //Launch Add Visite Couroutine
         GlobalScope.launch(Dispatchers.Main) {
+
+            //Prepare visitePost Object
             val visitePost = VisitPost(null, getDateNow(), 0, taskId, userId, false, null)
             val arayListViste = ArrayList<VisitPost>()
             arayListViste.add(visitePost)
+
+            //Get Response Service
             responseAdd = viewModelQuiz.addVisite(arayListViste) as Resource<SuccessResponse>
 
 
+            //If Response is good
             if (responseAdd.responseCode == 201) {
                 dialog!!.setCancelable(true)
                 cancel.isEnabled = true
@@ -234,11 +241,13 @@ class AddVisteDialog(
 
     //Get All Stores
     private fun getStores() {
+        //Set progress visible
         progress_indicator.visibility = View.VISIBLE
 
+        //Launch couroutine
         lifecycleScope.launch(Dispatchers.Main) {
 
-
+            //Get response from service
             responseDataStores = viewModel.getStores()
 
             //If Response is Good
@@ -319,6 +328,7 @@ class AddVisteDialog(
     //Check for internet , if all good then getSTore service
     private fun checkInternetGetStore() {
         InternetCheck { internet ->
+            //Internet is Good
             if (internet)
                 getStores()
             else {

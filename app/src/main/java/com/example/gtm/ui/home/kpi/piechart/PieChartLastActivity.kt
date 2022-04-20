@@ -29,7 +29,10 @@ class PieChartLastActivity : AppCompatActivity() {
         villeHashMap.clear()
         magasinHashMap.clear()
 
+        //Get Ville HashMAp From previous activity
         villeHashMap = intent.getSerializableExtra("villeMap") as HashMap<String, Double>
+
+        //Get Magasin HashMap from previous activity
         magasinHashMap = intent.getSerializableExtra("magasinMap") as HashMap<String, Double>
 
 

@@ -36,6 +36,7 @@ class SuivieDetailFragment : Fragment(), SuivieDetailFragmentAdapter.SuivieDetai
     ): View {
         binding = FragmentSuivieDetailBinding.inflate(inflater, container, false)
 
+        //Get storeName from sharedPref
         sharedPref = requireContext().getSharedPreferences(
             R.string.app_name.toString(),
             Context.MODE_PRIVATE
@@ -43,7 +44,7 @@ class SuivieDetailFragment : Fragment(), SuivieDetailFragmentAdapter.SuivieDetai
         storeName = sharedPref.getString("storeName", "")
 
         afterSuiviArray = ArrayList<Survey>()
-        Log.i("joker","${afterSuiviArray.size}")
+
 
         return binding.root
     }
@@ -52,12 +53,15 @@ class SuivieDetailFragment : Fragment(), SuivieDetailFragmentAdapter.SuivieDetai
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Set store text title
         binding.title.text = storeName
 
+        //Back to previous activity
         binding.backFromDetail.setOnClickListener {
             requireActivity().finish()
         }
 
+        //Get list of surveys from activity
         getListOfSurveys()
     }
 
@@ -92,12 +96,12 @@ class SuivieDetailFragment : Fragment(), SuivieDetailFragmentAdapter.SuivieDetai
         binding.quizRecycleview.adapter = adapterSurvey
         adapterSurvey.clear()
         adapterSurvey.setItems(afterSuiviArray)
-        Log.i("afterSuiviArray","$afterSuiviArray")
         binding.progressIndicator.visibility = View.GONE
 
     }
 
 
+    //Get list of surveys from activity
     private fun getListOfSurveys() {
         for (i in (activity as SuiviDetailActivity).afterSuiviArray) {
             i.survey.average = i.average
@@ -108,6 +112,8 @@ class SuivieDetailFragment : Fragment(), SuivieDetailFragmentAdapter.SuivieDetai
     }
 
 
+
+    //Put Question Name in shred pref
     private fun putQuestionName(questionName:String)
     {
         sharedPref =

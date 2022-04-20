@@ -50,25 +50,36 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     private lateinit var fm: FragmentManager
     private val viewModel: DrawerActivityViewModel by viewModels()
     lateinit var sharedPref: SharedPreferences
-    lateinit var responseData: Resource<UserResponse>
+    lateinit var responseDataUser: Resource<UserResponse>
     private lateinit var sessionManager: SessionManager
     private lateinit var user: User
     private var picture: String? = null
+
+    //List Of Questions per sub category
     var listOfQuestionsPerSc = HashMap<Int, HashMap<Int, Survey?>>()
     var loading = false
-    var listOfTriDates: ArrayList<String> = ArrayList<String>()
+
+    //Hashmap visite per day
     var HashMaplistaTasksDate: HashMap<String, ArrayList<Visite>> =
         HashMap<String, ArrayList<Visite>>()
+
+    //This array is used  to post final response for quiz
     var surveyPostArrayList: HashMap<UserInf, QuestionNewPost> = HashMap<UserInf, QuestionNewPost>()
+
+    //Current fragment
     var nowFragment = 0
+
+    //Last fragment
     var lastFragment = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawer)
 
+        //Init session manager + fragment manager
         sessionManager = SessionManager(this)
         fm = this.supportFragmentManager
+        //Init Navigation View
         val mNavigationView = findViewById<NavigationView>(R.id.nav_view)
         mNavigationView.setNavigationItemSelectedListener(this)
 
@@ -87,43 +98,44 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             var selectedFragment: Fragment? = null
 
 
-                when (it.itemId) {
+            when (it.itemId) {
 
-                    R.id.task -> {
+                R.id.task -> {
 
-                        // if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
-                        selectedFragment = BeforeHomeFragment()
-                        nowFragment = 1
+                    // if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
+                    selectedFragment = BeforeHomeFragment()
+                    nowFragment = 1
 
-                        //  lastTimeClicked = SystemClock.elapsedRealtime()
+                    //  lastTimeClicked = SystemClock.elapsedRealtime()
 
-                    }
-                    R.id.suivie -> {
-                        //   if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
-                        selectedFragment = SuiviePlanningFragment()
-                        nowFragment = 2
-                        //     lastTimeClicked = SystemClock.elapsedRealtime()
-
-                    }
-
-                    R.id.kpi -> {
-                        //   if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
-                        selectedFragment = KpiGraphFragment()
-                        nowFragment = 3
-                        //  selectedFragment = KpiFragment()
-                        //  lastTimeClicked = SystemClock.elapsedRealtime()
-                    }
+                }
+                R.id.suivie -> {
+                    //   if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
+                    selectedFragment = SuiviePlanningFragment()
+                    nowFragment = 2
+                    //     lastTimeClicked = SystemClock.elapsedRealtime()
 
                 }
 
-                if (selectedFragment != null) {
-
-                    if (checkForFragment())
-                        supportFragmentManager.beginTransaction().replace(
-                            R.id.nav_acceuil_fragment,
-                            selectedFragment
-                        ).commit()
+                R.id.kpi -> {
+                    //   if (SystemClock.elapsedRealtime() - lastTimeClicked > defaultInterval) {
+                    selectedFragment = KpiGraphFragment()
+                    nowFragment = 3
+                    //  selectedFragment = KpiFragment()
+                    //  lastTimeClicked = SystemClock.elapsedRealtime()
                 }
+
+            }
+
+            if (selectedFragment != null) {
+
+                //we are checking for fragment , if the same fragment is already present we don't load it again
+                if (checkForFragment())
+                    supportFragmentManager.beginTransaction().replace(
+                        R.id.nav_acceuil_fragment,
+                        selectedFragment
+                    ).commit()
+            }
 
             true
 
@@ -141,7 +153,6 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             return true
         }
     }
-
 
 
     //Side Nav Bar Menu Item Listener
@@ -189,6 +200,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     @DelicateCoroutinesApi
     private fun getProfile() {
 
+        //Get username from shared Pref
         sharedPref = this.getSharedPreferences(
             R.string.app_name.toString(),
             Context.MODE_PRIVATE
@@ -197,25 +209,27 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         //Get User Couroutine
         GlobalScope.launch(Dispatchers.Main) {
-            responseData = viewModel.getUser(username!!)
-            if (responseData.responseCode == 200) {
+            //getUser Response service
+            responseDataUser = viewModel.getUser(username!!)
+
+            //If everything is good we save user
+            if (responseDataUser.responseCode == 200) {
                 saveUser(
-                    responseData.data!!.data.first_name,
-                    responseData.data!!.data.last_name,
-                    responseData.data!!.data.email,
-                    responseData.data!!.data.phone_number,
-                    responseData.data!!.data.profile_picture,
-                    responseData.data!!.data.id,
-                    responseData.data!!.data.enabled,
-                    responseData.data!!.data.gender,
-                    responseData.data!!.data.roleId,
-                    responseData.data!!.data.password
+                    responseDataUser.data!!.data.first_name,
+                    responseDataUser.data!!.data.last_name,
+                    responseDataUser.data!!.data.email,
+                    responseDataUser.data!!.data.phone_number,
+                    responseDataUser.data!!.data.profile_picture,
+                    responseDataUser.data!!.data.id,
+                    responseDataUser.data!!.data.enabled,
+                    responseDataUser.data!!.data.gender,
+                    responseDataUser.data!!.data.roleId,
+                    responseDataUser.data!!.data.password
                 )
-                picture = responseData.data!!.data.profile_picture
+                picture = responseDataUser.data!!.data.profile_picture
             }
         }
     }
-
 
 
     // Save User to SharedPref

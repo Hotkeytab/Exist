@@ -36,7 +36,7 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
 
     private lateinit var binding: FragmentSignInBinding
     private val viewModel: SignInFragmentViewModel by viewModels()
-    private lateinit var responseData: Resource<SignInResponse>
+    private lateinit var responseDataSignIn: Resource<SignInResponse>
     private var responseDataUser: Resource<UserResponse>? = null
     lateinit var sharedPref: SharedPreferences
     private lateinit var sessionManager: SessionManager
@@ -53,6 +53,7 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
         //If Fragment is Added
         if (isAdded) {
 
+            //Init session manager , fragment manager and Internet Dialog
             sessionManager = SessionManager(requireContext())
             fm = requireActivity().supportFragmentManager
             dialog = InternetCheckDialog()
@@ -62,12 +63,13 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
 
 
             //Init All Editexts Animations
+            //Left to roght animation
             val animationLeftToRight =
                 AnimationUtils.loadAnimation(requireContext(), R.anim.left_to_right)
-
+            //Right to left animation
             val animationRightToLeft =
                 AnimationUtils.loadAnimation(requireContext(), R.anim.right_to_left)
-
+            //Bottom to top animation
             val animationBottomToTop =
                 AnimationUtils.loadAnimation(requireContext(), R.anim.bottom_to_top)
 
@@ -75,9 +77,10 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
             animationSignin(animationLeftToRight, animationRightToLeft, animationBottomToTop)
 
 
-
             //SignIn Button Click Listener
+            //We check Internet , if everything is good then we login
             binding.signinButton.setOnClickListener {
+                //Disable signin button until we get a response from webservice
                 binding.signinButton.isEnabled = false
                 checkInternet()
             }
@@ -95,11 +98,13 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
 
         //If Username is empty
         if (binding.username.editText!!.trimStringEditText().isEmpty()) {
+            //Prepare Error
             clearError()
             binding.username.error = "Username is Empty"
             binding.signinButton.isEnabled = true
             //If password is empty
         } else if (binding.password.editText!!.trimStringEditText().isEmpty()) {
+            //Prepare Error
             clearError()
             binding.password.error = "Password is Empty"
             binding.signinButton.isEnabled = true
@@ -113,6 +118,7 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
             InternetCheck { internet ->
                 //If Internet is Good
                 if (internet) {
+                    //Create SignIn Object
                     val sinInObject = SignInPost(
                         binding.username.editText!!.trimStringEditText(),
                         binding.password.editText!!.trimStringEditText()
@@ -122,34 +128,32 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
                     if (isAdded) {
                         //Launch Couroutine
                         GlobalScope.launch(Dispatchers.Main) {
-                            responseData = viewModel.login(sinInObject)
+                            //Response from SignIn Webservice
+                            responseDataSignIn = viewModel.login(sinInObject)
                             //If response is good
-                            if (responseData.responseCode == 200) {
-                                //Save Login Infos
+                            if (responseDataSignIn.responseCode == 200) {
+                                //Save Login Infos to shared pref
                                 rememberMe()
-                                sessionManager.saveToken(responseData.data!!.token)
+                                sessionManager.saveToken(responseDataSignIn.data!!.token)
                                 //Fetch DataUser
                                 responseDataUser =
                                     viewModel.getUser(binding.username.editText!!.trimStringEditText())
-                                if (responseDataUser!!.responseCode == 200) {
-                                    sharedPref =
-                                        requireActivity().getSharedPreferences(
-                                            R.string.app_name.toString(),
-                                            Context.MODE_PRIVATE
-                                        )!!
-                                    with(sharedPref.edit()) {
-                                        this?.putInt("id", responseDataUser!!.data!!.data.id)
-                                    }?.commit()
-                                    //Start Intent after everything is good
-                                    val intent = Intent(activity, DrawerActivity::class.java)
-                                    activity?.startActivity(intent)
-                                    activity?.finish()
-                                } else {
-                                    binding.signinButton.isEnabled = true
-                                    binding.progressIndicator.visibility = View.INVISIBLE
-                                    clearError()
-                                    binding.password.error = "Erreur Connexion "
-                                }
+
+                                //Save User ID to shared pref
+                                sharedPref =
+                                    requireActivity().getSharedPreferences(
+                                        R.string.app_name.toString(),
+                                        Context.MODE_PRIVATE
+                                    )!!
+                                with(sharedPref.edit()) {
+                                    this?.putInt("id", responseDataUser!!.data!!.data.id)
+                                }?.commit()
+
+                                //Start Intent after everything is good
+                                val intent = Intent(activity, DrawerActivity::class.java)
+                                activity?.startActivity(intent)
+                                activity?.finish()
+
 
                                 //Password is wrong
                             } else if (responseDataUser != null) {
@@ -205,7 +209,7 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
     //Remember me function
     private fun rememberMe() {
 
-        //If remember me is checked
+        //If remember me is checked then put data inside username and password
         if (binding.remembermebox.isChecked) {
             sharedPref =
                 context?.getSharedPreferences(R.string.app_name.toString(), Context.MODE_PRIVATE)!!
@@ -215,6 +219,7 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
             }?.commit()
 
         } else {
+            //Clear shared pref from username and password
             sharedPref =
                 context?.getSharedPreferences(R.string.app_name.toString(), Context.MODE_PRIVATE)!!
             with(sharedPref.edit()) {
@@ -244,6 +249,7 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
     }
 
     //OnDismissDialog (check internet dialog)
+    //SignIn Again if dialog is closed
     override fun onDismiss(p0: DialogInterface?) {
         signIn()
     }

@@ -47,6 +47,7 @@ class KpiFragment : Fragment() {
     ): View {
         binding = FragmentKpiBinding.inflate(inflater, container, false)
 
+        //Get instance of PieChartLastActivity
         pieChartLastActivity = activity as PieChartLastActivity
 
         return binding.root
@@ -55,13 +56,17 @@ class KpiFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
+        //SetupPieChart Design
         setupPieChart()
+
+        //Prepare Entry Arraylist for piechart
         preparePieChartData()
+
+        //Load PieCHartData with Data
         loadPieChartData()
 
 
+        //Change filter to "Par Magasin"
         pieChartLastActivity.par_magasin_cardview.setOnClickListener {
             if (etatGroup == 1) {
                 etatGroup = 0
@@ -70,12 +75,15 @@ class KpiFragment : Fragment() {
                 pieChartLastActivity.pie_chart_text.setHintTextColor(resources.getColor(R.color.clear_grey))
                 pieChartLastActivity.table_text.setTextColor(resources.getColor(R.color.purpleLogin))
                 binding.piechart.centerText = "Par\nMagasin"
+
+                //Prepare Entry Arraylist for piechart
                 preparePieChartData()
             }
 
 
         }
 
+        //Change filter to "Par Ville"
         pieChartLastActivity.par_ville_card.setOnClickListener {
 
             if (etatGroup == 0) {
@@ -92,6 +100,8 @@ class KpiFragment : Fragment() {
                 pieChartLastActivity.pie_chart_text.setHintTextColor(resources.getColor(R.color.purpleLogin))
                 pieChartLastActivity.table_text.setTextColor(resources.getColor(R.color.clear_grey))
                 binding.piechart.centerText = "Par\nVille"
+
+                //Prepare Entry Arraylist for piechart
                 preparePieChartData()
             }
 
@@ -136,9 +146,13 @@ class KpiFragment : Fragment() {
                 for (i in pieChartLastActivity.magasinHashMap) {
                     entries.add(PieEntry(i.value.toFloat(), i.key))
                 }
+
+
+                //Load PieCHartData with Data
                 loadPieChartData()
             }
         }
+
         //Prepare entry arraylist with ville ( par ville )
         else {
             if (pieChartLastActivity.villeHashMap.isEmpty()) {
@@ -151,6 +165,8 @@ class KpiFragment : Fragment() {
                     entries.add(PieEntry(i.value.toFloat(), i.key))
                 }
 
+
+                //Load PieCHartData with Data
                 loadPieChartData()
             }
         }
@@ -162,9 +178,6 @@ class KpiFragment : Fragment() {
     //Load PieCHartData with Data
     private fun loadPieChartData() {
 
-        /* entries.add(PieEntry(7f, "MG"))
-         entries.add(PieEntry(6f, "Monoprix"))
-         entries.add(PieEntry(2.9f, "Géant")) */
         val colors: ArrayList<Int> = ArrayList()
         for (color in ColorTemplate.MATERIAL_COLORS) {
             colors.add(color)
@@ -179,11 +192,6 @@ class KpiFragment : Fragment() {
         dataSet.colors = colors
         val data = PieData(dataSet)
         data.setDrawValues(true)
-
-        //Activate PercentFormatter
-        //data.setValueFormatter(PercentFormatter(binding.piechart))
-
-
         data.setValueTextSize(12f)
         data.setValueTextColor(Color.BLACK)
         binding.piechart.data = data

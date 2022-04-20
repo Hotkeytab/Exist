@@ -64,7 +64,7 @@ class EditProfileDialog(
     private val firstNameOnlyIn = firstNameONly
     private var pictureIn = picture
     private val viewModelIn = viewModel
-    lateinit var responseData: Resource<EditProfileResponse>
+    lateinit var responseDataEditProfile: Resource<EditProfileResponse>
     private var selectedImageUri: Uri? = null
     private var profilePictureIn = profilePicture
     private var file: File? = null
@@ -94,15 +94,19 @@ class EditProfileDialog(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Init Fragment Manager
         fm = requireActivity().supportFragmentManager
 
+        //Change profile picture
         profile_picture_dialog.setOnClickListener {
             openImageChoser()
         }
+        //Change profile picture
         change_photo_text.setOnClickListener {
             openImageChoser()
         }
 
+        //CHange profile after Internet check
         submit.setOnClickListener {
             checkInternet()
         }
@@ -112,6 +116,7 @@ class EditProfileDialog(
     }
 
 
+    //GetUser From shared pref and fill all editexts
     private fun initProfile() {
         firstname_dialog.editText?.setText(userIn.first_name)
         lastname_dialog.editText?.setText(userIn.last_name)
@@ -168,6 +173,7 @@ class EditProfileDialog(
         //Prepare ChangeProfile Couroutine
         GlobalScope.launch(Dispatchers.Main) {
 
+            //Convert User Object to User String Json
             val userNewJson = jacksonObjectMapper().writeValueAsString(userNew)
             val bodyJson = RequestBody.create(
                 "application/json; charset=utf-8".toMediaTypeOrNull(),
@@ -178,6 +184,7 @@ class EditProfileDialog(
             if (firstname_dialog.editText?.isValidName() == true && lastname_dialog.editText?.isValidName() == true && email_dialog.editText?.isValidEmail() == true && phone_edit_dialog.editText?.isNumeric() == true) {
                 val objectSend: MultipartBody.Part?
 
+                //Test if Object to send is null
                 if (file == null || body == null)
                     objectSend = null
                 else
@@ -185,22 +192,25 @@ class EditProfileDialog(
                         "file", file?.name,
                         body!!
                     )
+
                 //Get Response EditProfile
-                responseData =
+                responseDataEditProfile =
                     viewModelIn.changeProfile(objectSend, bodyJson) as Resource<EditProfileResponse>
 
 
                 //If response is good
-                if (responseData.responseCode == 201) {
+                if (responseDataEditProfile.responseCode == 201) {
 
+                    //Close Progress Bar
                     progress_indicator_dialog.visibility = View.INVISIBLE
 
+                    //Fill Editexts with response
                     nameIn.text = "${userNew.first_name}  ${userNew.last_name}"
                     emailIn.text = userNew.email
                     phoneIn.text = userNew.phone_number
                     lastNameOnlyIn.text = userNew.last_name
                     firstNameOnlyIn.text = userNew.first_name
-
+                    //Close Dialog
                     dismiss()
                 }
 
@@ -256,8 +266,8 @@ class EditProfileDialog(
 
     //Check if Internet is Good
     private fun checkInternet() {
-        //Internet is good
         InternetCheck { internet ->
+            //Internet is good
             if (internet)
                 changeProfile()
             //Internet is bad

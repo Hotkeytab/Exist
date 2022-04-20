@@ -58,9 +58,10 @@ class KpiFIlterFragment : Fragment() {
     private lateinit var responseDataStores: Resource<GetStore>
     private val viewModel: AddVisiteDialogViewModel by viewModels()
     private val viewModelKpi: KpiFilterFragmentViewModel by viewModels()
+    //List of StoreXX
     private var listaDataXX = ArrayList<DataXX>()
     private var listaKpi = ArrayList<DataXXX>()
-    private lateinit var responseDataQuiz: Resource<Quiz>
+    private lateinit var responseDataQuestionnaire: Resource<Quiz>
     private lateinit var responseKpi: Resource<AnalyseKpi>
     private lateinit var responseChart: Resource<ChartResponse>
     private var listaQuiz = ArrayList<QuizData>()
@@ -73,7 +74,6 @@ class KpiFIlterFragment : Fragment() {
     private var arrayVilleNew = ArrayList<String>()
     private var arrayStoreNew = ArrayList<String>()
     private var arrayQuestNew = ArrayList<String>()
-    private var type = ""
     private var userId = 0
     lateinit var sharedPref: SharedPreferences
     private var arraySupervisorsId = ArrayList<Int>()
@@ -87,12 +87,10 @@ class KpiFIlterFragment : Fragment() {
     var valueVilleMap: HashMap<String, Double> = HashMap<String, Double>()
     var magasinNameSet: HashSet<String> = HashSet<String>()
     var villeNameSet: HashSet<String> = HashSet<String>()
-
-
-    // heure_debut = "8:00"
     private var etatFragment = 0
 
 
+    //List of villes
     val items = listOf(
         "Ariana",
         "Béja",
@@ -128,6 +126,7 @@ class KpiFIlterFragment : Fragment() {
     ): View {
         binding = FragmentKpiFIlterBinding.inflate(inflater, container, false)
 
+        //Init childFragmentManager
         fm = childFragmentManager
 
 
@@ -153,7 +152,7 @@ class KpiFIlterFragment : Fragment() {
         //Get Instance of Drawer Layout
         val mDrawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
 
-        //Top Bar
+        //Top Bar with left animation
         topAppBar.setNavigationOnClickListener {
             mDrawerLayout.openDrawer(Gravity.LEFT)
         }
@@ -166,11 +165,12 @@ class KpiFIlterFragment : Fragment() {
         val arrayAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, items)
         binding.villeText.setAdapter(arrayAdapter)
 
-        //Get Questionnaires + Get Stores
-        getStores()
+        //Get  Get Stores + Questionnaires
+        getStoresAndQuestionnaires()
 
 
 
+        //Ville Editext Listener
         villeText.onItemClickListener = OnItemClickListener { parent, view, position, id ->
             //if ville doesnt exist in the groupList then add it
             if (!checkForChips(arrayVilleNew, parent.getItemAtPosition(position).toString())) {
@@ -179,6 +179,7 @@ class KpiFIlterFragment : Fragment() {
             }
         }
 
+        //Magasin Editext Listener
         magasinText.onItemClickListener = OnItemClickListener { parent, view, position, id ->
             //if magasin doesnt exist in the groupList then add it
             if (!checkForChips(arrayStoreNew, parent.getItemAtPosition(position).toString())) {
@@ -187,6 +188,7 @@ class KpiFIlterFragment : Fragment() {
             }
         }
 
+        //Questionnaire Editext Listener
         questionnaireText.onItemClickListener = OnItemClickListener { parent, view, position, id ->
             //if questionnaire doesn't exist in the groupList then add it
             if (!checkForChips(arrayQuestNew, parent.getItemAtPosition(position).toString())) {
@@ -218,7 +220,7 @@ class KpiFIlterFragment : Fragment() {
         }
 
 
-        //Choose Analyses Superviseur Option
+        //Choose Analyses Superviseur Option ( etat fragment  = 0)
         binding.imageTableStatsCard.setOnClickListener {
 
             if (etatFragment == 1) {
@@ -231,7 +233,7 @@ class KpiFIlterFragment : Fragment() {
         }
 
 
-        //Choose PieChart Option
+        //Choose PieChart Option ( etat fragment = 1)
         binding.imageKpiStatsCard.setOnClickListener {
 
             if (etatFragment == 0) {
@@ -247,7 +249,7 @@ class KpiFIlterFragment : Fragment() {
         //SwipeDown Refresh
         binding.swiperefreshlayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
 
-            getStores()
+            getStoresAndQuestionnaires()
             swiperefreshlayout.isRefreshing = false
         })
 
@@ -332,6 +334,7 @@ class KpiFIlterFragment : Fragment() {
             setOnCloseIconClickListener {
 
 
+                //Animate chips
                 val anim = AlphaAnimation(1f, 0f)
                 anim.duration = 250
                 anim.setAnimationListener(object : Animation.AnimationListener {
@@ -366,30 +369,42 @@ class KpiFIlterFragment : Fragment() {
 
 
     //Get Questionnaires + Get Stores
-    private fun getStores() {
+    private fun getStoresAndQuestionnaires() {
 
+        //If fragment manager is present
         if (!fm!!.isDestroyed)
             progressUploadDialog.show(fm!!, "ProgressUploadDialog")
+
+        //Start couroutine to get stores and questionnaires
         lifecycleScope.launch(Dispatchers.Main) {
 
-
+            //GetStores Response
             responseDataStores = viewModel.getStores()
 
+            //If response is good
             if (responseDataStores.responseCode == 200) {
+                //If progress indicator is present then make it gone
                 if (progress_indicator != null)
                     progress_indicator.visibility = View.GONE
+
+                //Get list of stores as listaDataXX
                 listaDataXX = responseDataStores.data!!.data as ArrayList<DataXX>
+
+                //Convert List of Store to Map storeName -> storeId
                 getSubListStore()
+
+                //Get List of Questionnaire Service
                 getQuestionnaires()
 
+                //if fragment manager is present then dismiss progressUploadDialog
                 if (fm != null && !fm!!.isDestroyed)
                     progressUploadDialog.dismiss()
 
-
+            // Repeat getStoresAndQuestionnaires() until we get good response
             } else {
 
                 progressUploadDialog.dismiss()
-                getStores()
+                getStoresAndQuestionnaires()
 
             }
 
@@ -400,13 +415,22 @@ class KpiFIlterFragment : Fragment() {
     private fun getQuestionnaires() {
         lifecycleScope.launch(Dispatchers.Main) {
 
+            //If Fragment is Added
             if (isAdded) {
-                responseDataQuiz = viewModelQuestionnaire.getSurvey()
 
-                if (responseDataQuiz.responseCode == 200) {
-                    listaQuiz = responseDataQuiz.data!!.data as ArrayList<QuizData>
+                //Get Response Questionnaire
+                responseDataQuestionnaire = viewModelQuestionnaire.getSurvey()
+
+                //If Response Good
+                if (responseDataQuestionnaire.responseCode == 200) {
+                    //Extract List of Questionnaires from response
+                    listaQuiz = responseDataQuestionnaire.data!!.data as ArrayList<QuizData>
+
+                    //Convert List of Questionnaire to Map quizName -> quizId
                     getSubListQuestionnaire()
                     progressUploadDialog.dismiss()
+
+                    //Repeat getQuestionnaires until we get a good response
                 } else {
                     getQuestionnaires()
                 }
@@ -459,7 +483,6 @@ class KpiFIlterFragment : Fragment() {
         if (arrayStoresId.size > 1)
             arrayStoresId.clear()
 
-
         if (arrayStoreNew.size == 0) {
             for (i in listaDataXX.indices) {
                 arrayStoresId.add(listaDataXX[i].id)
@@ -493,8 +516,8 @@ class KpiFIlterFragment : Fragment() {
             }
         }
 
+        //We chose between Analyse Superviseur and Pie chart Activity
         if (etatFragment == 0) {
-
             getAnalyseResponse()
         } else {
 
@@ -507,18 +530,24 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
+    //Get Pie chart service
     private fun getAnalyseChart() {
 
+        //show Progress Dialog
         progressUploadDialog.show(fm!!, "ProgressUploadDialog")
 
+        //Launch Couroutine
         lifecycleScope.launch(Dispatchers.Main) {
 
+
             val newArrayVilleNew = ArrayList<String>()
+
             //Add special characters to arraylist of strings "%"
             for (i in arrayVilleNew) {
                 newArrayVilleNew.add("\"$i\"")
             }
 
+            //Get Response Chart
             responseChart = viewModelKpi.getStatChart(
                 arrayStoresId,
                 arrayQuestIds[0],
@@ -529,20 +558,29 @@ class KpiFIlterFragment : Fragment() {
             ) as Resource<ChartResponse>
 
 
-
+            //If All is Good
             if (responseChart.responseCode == 200) {
 
+                //Dismiss Dialog
                 progressUploadDialog.dismiss()
 
+                //Get List of CHar from response
                 listaChar = responseChart.data?.data as ArrayList<DataChart>
+
+                // Get Unique Name of every Store
                 extractStore()
+
+                // Get Unique Name of every Ville
                 extractVille()
 
 
+                //start Intent to PieCHarrtActivity
                 val intent = Intent(requireActivity(), PieChartLastActivity::class.java)
                 intent.putExtra("villeMap", valueVilleMap)
                 intent.putExtra("magasinMap", valueMagasinMap)
                 startActivity(intent)
+
+                //Override Animations
                 requireActivity().overridePendingTransition(
                     R.anim.right_to_left_activity,
                     R.anim.left_to_right_activity
@@ -564,6 +602,7 @@ class KpiFIlterFragment : Fragment() {
             magasinNameSet.add(i.store.name)
         }
 
+        // Create HAShmap of magasin -> average
         extractAverageForStore()
     }
 
@@ -593,18 +632,19 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
-    // Get Unique Name of every Store
+    // Get Unique Name of every Ville
     private fun extractVille() {
         for (i in listaChar) {
             villeNameSet.add(i.store.governorate)
         }
 
+        // Create HAShmap of ville -> average
         extractAverageForVille()
 
     }
 
 
-    // Create HAShmap of magasin -> average
+    // Create HAShmap of ville -> average
     private fun extractAverageForVille() {
 
         var increment = 0
@@ -632,8 +672,12 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
+    //Get Analyse Superviseur response froms ervice
     private fun getAnalyseResponse() {
+        //show progress dialog
         progressUploadDialog.show(fm!!, "ProgressUploadDialog")
+
+        //launch Couroutine
         lifecycleScope.launch(Dispatchers.Main) {
 
             val newArrayVilleNew = ArrayList<String>()
@@ -642,6 +686,7 @@ class KpiFIlterFragment : Fragment() {
                 newArrayVilleNew.add("\"$i\"")
             }
 
+            //Get response from service
             responseKpi = viewModelKpi.getStatTable(
                 day_debut_picker,
                 day_fin_picker,
@@ -651,38 +696,37 @@ class KpiFIlterFragment : Fragment() {
                 newArrayVilleNew
             )
 
+            //If >Everything is good
             if (responseKpi.responseCode == 200) {
 
+                //Remove progress dialog and clear all errors
                 progressUploadDialog.dismiss()
                 binding.errorTextKpi.visibility = View.GONE
 
+
+                //GetLista Kpi From response as DataXXX
                 listaKpi = responseKpi.data!!.data as ArrayList<DataXXX>
 
+
+                //Prepare KPI Object for Analyse superviseur
                 val myObject: KpiStats = prepareKpiObject()
 
+                //COnvert myObject to string Json
                 val myObjectJson: String = Gson().toJson(myObject)
 
-                //  if (etatFragment == 0) {
 
+                //Intent to KpiResultActivity
                 val intent = Intent(requireActivity(), KpiFinalResultActivity::class.java)
                 intent.putExtra("kpiObject", myObjectJson)
                 startActivity(intent)
+
+                //Override Animation
                 requireActivity().overridePendingTransition(
                     R.anim.right_to_left_activity,
                     R.anim.left_to_right_activity
                 )
-                //  } else {
 
-                /*    val intent = Intent(requireActivity(), PieChartLastActivity::class.java)
-                    intent.putExtra("kpiObject", myObjectJson)
-                    startActivity(intent)
-                    requireActivity().overridePendingTransition(
-                        R.anim.right_to_left_activity,
-                        R.anim.left_to_right_activity
-                    )
-
-                } */
-
+                //Clear errors and dismiss progress dialog
             } else {
 
                 arraySupervisorsId.clear()
@@ -698,6 +742,7 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
+    //Prepare KPI Object for Analyse superviseur
     private fun prepareKpiObject(): KpiStats {
         val moyenneRetard = calculerMoyenneRetard()
         val moyenneDernierPointage = calculerMoyenneDernierPointage()
@@ -724,6 +769,7 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
+    //Calculer performance supervisuer
     private fun calculerPerformance(done: Int, total: Int): Double {
         if (done == 0)
             return 0.0
@@ -735,6 +781,7 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
+    //Calculer moyenne retard superviseur
     private fun calculerMoyenneRetard(): Long {
         var totalSeconds = 0
         var incrementCalcul = 0
@@ -758,6 +805,7 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
+    //Calculer moeyenne dernier poinatage superviseur
     private fun calculerMoyenneDernierPointage(): String {
         var totalSeconds = 0
         var numberTime = 0
@@ -780,6 +828,7 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
+    //Calculer visites planifies pour superviseur
     private fun calculerVisitesPlanifies(): Int {
         var cvp = 0
 
@@ -792,6 +841,7 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
+    //Calculer visite non planifies pour superviseur
     private fun calculerVisitesNonPlanifies(): Int {
         var cvnp = 0
 
@@ -804,6 +854,7 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
+    //Calculer visites realises superviseur
     private fun calculerVisitesRealises(): Int {
         var cvr = 0
         for (i in listaKpi) {
@@ -815,6 +866,7 @@ class KpiFIlterFragment : Fragment() {
         return cvr
     }
 
+    //Calculer Questionnaire realise superviseur
     private fun calculerQuestionnairesRealise(): Int {
         val arrayIdQuest = ArrayList<Int>()
         for (i in listaKpi) {
@@ -826,6 +878,7 @@ class KpiFIlterFragment : Fragment() {
         return arrayIdQuest.size
     }
 
+    //Calculer moyenne questionnaires pour superviseur
     private fun calculerMoyenneQuestionnaire(): Double {
         var avr = 0.0
         var iterateAvr = 0
@@ -845,6 +898,7 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
+    //Calculer nombre total de photos pour superviseur
     private fun calculerNombrePhotos(): Int {
         var cnp = 0
 
@@ -860,10 +914,13 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
+    //Convert date to seconds
     private fun fromDateToSeconds(hours: Int, minutes: Int, seconds: Int): Int {
         return seconds + (minutes * 60) + (hours * 3600)
     }
 
+
+    //Convert seconds to date
     private fun fromSecondsToDate(scds: Long): String {
         val hours = scds / 3600
         var rest = scds % 3600
@@ -888,6 +945,7 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
+    //Clear all EditeTexts
     private fun clearData() {
         valueMagasinMap.clear()
         valueVilleMap.clear()

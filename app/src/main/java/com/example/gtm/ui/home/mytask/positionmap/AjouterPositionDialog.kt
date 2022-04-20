@@ -42,8 +42,6 @@ class AjouterPositionDialog(
     override fun onStart() {
         super.onStart()
 
-        val width = (resources.displayMetrics.widthPixels * 0.99).toInt()
-        val height = (resources.displayMetrics.heightPixels * 0.88).toInt()
         dialog!!.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         dialog!!.window!!.setWindowAnimations(R.style.AnimationsForMapDialogSwipe)
     }

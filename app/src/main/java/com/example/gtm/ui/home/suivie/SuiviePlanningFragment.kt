@@ -81,13 +81,14 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     private lateinit var locationManager: LocationManager
     private val REQUEST_CODE = 2
     private var GpsStatus = false
-    private lateinit var navController: NavController
     private lateinit var d: Date
 
 
     override fun onStart() {
         super.onStart()
 
+
+        //If Fragment os Added then Verify Gps Permission
         if (isAdded && activity != null) {
             askForPermissions()
         }
@@ -102,14 +103,16 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
         binding = FragmentSuiviePlanningBinding.inflate(inflater, container, false)
 
 
-
+        //If Fragment is added and Activity isn't null
         if (isAdded && activity != null) {
 
-            Log.i("repeat", "0")
+            //Get Current date
             d = Date()
 
+            //Init Fragment Manager
             fm = requireActivity().supportFragmentManager
 
+            //Get User ID from shared Pref
             sharedPref = requireContext().getSharedPreferences(
                 R.string.app_name.toString(),
                 Context.MODE_PRIVATE
@@ -117,6 +120,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
             userId = sharedPref.getInt("id", 0)
 
 
+            //Prepare Date Format for dates
             val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
             dateTimeBegin = simpleDateFormat.format(d.time).toString()
             dateTimeEnd = simpleDateFormat.format(d.time).toString()
@@ -131,6 +135,8 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
         super.onViewCreated(view, savedInstanceState)
 
 
+
+        //Override Bottom back button
         val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true /* enabled by default */) {
                 override fun handleOnBackPressed() {
@@ -138,24 +144,30 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
             }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
+
+        //If Fragment is Added and activity isn't null
         if (isAdded && activity != null) {
-            Log.i("repeat", "1")
+            //Init drawerlayout
             val mDrawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
-            //Top Bar
+
+            //Top Bar open with left animation
             topAppBar.setNavigationOnClickListener {
                 mDrawerLayout.openDrawer(Gravity.LEFT)
             }
 
+            //Make bottom nav visible
             requireActivity().bottom_nav.visibility = View.VISIBLE
 
 
-        //    navController = NavHostFragment.findNavController(this)
-
+            //Correct top day,week,month filter
             correctFilters()
 
 
+            //Calculate Top Date After switch day or week or month
             setTopDate()
 
+
+            //>Day filter clicked
             binding.dayfiltercard.setOnClickListener {
                 daysFilter.dayFilter = 1
                 daysFilter.weekFilter = 0
@@ -165,6 +177,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
                 binding.progressIndicator.visibility = View.VISIBLE
                 getVisites()
             }
+            // >> Week Filter Clicked
             binding.weekfilterward.setOnClickListener {
                 daysFilter.dayFilter = 0
                 daysFilter.weekFilter = 1
@@ -175,6 +188,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
 
             }
 
+            // >> Month Filetr Clicked
             binding.montherfiltercard.setOnClickListener {
                 daysFilter.dayFilter = 0
                 daysFilter.weekFilter = 0
@@ -187,13 +201,17 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
 
 
 
+            //Next date button listener
             binding.nextDate.setOnClickListener {
                 nextDate()
             }
+
+            //previous date button clicked
             binding.previousDate.setOnClickListener {
                 previousDate()
             }
 
+            //today button listener clicked
             binding.today.setOnClickListener {
                 setToday()
             }
@@ -201,14 +219,17 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
 
         }
 
-        binding.swiperefreshlayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
 
+        //Swipe down refresh layout
+        binding.swiperefreshlayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
             getVisites()
             swiperefreshlayout.isRefreshing = false
         })
 
+        //Init drawer layout
         val mDrawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
-        //Top Bar
+
+        //Top Bar with left animation
         topAppBar.setNavigationOnClickListener {
             mDrawerLayout.openDrawer(Gravity.LEFT)
         }
@@ -216,10 +237,10 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
-    private fun setupRecycleViewPredictionDetail() {
+    //Set Visite RecycleView
+    private fun setupRecycleView() {
 
-
-        Log.i("repeat", "1")
+        //If fragment is added
         if(isAdded) {
             adapterTask = SuiviePlanningBlocAdapter(
                 this,
@@ -244,7 +265,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
 
     override fun onClickedTask(taskId: Int, distance: String) {
 
-     //   askForPermissionsDialog()
+        //Save storeId to sharedPref
         sharedPref =
             requireContext().getSharedPreferences(
                 R.string.app_name.toString(),
@@ -256,22 +277,25 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
+
+    //Get Visites Service
     @DelicateCoroutinesApi
     private fun getVisites() {
+
+        //Launch couroutine
         lifecycleScope.launch(Dispatchers.Main) {
 
-
-            Log.i("repeat", "1")
-
+            //Save ResponseData of get Visites
             responseData = viewModel.getVisites(userId.toString(), dateTimeBegin, dateTimeEnd)
 
-
+        //If response is good
             if (responseData.responseCode == 200) {
 
+                //get Lista of Visite from response
                 listaTasks = responseData.data!!.data as ArrayList<Visite>
-                /* listaTasks[0].store.lat = 22.3
-                 listaTasks[0].store.lng = 22.3*/
 
+
+                //Filter List with day , week , month
                 if (daysFilter.dayFilter == 1)
                     listaTasks =
                         listaTasks.filter { list -> compareDatesDay(list.day) } as ArrayList<Visite>
@@ -293,60 +317,26 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
                     //  transformListToHashMapDate()
                 }
 
+                //If fragment is added and activity isn't null we get all responses of every quiz inside store
                 if (isAdded && activity != null)
                     getSurveyResponses()
-
-
-
-
-
-
-
             }
 
         }
     }
 
 
+    //Get survey response of every quiz inside store .. why ? ask backend developper
     @DelicateCoroutinesApi
     private fun getSurveyResponses() {
         GlobalScope.launch(Dispatchers.Main) {
-
-
+            //Get response service
             responseData2 = viewModel.getSurveyResponse(userId.toString(), dateTimeBegin, dateTimeEnd)
 
-
+            //If response is good
             if (responseData2.responseCode == 200) {
               listaSurveyResponse = responseData2.data!!.data as ArrayList<DataX>
-                setupRecycleViewPredictionDetail()
-                /*    if (daysFilter.dayFilter == 1)
-                      listaTasks =
-                          listaTasks.filter { list -> compareDatesDay(list.day) } as ArrayList<Visite>
-                  else if (daysFilter.weekFilter == 1)
-                      listaTasks =
-                          listaTasks.filter { list -> compareDatesMonth(list.day) } as ArrayList<Visite>
-                  else if (daysFilter.monthFilter == 1)
-                      listaTasks =
-                          listaTasks.filter { list -> compareDatesMonth(list.day) } as ArrayList<Visite>
-
-                  if (listaTasks.size == 0)
-                      binding.novisit.visibility = View.VISIBLE
-                  else
-                      binding.novisit.visibility = View.GONE
-
-
-                  if (daysFilter.weekFilter == 1 || daysFilter.monthFilter == 1) {
-                      Collections.sort(listaTasks, SortByDate())
-                      //  transformListToHashMapDate()
-                  }
-
-                  if (isAdded && activity != null)
-                      setupRecycleViewPredictionDetail()
-
-
-                  */
-
-
+                setupRecycleView()
                 binding.progressIndicator.visibility = View.GONE
 
             }
@@ -354,6 +344,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
         }
     }
 
+    //test if Permission GPS is granted
     fun isPermissionsAllowed(): Boolean {
         return ContextCompat.checkSelfPermission(
             requireContext(),
@@ -361,6 +352,8 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+
+    //Ask for permission for gps
     fun askForPermissions(): Boolean {
         if (!isPermissionsAllowed()) {
             if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -383,28 +376,9 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
         return true
     }
 
-    fun askForPermissionsDialog(): Boolean {
-        if (!isPermissionsAllowed()) {
-            if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                showPermissionDeniedDialog()
-            } else {
-                requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE)
-            }
-            return false
-        } else {
-            Log.i("PERMISSIONBITCH", "4")
-            if (CheckGpsStatus())
-            // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
-            {
-              //  SurveyCheckDialog(navController,3,requireView(),adapterTask,listaTasks).show(fm, "SurveyDialog")
-            } else {
-                showPermissionDeniedGPS()
-            }
-        }
-        return true
-    }
 
 
+    //SHow Permission Gps dialog
     private fun showPermissionDeniedDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle("Autorisation refusée")
@@ -423,6 +397,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
+    //SHow Permission Dienied dialog
     private fun showPermissionDeniedGPS() {
         AlertDialog.Builder(requireContext())
             .setTitle("Autorisation GPS")
@@ -447,17 +422,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
         when (requestCode) {
             2 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission is granted, you can perform your operation here
-                    /* if (CheckGpsStatus())
-                         SurveyCheckDialog(requireActivity(), requireContext()).show(
-                             fm,
-                             "SurveyDialog"
-                         )
-                     else {
-                         showPermissionDeniedGPS()
-                     } */
                     if (CheckGpsStatus())
-                    // SurveyCheckDialog(latitude, Longitude,navController).show(fm, "SurveyDialog")
                     {
                         binding.progressIndicator.visibility = View.VISIBLE
                         getVisites()
@@ -477,6 +442,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
+    //Check Gps status if activated or not
     fun CheckGpsStatus(): Boolean {
         locationManager =
             requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -485,6 +451,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
+    //Sort dates by day
     internal class SortByDate : Comparator<Visite?> {
         override fun compare(p0: Visite?, p1: Visite?): Int {
             return p0!!.day.compareTo(p1!!.day)
@@ -495,9 +462,8 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
 
 
 
+    //Compare between two Dates
     private fun compareDatesDay(simpleDate: String): Boolean {
-
-
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         val date: Date = format.parse(simpleDate)
         format.applyPattern("dd-MM-yyyy")
@@ -516,8 +482,9 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
-    private fun compareDatesMonth(simpleDate: String): Boolean {
 
+    //Compare Between two months
+    private fun compareDatesMonth(simpleDate: String): Boolean {
 
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         val date: Date = format.parse(simpleDate)
@@ -539,6 +506,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
+    //Correct top day,week,month filter
     private fun correctFilters() {
         setFilters(binding.dayfiltercard, binding.dayfiltertext, daysFilter.dayFilter)
         setFilters(binding.weekfilterward, binding.weektextfilter, daysFilter.weekFilter)
@@ -546,6 +514,8 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
+
+    //Set top filter color , texts , titles ....
     @SuppressLint("ResourceAsColor")
     private fun setFilters(cardview: CardView, textView: TextView, filter: Int) {
         if (filter == 1) {
@@ -563,6 +533,9 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
+
+
+    //Calculate Top Date After switch day or week or month
     private fun setTopDate() {
 
         if (daysFilter.dayFilter == 1) {
@@ -637,6 +610,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
+    //Next date button
     private fun nextDate() {
         if (daysFilter.dayFilter == 1) {
             val cal = Calendar.getInstance()
@@ -666,6 +640,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
         }
     }
 
+    //Previous date button function
     private fun previousDate() {
         if (daysFilter.dayFilter == 1) {
             val cal = Calendar.getInstance()
@@ -697,6 +672,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
+    //Today button function
     private fun setToday() {
         daysFilter.dayFilter = 1
         daysFilter.weekFilter = 0
@@ -713,6 +689,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
+    //Get curretn day of the week
     private fun dayOfWeek(): Int {
         val calendar = Calendar.getInstance()
         calendar.time = d
@@ -722,70 +699,6 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
             day - 2
         else
             6
-    }
-
-
-    private fun transformListToHashMapDate() {
-        Log.i("myhashmap", "${(listaTasks.size)}")
-        var exist = false
-
-        if (listaTasks.size != 0) {
-
-
-            for (i in listaTasks) {
-
-                exist = false
-
-                if ((activity as DrawerActivity).HashMaplistaTasksDate.size == 0) {
-                    val tempAray = ArrayList<Visite>()
-                    tempAray.add(i)
-                    (activity as DrawerActivity).HashMaplistaTasksDate.put(
-                        i.day,
-                        tempAray
-                    )
-                } else {
-
-                    (activity as DrawerActivity).HashMaplistaTasksDate.forEach { (v, k) ->
-                        if (i.day == v) {
-                            k.add(i)
-                            exist = true
-                        }
-                    }
-
-                    if (!exist) {
-                        val tempAray = ArrayList<Visite>()
-                        tempAray.add(i)
-                        (activity as DrawerActivity).HashMaplistaTasksDate.put(i.day, tempAray)
-                    }
-                }
-            }
-
-        }
-
-        sortHashMapVisite()
-        /* (activity as DrawerActivity).HashMaplistaTasksDate.forEach { (v,k) ->
-             Log.i("myhashmap","$v")
-             Log.i("myhashmap","$k")
-         }*/
-        //  Log.i("myhashmap", "${(activity as DrawerActivity).HashMaplistaTasksDate}")
-    }
-
-
-    private fun sortHashMapVisite() {
-        val entries: Set<Map.Entry<String, ArrayList<Visite>>> =
-            (activity as DrawerActivity).HashMaplistaTasksDate.entries
-
-        val sorted: TreeMap<String, ArrayList<Visite>> =
-            TreeMap((activity as DrawerActivity).HashMaplistaTasksDate)
-
-        val mappings: Set<Map.Entry<String, ArrayList<Visite>>> = sorted.entries
-
-        mappings.forEach { (k, v) ->
-            Log.i("myhashmap", "$k")
-            Log.i("myhashmap", "$v")
-        }
-
-
     }
 
 

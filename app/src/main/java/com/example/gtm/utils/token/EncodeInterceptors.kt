@@ -10,10 +10,9 @@ class EncodeInterceptors : Interceptor {
         val request = chain.request()
         val path = request.url.toString()
 
-        var string = path.replace("%22", "\"") // replace
+        val string = path.replace("%22", "\"") // replace
 
 
-        Log.i("interceptorCaled",string)
         val newRequest = request.newBuilder()
             .url(string)
             .build()

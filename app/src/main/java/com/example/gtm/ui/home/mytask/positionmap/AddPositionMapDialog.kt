@@ -59,8 +59,7 @@ class AddPositionMapDialog(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //   dialog!!.window!!.setBackgroundDrawableResource(R.drawable.corned_white_purple)
-
+        //init dialog Internet + fragment manager
         dialogInternet = InternetCheckDialog()
         fm = requireActivity().supportFragmentManager
         return inflater.inflate(R.layout.fragment_position_map, container, false)
@@ -68,6 +67,8 @@ class AddPositionMapDialog(
 
     override fun onStart() {
         super.onStart()
+
+        //Set Custom height and width
         val width = (resources.displayMetrics.widthPixels * 0.99).toInt()
         val height = (resources.displayMetrics.heightPixels * 0.88).toInt()
         dialog!!.window?.setLayout(width, height)
@@ -76,16 +77,19 @@ class AddPositionMapDialog(
 
     override fun onDestroy() {
         super.onDestroy()
+        //Flagged as not running to do some tests after
         StaticMapClicked.mapIsRunning = false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //dismiss listener
         cancel.setOnClickListener {
             dismiss()
         }
 
+        //Store name
         store_name.text = nameIn
 
 
@@ -97,28 +101,36 @@ class AddPositionMapDialog(
 
         confirm_position.setOnClickListener {
 
+            //Check internet if good then add position
             checkInternet()
 
         }
 
     }
 
+
+    //Add new position to store
     private fun addPosition() {
         progress_indicator_position.visibility = View.VISIBLE
+        //Create a copy from Object
         val newStore = store.copy()
         newStore.lat = newPosition.latitude
         newStore.lng = newPosition.longitude
 
+        //Launch couroutine
         GlobalScope.launch(Dispatchers.Main) {
 
+            //Convert store Object to Json string
             val newStoreJson = jacksonObjectMapper().writeValueAsString(newStore)
             val bodyJson = RequestBody.create(
                 "application/json; charset=utf-8".toMediaTypeOrNull(),
                 newStoreJson
             )
 
+            //Get response after modifying store
             response = viewModel.modifyStore(bodyJson)
 
+            //If Response is Good
             if (response.responseCode == 201) {
                 store.lat = newPosition.latitude
                 store.lng = newPosition.longitude
@@ -129,21 +141,11 @@ class AddPositionMapDialog(
         }
     }
 
+    //ON GOOGLE MAP READY
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-
-        // Add a marker in Market and move the camera
-        /*  val marketPosition = LatLng(
-              LocationValueListener.myLocation.latitude,
-              LocationValueListener.myLocation.longitude
-          )
-
-          val location = CameraUpdateFactory.newLatLngZoom(
-              marketPosition, 16f
-          )
-          mMap.animateCamera(location) */
-
+        //Init marketPosition
         val marketPosition = LatLng(
             LocationValueListener.myLocation.latitude,
             LocationValueListener.myLocation.longitude
@@ -174,37 +176,16 @@ class AddPositionMapDialog(
 
         confirm_position.visibility = View.VISIBLE
 
-
-        // Setting a click event handler for the map
-        /* mMap.setOnMapClickListener { latLng -> // Creating a marker
-             val markerOptions = MarkerOptions()
-
-             // Setting the position for the marker
-             markerOptions.position(latLng)
-             newPosition = latLng
-
-
-             markerOptions.title(nameIn)
-
-             // Clears the previously touched position
-             googleMap.clear()
-
-             // Animating to the touched position
-             googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
-
-             // Placing a marker on the touched position
-             googleMap.addMarker(markerOptions)
-
-
-             confirm_position.visibility = View.VISIBLE
-         } */
     }
 
 
+    //Check Internet Before Adding Position
     private fun checkInternet() {
         InternetCheck { internet ->
+            //Position is good
             if (internet)
                 addPosition()
+            //repeat until position is added
             else {
 
                 //  progress_indicator_dialog.visibility = View.INVISIBLE
