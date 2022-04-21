@@ -9,6 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="purpleMain">#556ee6</color>
     <color name="purpleLogin">#2a3042</color>
+    <color name="purpleLoginMid">#6A2A3042</color>
     <color name="clear_grey">#dcdcdc</color>
     <color name="red">#DD3333</color>
     <color name="yellow">#FFE60D</color>

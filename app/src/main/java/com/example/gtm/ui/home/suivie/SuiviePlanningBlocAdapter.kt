@@ -137,7 +137,6 @@ class TaskViewBlocHolder(
 
 
     override fun onClick(v: View?) {
-        Log.i("Clicked", "${visiteResponse.storeId}")
         putStoreName(visiteResponse.store.name)
         listener.onClickedTask(
             visiteResponse.storeId,
@@ -268,7 +267,6 @@ class TaskViewBlocHolder(
         val date: Date = format.parse(simpleDate)
         format.applyPattern("yyyy-MM-dd")
         val dateformat = format.format(date)
-        Log.i("newar", dateformat)
         return dateformat
 
     }

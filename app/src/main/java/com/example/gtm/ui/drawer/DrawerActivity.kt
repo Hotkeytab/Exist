@@ -59,7 +59,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     var listOfQuestionsPerSc = HashMap<Int, HashMap<Int, Survey?>>()
     var loading = false
 
-    //Hashmap visite per day
+    //Hashmap visit per day
     var HashMaplistaTasksDate: HashMap<String, ArrayList<Visite>> =
         HashMap<String, ArrayList<Visite>>()
 
@@ -136,9 +136,7 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                         selectedFragment
                     ).commit()
             }
-
             true
-
         }
 
     }

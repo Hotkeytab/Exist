@@ -106,7 +106,7 @@ class EditProfileDialog(
             openImageChoser()
         }
 
-        //CHange profile after Internet check
+        //Change profile after Internet check
         submit.setOnClickListener {
             checkInternet()
         }
@@ -116,7 +116,7 @@ class EditProfileDialog(
     }
 
 
-    //GetUser From shared pref and fill all editexts
+    //GetUser From shared pref and fill all edittext
     private fun initProfile() {
         firstname_dialog.editText?.setText(userIn.first_name)
         lastname_dialog.editText?.setText(userIn.last_name)
@@ -130,7 +130,7 @@ class EditProfileDialog(
     }
 
 
-    //Change Profile Informations
+    //Change Profile Information
     @DelicateCoroutinesApi
     private fun changeProfile() {
 
@@ -170,7 +170,7 @@ class EditProfileDialog(
             userIn.roleId
         )
 
-        //Prepare ChangeProfile Couroutine
+        //Prepare ChangeProfile Coroutine
         GlobalScope.launch(Dispatchers.Main) {
 
             //Convert User Object to User String Json

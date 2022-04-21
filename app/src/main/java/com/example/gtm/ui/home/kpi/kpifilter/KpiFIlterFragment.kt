@@ -149,6 +149,9 @@ class KpiFIlterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
+        //Init dates for date_début and date_fin
+        setTodayDate()
+
         //Get Instance of Drawer Layout
         val mDrawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
 
@@ -951,6 +954,20 @@ class KpiFIlterFragment : Fragment() {
         valueVilleMap.clear()
         villeNameSet.clear()
         magasinNameSet.clear()
+    }
+
+
+    //set today date for date_debut and date_fin
+    private fun setTodayDate()
+    {
+        val cal = Calendar.getInstance()
+        val my_year = cal.get(Calendar.YEAR)
+        val my_month = cal.get(Calendar.MONTH)
+        val my_day = cal.get(Calendar.DAY_OF_MONTH)
+
+        binding.debutText.text = "$my_year-$my_month-$my_day"
+        binding.finText.text = "$my_year-$my_month-$my_day"
+
     }
 
 }

@@ -84,6 +84,8 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     private lateinit var d: Date
 
 
+
+
     override fun onStart() {
         super.onStart()
 
@@ -118,7 +120,6 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
                 Context.MODE_PRIVATE
             )
             userId = sharedPref.getInt("id", 0)
-
 
 
             //Prepare Date Format for dates
@@ -254,7 +255,6 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
                 false
             )
             binding.suivieRecycleview.adapter = adapterTask
-            // (activity as DrawerActivity).listOfTriDates = ArrayList<String>()
             adapterTask.setItems(listaTasks)
         }
 
@@ -275,20 +275,20 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
-    //Get Visites Service
+    //Get Visits Service
     @DelicateCoroutinesApi
     private fun getVisites() {
 
-        //Launch couroutine
+        //Launch Coroutine
         lifecycleScope.launch(Dispatchers.Main) {
 
-            //Save ResponseData of get Visites
+            //Save ResponseData of get Visits
             responseData = viewModel.getVisites(userId.toString(), dateTimeBegin, dateTimeEnd)
 
             //If response is good
             if (responseData.responseCode == 200) {
 
-                //get Lista of Visite from response
+                //get List of Visit from response
                 listaTasks = responseData.data!!.data as ArrayList<Visite>
 
 
@@ -316,7 +316,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
                 //If fragment is added and activity isn't null we get all responses of every quiz inside store
                 if (isAdded && activity != null)
                     getSurveyResponses()
-                
+
             }
 
         }
@@ -361,9 +361,9 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
             }
             return false
         } else {
-            Log.i("PERMISSIONBITCH", "4")
             if (CheckGpsStatus()) {
                 binding.progressIndicator.visibility = View.VISIBLE
+                //Get All Visites Then filter them with all responses
                 getVisites()
 
             } else {
@@ -531,7 +531,6 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
             val dayOfTheWeek = sdf.format(d)
             val dayOfTheWeek2 = sdf2.format(d)
             binding.topAppBar.title = "$dayOfTheWeek $dayOfTheWeek2"
-            Log.i("repeat", "2")
 
         } else if (daysFilter.weekFilter == 1) {
 

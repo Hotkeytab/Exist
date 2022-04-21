@@ -58,12 +58,12 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
             fm = requireActivity().supportFragmentManager
             dialog = InternetCheckDialog()
 
-            //Fill SignIn Editexts with sharedPref
+            //Fill SignIn Edittext with sharedPref
             initSignIn()
 
 
-            //Init All Editexts Animations
-            //Left to roght animation
+            //Init All Edittext Animations
+            //Left to right animation
             val animationLeftToRight =
                 AnimationUtils.loadAnimation(requireContext(), R.anim.left_to_right)
             //Right to left animation

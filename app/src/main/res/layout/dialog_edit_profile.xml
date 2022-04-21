@@ -141,7 +141,7 @@
             android:layout_marginLeft="@dimen/_60sdp"
             android:layout_marginRight="@dimen/_60sdp"
             android:background="@drawable/rounded_purple_button"
-            android:text="Submit"
+            android:text="Terminer"
             android:textColor="@color/white" />
 
         <Button
