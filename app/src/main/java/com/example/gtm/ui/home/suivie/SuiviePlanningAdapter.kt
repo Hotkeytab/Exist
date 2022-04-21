@@ -198,20 +198,12 @@ class TaskViewHolder(
 
 
 
-        /* itemBinding.storeText.setOnClickListener {
-             putStoreName(item.store.name)
-             listener.onClickedTask(
-                 visiteResponse.storeId,
-                 finalDistance
-             )
-         } */
 
 
     }
 
 
     override fun onClick(v: View?) {
-        Log.i("Clicked", "${visiteResponse.storeId}")
         putStoreName(visiteResponse.store.name)
         listener.onClickedTask(
             visiteResponse.storeId,
@@ -230,7 +222,6 @@ class TaskViewHolder(
         val date: Date = format.parse(simpleDate)
         format.applyPattern("yyyy-MM-dd")
         val dateformat = format.format(date)
-        Log.i("newar", dateformat)
         return dateformat
 
     }
@@ -269,7 +260,6 @@ class TaskViewHolder(
 
 
     private fun putStoreName(storeName: String) {
-        Log.i("storename", storeName)
         sharedPref =
             parent.context.getSharedPreferences(
                 R.string.app_name.toString(),

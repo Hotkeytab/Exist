@@ -86,7 +86,9 @@ class CategoryViewHolder(
 ) : RecyclerView.ViewHolder(itemBinding.root),
     View.OnClickListener {
 
+    //Test if Category is Open
     var isOpenLinear = false
+    //Test if Sub Category is open
     var isOpenLinearSC = false
     var addedValues = false
 
@@ -105,6 +107,7 @@ class CategoryViewHolder(
         //Expand Category
         expandColapse()
 
+        //Set Listener on category item , expand
         itemBinding.topCardv.setOnClickListener {
             expandColapse()
         }
@@ -119,6 +122,7 @@ class CategoryViewHolder(
     }
 
 
+    //Expand Category
     private fun expandColapse() {
         var i = 0
 
@@ -143,6 +147,7 @@ class CategoryViewHolder(
             val layout = itemBinding.testLinear
             layout.orientation = LinearLayout.VERTICAL
             var test: HashMap<Int, Survey?>?
+            //Test if there are sub categories under categories
             if (!addedValues) {
                 for (j in categoryResponse.questionSubCategories) {
 

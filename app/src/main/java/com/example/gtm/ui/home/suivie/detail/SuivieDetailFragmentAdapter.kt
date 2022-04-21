@@ -82,9 +82,6 @@ class SuivieDetailViewHolder(
 
         itemBinding.surveyName.text = item.name + "\n" + "note:       " +String.format("%.1f",item.average) + "/10"
 
-
-
-        Log.i("anacondalast","${item}")
         for(i in (sdActivity).afterSuiviArray)
         {
             if(i.survey == item)
@@ -110,7 +107,6 @@ class SuivieDetailViewHolder(
         val date: Date = format.parse(simpleDate)
         format.applyPattern("dd-MM-yyyy")
         val dateformat = format.format(date)
-        Log.i("newar", dateformat)
         return dateformat
 
     }

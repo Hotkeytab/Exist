@@ -126,7 +126,6 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
     }
 
 
-
     //Set Up recycleView Quiz
     private fun setupRecycleViewSurvey() {
 
@@ -142,11 +141,9 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
         adapterSurvey.setItems(listaQuiz)
         binding.progressIndicator.visibility = View.GONE
 
-        if(listaQuiz.size == 0)
-        {
+        if (listaQuiz.size == 0) {
             binding.noquiz.visibility = View.VISIBLE
-        }
-        else
+        } else
             binding.noquiz.visibility = View.GONE
 
     }
@@ -202,13 +199,11 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
     }
 
 
-    private fun searchForQuiz(quizId: Int) : Boolean
-    {
+    private fun searchForQuiz(quizId: Int): Boolean {
 
 
-        for(i in listaSurveyResponse)
-        {
-            if(i.surveyId == quizId)
+        for (i in listaSurveyResponse) {
+            if (i.surveyId == quizId)
                 return true
         }
         return false
@@ -232,13 +227,11 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
                 listaSurveyResponse = responseData2.data!!.data as ArrayList<DataX>
 
 
-                 listaQuiz = listaQuiz.filter { list -> !searchForQuiz(list.id) } as ArrayList<QuizData>
+                listaQuiz =
+                    listaQuiz.filter { list -> !searchForQuiz(list.id) } as ArrayList<QuizData>
 
                 setupRecycleViewSurvey()
-            }
-
-            else
-            {
+            } else {
                 checkInternet()
             }
         }

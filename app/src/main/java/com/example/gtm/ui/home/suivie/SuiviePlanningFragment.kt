@@ -72,7 +72,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     private var listaSurveyResponse = ArrayList<DataX>()
     lateinit var sharedPref: SharedPreferences
     private lateinit var responseData: Resource<VisiteResponse>
-    private lateinit var responseData2 : Resource<SurveyResponse>
+    private lateinit var responseData2: Resource<SurveyResponse>
     private val viewModel: MyTaskViewModel by viewModels()
     private var userId = 0
     private lateinit var dateTimeBegin: String
@@ -120,6 +120,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
             userId = sharedPref.getInt("id", 0)
 
 
+
             //Prepare Date Format for dates
             val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
             dateTimeBegin = simpleDateFormat.format(d.time).toString()
@@ -133,7 +134,6 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
 
         //Override Bottom back button
@@ -188,7 +188,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
 
             }
 
-            // >> Month Filetr Clicked
+            // Month Filetr Clicked
             binding.montherfiltercard.setOnClickListener {
                 daysFilter.dayFilter = 0
                 daysFilter.weekFilter = 0
@@ -197,8 +197,6 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
                 binding.progressIndicator.visibility = View.VISIBLE
                 setTopDate()
             }
-
-
 
 
             //Next date button listener
@@ -241,7 +239,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     private fun setupRecycleView() {
 
         //If fragment is added
-        if(isAdded) {
+        if (isAdded) {
             adapterTask = SuiviePlanningBlocAdapter(
                 this,
                 requireActivity(),
@@ -277,7 +275,6 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
-
     //Get Visites Service
     @DelicateCoroutinesApi
     private fun getVisites() {
@@ -288,7 +285,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
             //Save ResponseData of get Visites
             responseData = viewModel.getVisites(userId.toString(), dateTimeBegin, dateTimeEnd)
 
-        //If response is good
+            //If response is good
             if (responseData.responseCode == 200) {
 
                 //get Lista of Visite from response
@@ -314,12 +311,12 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
 
                 if (daysFilter.weekFilter == 1 || daysFilter.monthFilter == 1) {
                     Collections.sort(listaTasks, SortByDate())
-                    //  transformListToHashMapDate()
                 }
 
                 //If fragment is added and activity isn't null we get all responses of every quiz inside store
                 if (isAdded && activity != null)
                     getSurveyResponses()
+                
             }
 
         }
@@ -331,11 +328,12 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     private fun getSurveyResponses() {
         GlobalScope.launch(Dispatchers.Main) {
             //Get response service
-            responseData2 = viewModel.getSurveyResponse(userId.toString(), dateTimeBegin, dateTimeEnd)
+            responseData2 =
+                viewModel.getSurveyResponse(userId.toString(), dateTimeBegin, dateTimeEnd)
 
             //If response is good
             if (responseData2.responseCode == 200) {
-              listaSurveyResponse = responseData2.data!!.data as ArrayList<DataX>
+                listaSurveyResponse = responseData2.data!!.data as ArrayList<DataX>
                 setupRecycleView()
                 binding.progressIndicator.visibility = View.GONE
 
@@ -364,8 +362,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
             return false
         } else {
             Log.i("PERMISSIONBITCH", "4")
-            if (CheckGpsStatus())
-            {
+            if (CheckGpsStatus()) {
                 binding.progressIndicator.visibility = View.VISIBLE
                 getVisites()
 
@@ -375,7 +372,6 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
         }
         return true
     }
-
 
 
     //SHow Permission Gps dialog
@@ -397,7 +393,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
-    //SHow Permission Dienied dialog
+    //Show Permission Dienied dialog
     private fun showPermissionDeniedGPS() {
         AlertDialog.Builder(requireContext())
             .setTitle("Autorisation GPS")
@@ -405,7 +401,6 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
             .setPositiveButton("Paramètres de l’application",
                 DialogInterface.OnClickListener { _, _ ->
                     // send to app settings if permission is denied permanently
-
                     val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                     startActivity(intent)
 
@@ -422,8 +417,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
         when (requestCode) {
             2 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (CheckGpsStatus())
-                    {
+                    if (CheckGpsStatus()) {
                         binding.progressIndicator.visibility = View.VISIBLE
                         getVisites()
 
@@ -459,9 +453,6 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
-
-
-
     //Compare between two Dates
     private fun compareDatesDay(simpleDate: String): Boolean {
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -480,7 +471,6 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
         return false
 
     }
-
 
 
     //Compare Between two months
@@ -514,7 +504,6 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     }
 
 
-
     //Set top filter color , texts , titles ....
     @SuppressLint("ResourceAsColor")
     private fun setFilters(cardview: CardView, textView: TextView, filter: Int) {
@@ -531,8 +520,6 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
 
         }
     }
-
-
 
 
     //Calculate Top Date After switch day or week or month

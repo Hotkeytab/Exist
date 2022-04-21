@@ -97,7 +97,6 @@ class TaskViewHolder(
 
     fun bind(item: Visite) {
         this.visiteResponse = item
-        var clicked = false
         itemBinding.pointage.visibility = View.VISIBLE
 
 
@@ -168,8 +167,6 @@ class TaskViewHolder(
                     item,
                     theDistance
                 )
-                /*  parent.findNavController()
-                      .navigate(R.id.action_taskFragment_to_quizFragment)*/
             }
 
             itemBinding.storeText.setOnClickListener {
@@ -181,8 +178,7 @@ class TaskViewHolder(
                     item,
                     theDistance
                 )
-                /* parent.findNavController()
-                     .navigate(R.id.action_taskFragment_to_quizFragment)*/
+
             }
         } else {
             finalDistance = (theDistance.toInt() / 1000).toString() + " km"
@@ -277,7 +273,7 @@ class TaskViewHolder(
 
 
 
-    //Add  An Hour to the current date because backend developer as always doesn't want  to send GMT Form
+    //Add  An Hour to the current date because backend service doesn't provide GMT form
     private fun testDay(day : String) : String
     { //Normal Date Format
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -325,7 +321,7 @@ class TaskViewHolder(
         }?.commit()
     }
 
-    //Put VisitID in sharedPref
+    //Put VisitId in sharedPref
     private fun putVisiteId(visiteId: Int) {
         sharedPref =
             parent.context.getSharedPreferences(

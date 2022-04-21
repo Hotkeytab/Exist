@@ -262,6 +262,7 @@ class TaskViewBlocHolder(
     }
 
 
+    //Extract date from string
     private fun extractDate(simpleDate: String) : String{
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         val date: Date = format.parse(simpleDate)
@@ -273,6 +274,7 @@ class TaskViewBlocHolder(
     }
 
 
+    //Format Date and show it in item
     private fun showDate( inflatter : View) {
         //Normal Date Format
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -305,8 +307,8 @@ class TaskViewBlocHolder(
     }
 
 
+    //Put Store Name into shared pref
     private fun putStoreName(storeName: String) {
-        Log.i("storename", storeName)
         sharedPref =
             parent.context.getSharedPreferences(
                 R.string.app_name.toString(),
@@ -318,6 +320,7 @@ class TaskViewBlocHolder(
     }
 
 
+    //Format date from string to date then back from date to string
     private fun testDay(day : String) : String
     { //Normal Date Format
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")

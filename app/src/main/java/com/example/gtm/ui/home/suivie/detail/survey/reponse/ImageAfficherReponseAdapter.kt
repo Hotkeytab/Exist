@@ -72,7 +72,6 @@ class ImageViewHolder(
     fun bind(item: String,position: Int) {
         this.imageResponse = item
 
-        //itemBinding.myimage.setImageBitmap(item.url)
 
         Glide.with(itemBinding.root)
             .load(item)
@@ -87,8 +86,6 @@ class ImageViewHolder(
 
     override fun onClick(v: View?) {
         listener.onClickedImage(adapterPosition)
-
-
 
     }
 

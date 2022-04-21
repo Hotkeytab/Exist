@@ -185,13 +185,4 @@ class CategoryDetailViewHolder(
 
 
 
-    /*    val btnTag = Button(parent.context)
-    btnTag.layoutParams = LinearLayout.LayoutParams(
-        LinearLayout.LayoutParams.WRAP_CONTENT,
-        LinearLayout.LayoutParams.MATCH_PARENT
-    )
-    btnTag.text = "Button " + (j + 1 + i * 4)
-    btnTag.id = j + 1 + i * 4*/
-
-
 }

@@ -60,6 +60,7 @@ class AddVisiteAdapter(
 
     }
 
+    //list size
     override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) =
@@ -75,11 +76,7 @@ class TaskViewHolder(
 
 
     private lateinit var visiteResponse: DataXX
-    private lateinit var dialog: PositionMapDialog
     lateinit var sharedPref: SharedPreferences
-    private val REQUEST_CODE = 2
-    private var finalDistance = ""
-    private var selected = false
 
     init {
         itemBinding.root.setOnClickListener(this)
@@ -90,6 +87,7 @@ class TaskViewHolder(
         this.visiteResponse = item
 
 
+        //Store Picture
         if(item.storePictures.isNotEmpty())
         Glide.with(itemBinding.root)
             .load(item.storePictures[0].path)
