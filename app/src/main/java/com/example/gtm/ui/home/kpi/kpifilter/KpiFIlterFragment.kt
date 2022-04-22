@@ -1,5 +1,6 @@
 package com.example.gtm.ui.home.kpi.kpifilter
 
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -58,6 +59,7 @@ class KpiFIlterFragment : Fragment() {
     private lateinit var responseDataStores: Resource<GetStore>
     private val viewModel: AddVisiteDialogViewModel by viewModels()
     private val viewModelKpi: KpiFilterFragmentViewModel by viewModels()
+
     //List of StoreXX
     private var listaDataXX = ArrayList<DataXX>()
     private var listaKpi = ArrayList<DataXXX>()
@@ -172,7 +174,6 @@ class KpiFIlterFragment : Fragment() {
         getStoresAndQuestionnaires()
 
 
-
         //Ville Editext Listener
         villeText.onItemClickListener = OnItemClickListener { parent, view, position, id ->
             //if ville doesnt exist in the groupList then add it
@@ -201,7 +202,6 @@ class KpiFIlterFragment : Fragment() {
         }
 
 
-
         //Valider Button Listener
         valider_kpi.setOnClickListener {
             //if EndDate >= StartDate
@@ -210,7 +210,7 @@ class KpiFIlterFragment : Fragment() {
                 error_text.visibility = View.VISIBLE
                 date_debut_text.requestFocus()
                 //There must be at least one questionnaire if you want to get piechart
-            } else if (etatFragment == 1 && (arrayQuestNew.size != 1)) {
+            } else  if (etatFragment == 1 && (arrayQuestNew.size != 1)) {
                 error_text.visibility = View.GONE
                 binding.questionnaireErrorText.visibility = View.VISIBLE
                 binding.questionnaireErrorText.requestFocus()
@@ -252,13 +252,40 @@ class KpiFIlterFragment : Fragment() {
         //SwipeDown Refresh
         binding.swiperefreshlayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
 
-            getStoresAndQuestionnaires()
+          //  getStoresAndQuestionnaires()
             swiperefreshlayout.isRefreshing = false
         })
 
 
-    }
+        //Date debut setOnClickListener
+        binding.dateDebutCardTextCalendar.setOnClickListener {
 
+            //Show calendarView then setText in datedebuttext
+            clickDataPicker(requireView(),0)
+        }
+
+        binding.dateDebutCardText.setOnClickListener {
+
+            //Show calendarView then setText in datedebuttext
+            clickDataPicker(requireView(),0)
+        }
+
+
+        //Date fin setOnClickListener
+        binding.dateFinCardTextCalendar.setOnClickListener {
+
+            //Show calendarView then setText in datefintext
+            clickDataPicker(requireView(),1)
+        }
+
+        binding.dateFinCardText.setOnClickListener {
+
+            //Show calendarView then setText in datefintext
+            clickDataPicker(requireView(),1)
+        }
+
+
+    }
 
 
     //Check if the chip exists in the array
@@ -307,10 +334,10 @@ class KpiFIlterFragment : Fragment() {
 
     //End Date must be >= to Start Date
     private fun controleDate(): Boolean {
-        day_debut_picker =
+       /* day_debut_picker =
             "${date_debut_picker.year}-${(date_debut_picker.month + 1)}-${date_debut_picker.dayOfMonth}"
         day_fin_picker =
-            "${date_fin_picker.year}-${(date_fin_picker.month + 1)}-${date_fin_picker.dayOfMonth}"
+            "${date_fin_picker.year}-${(date_fin_picker.month + 1)}-${date_fin_picker.dayOfMonth}" */
 
         val sdf = SimpleDateFormat("yyyy-MM-dd")
         val debutParsed = sdf.parse(day_debut_picker)
@@ -403,7 +430,7 @@ class KpiFIlterFragment : Fragment() {
                 if (fm != null && !fm!!.isDestroyed)
                     progressUploadDialog.dismiss()
 
-            // Repeat getStoresAndQuestionnaires() until we get good response
+                // Repeat getStoresAndQuestionnaires() until we get good response
             } else {
 
                 progressUploadDialog.dismiss()
@@ -590,7 +617,12 @@ class KpiFIlterFragment : Fragment() {
                 )
 
             } else {
+                arraySupervisorsId.clear()
+                arrayStoresId.clear()
+                arrayQuestIds.clear()
+                arrayVilleNew.clear()
                 progressUploadDialog.dismiss()
+                binding.errorTextKpi.visibility = View.VISIBLE
             }
 
 
@@ -610,7 +642,7 @@ class KpiFIlterFragment : Fragment() {
     }
 
 
-    // Create HAShmap of magasin -> average
+    // Create Hashmap of magasin -> average
     private fun extractAverageForStore() {
         var increment = 0
         var average = 0.0
@@ -958,16 +990,52 @@ class KpiFIlterFragment : Fragment() {
 
 
     //set today date for date_debut and date_fin
-    private fun setTodayDate()
-    {
+    private fun setTodayDate() {
         val cal = Calendar.getInstance()
         val my_year = cal.get(Calendar.YEAR)
         val my_month = cal.get(Calendar.MONTH)
         val my_day = cal.get(Calendar.DAY_OF_MONTH)
 
-        binding.debutText.text = "$my_year-$my_month-$my_day"
-        binding.finText.text = "$my_year-$my_month-$my_day"
+        binding.debutText.text = "$my_year-${my_month+1}-$my_day"
+        binding.finText.text = "$my_year-${my_month+1}-$my_day"
 
+        day_debut_picker = "$my_year-${my_month+1}-$my_day"
+        day_fin_picker = "$my_year-${my_month+1}-$my_day"
+
+
+    }
+
+
+    //Prepare CalendarView
+    fun clickDataPicker(view: View,typeDate: Int) {
+        val c = Calendar.getInstance()
+        val year = c.get(Calendar.YEAR)
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
+
+        val dpd = DatePickerDialog(
+            requireContext(),
+            DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                // Display Selected date in Editext
+
+                //date Début
+                if(typeDate == 0)
+                {
+                    binding.debutText.text = "$year-${monthOfYear+1}-$dayOfMonth"
+                    day_debut_picker = "$year-${monthOfYear+1}-$dayOfMonth"
+                }
+                //date Fin
+                else
+                {
+                    binding.finText.text = "$year-${monthOfYear+1}-$dayOfMonth"
+                    day_fin_picker = "$year-${monthOfYear+1}-$dayOfMonth"
+                }
+            },
+            year,
+            month,
+            day
+        )
+        dpd.show()
     }
 
 }

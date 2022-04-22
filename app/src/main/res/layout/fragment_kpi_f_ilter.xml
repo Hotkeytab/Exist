@@ -211,211 +211,169 @@
 
                         <LinearLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_gravity="center"
                             android:layout_marginTop="@dimen/_5sdp"
                             android:orientation="horizontal">
 
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/date_debut_card_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:visibility="visible"
-                            app:cardCornerRadius="@dimen/_4sdp"
-                            app:cardUseCompatPadding="true">
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/date_debut_card_text_calendar"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="@dimen/_20sdp"
+                                android:visibility="visible"
+                                app:cardCornerRadius="@dimen/_4sdp"
+                                app:cardUseCompatPadding="true">
 
-                            <TextView
-                                android:id="@+id/debut_text"
-                                android:layout_width="match_parent"
+                                <ImageView
+                                    android:layout_width="@dimen/_35sdp"
+                                    android:layout_height="@dimen/_35sdp"
+                                    app:tint="@color/black"
+                                    android:src="@drawable/outline_calendar_month_24" />
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/date_debut_card_text"
+                                android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:layout_margin="@dimen/_10sdp"
-                                android:textStyle="bold" />
+                                android:visibility="visible"
+                                app:cardCornerRadius="@dimen/_4sdp"
+                                app:cardUseCompatPadding="true">
 
-                        </androidx.cardview.widget.CardView>
+                                <TextView
+                                    android:id="@+id/debut_text"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_margin="@dimen/_10sdp"
+                                    android:textStyle="bold" />
+
+                            </androidx.cardview.widget.CardView>
 
 
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/_15sdp"
-                        android:text="Date fin"
-                        android:textStyle="bold" />
-
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:visibility="gone"
-                        app:cardCornerRadius="@dimen/_4sdp"
-                        app:cardUseCompatPadding="true">
-
-                        <DatePicker
-                            android:id="@+id/date_fin_picker"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:calendarViewShown="false"
-                            android:datePickerMode="spinner" />
-
-                    </androidx.cardview.widget.CardView>
-
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/date_fin_card_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:layout_marginBottom="@dimen/_20sdp"
-                        android:visibility="visible"
-                        app:cardCornerRadius="@dimen/_4sdp"
-                        app:cardUseCompatPadding="true">
+                        </LinearLayout>
 
                         <TextView
-                            android:id="@+id/fin_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_margin="@dimen/_10sdp"
-                            android:textStyle="bold" />
-
-                    </androidx.cardview.widget.CardView>
-
-
-                    <!--  <TextView
-                            android:id="@+id/text_type_analyse"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginTop="@dimen/_15sdp"
-                            android:text="Type d'analyse"
+                            android:text="Date fin"
                             android:textStyle="bold" />
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="32dp"
-                            android:layout_marginTop="20dp"
-                            android:layout_marginEnd="32dp"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:visibility="gone"
+                            app:cardCornerRadius="@dimen/_4sdp"
+                            app:cardUseCompatPadding="true">
+
+                            <DatePicker
+                                android:id="@+id/date_fin_picker"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:calendarViewShown="false"
+                                android:datePickerMode="spinner" />
+
+                        </androidx.cardview.widget.CardView>
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/_5sdp"
                             android:orientation="horizontal">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1" />
-
                             <androidx.cardview.widget.CardView
-                                android:id="@+id/card_kpi_stats"
+                                android:id="@+id/date_fin_card_text_calendar"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginRight="@dimen/_20sdp"
+                                android:visibility="visible"
                                 app:cardCornerRadius="@dimen/_4sdp"
                                 app:cardUseCompatPadding="true">
 
                                 <ImageView
-                                    android:id="@+id/image_kpi_stats"
-                                    android:layout_width="@dimen/_40sdp"
-                                    android:layout_height="@dimen/_40sdp"
-                                    android:src="@drawable/ic_baseline_bar_chart_24"
-                                    app:tint="@color/clear_grey" />
+                                    android:layout_width="@dimen/_35sdp"
+                                    android:layout_height="@dimen/_35sdp"
+                                    app:tint="@color/black"
+                                    android:src="@drawable/outline_calendar_month_24" />
                             </androidx.cardview.widget.CardView>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1" />
-
                             <androidx.cardview.widget.CardView
-                                android:id="@+id/card_table_stats"
+                                android:id="@+id/date_fin_card_text"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="@dimen/_5sdp"
+                                android:layout_marginBottom="@dimen/_20sdp"
+                                android:visibility="visible"
                                 app:cardCornerRadius="@dimen/_4sdp"
                                 app:cardUseCompatPadding="true">
 
-                                <ImageView
-                                    android:id="@+id/image_table_stats"
-                                    android:layout_width="@dimen/_40sdp"
-                                    android:layout_height="@dimen/_40sdp"
-                                    android:src="@drawable/outline_table_rows_24"
-                                    app:tint="@color/purpleLogin" />
+                                <TextView
+                                    android:id="@+id/fin_text"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_margin="@dimen/_10sdp"
+                                    android:textStyle="bold" />
+
                             </androidx.cardview.widget.CardView>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1" />
 
                         </LinearLayout>
 
-                        -->
-
-                    <TextView
-                        android:id="@+id/error_text_kpi"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:text="Erreur connexion, réssayer plus tard"
-                        android:textColor="@color/red"
-                        android:visibility="gone" />
-
-
-                    <LinearLayout
-                        android:id="@+id/mainlinear"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:layout_constraintTop_toBottomOf="@id/progress_indicator">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-
-                            <TextView
+                        <!--  <TextView
+                                android:id="@+id/text_type_analyse"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1" />
+                                android:layout_gravity="center"
+                                android:layout_marginTop="@dimen/_15sdp"
+                                android:text="Type d'analyse"
+                                android:textStyle="bold" />
 
-                            <androidx.cardview.widget.CardView
-                                android:id="@+id/image_table_stats_card"
-                                android:layout_width="wrap_content"
-                                android:layout_height="@dimen/_60sdp"
-                                android:layout_marginLeft="@dimen/_10sdp"
-                                android:layout_marginTop="@dimen/_5sdp"
-                                android:layout_marginRight="@dimen/_10sdp"
-                                android:layout_marginBottom="@dimen/_10sdp"
-                                app:cardCornerRadius="@dimen/_4sdp"
-                                app:cardUseCompatPadding="true"
-                                app:layout_constraintTop_toBottomOf="@+id/date_text">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="32dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginEnd="32dp"
+                                android:orientation="horizontal">
 
-                                <LinearLayout
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1" />
 
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_margin="@dimen/_5sdp"
-                                    android:orientation="horizontal">
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/card_kpi_stats"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:cardCornerRadius="@dimen/_4sdp"
+                                    app:cardUseCompatPadding="true">
 
-                                    <LinearLayout
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="match_parent"
-                                        android:orientation="vertical"
+                                    <ImageView
+                                        android:id="@+id/image_kpi_stats"
+                                        android:layout_width="@dimen/_40sdp"
+                                        android:layout_height="@dimen/_40sdp"
+                                        android:src="@drawable/ic_baseline_bar_chart_24"
+                                        app:tint="@color/clear_grey" />
+                                </androidx.cardview.widget.CardView>
 
-                                        >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1" />
 
-                                        <TextView
-                                            android:id="@+id/table_text"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_weight="1"
-                                            android:gravity="center"
-                                            android:text="Analyses\nSupérviseur"
-                                            android:textColor="@color/purpleLogin"
-                                            android:textStyle="bold" />
-
-
-                                    </LinearLayout>
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/card_table_stats"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:cardCornerRadius="@dimen/_4sdp"
+                                    app:cardUseCompatPadding="true">
 
                                     <ImageView
                                         android:id="@+id/image_table_stats"
@@ -423,101 +381,185 @@
                                         android:layout_height="@dimen/_40sdp"
                                         android:src="@drawable/outline_table_rows_24"
                                         app:tint="@color/purpleLogin" />
+                                </androidx.cardview.widget.CardView>
 
-                                </LinearLayout>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1" />
+
+                            </LinearLayout>
+
+                            -->
+
+                        <TextView
+                            android:id="@+id/error_text_kpi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:text="Erreur connexion, réssayer plus tard"
+                            android:textColor="@color/red"
+                            android:visibility="gone" />
 
 
-                            </androidx.cardview.widget.CardView>
+                        <LinearLayout
+                            android:id="@+id/mainlinear"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintTop_toBottomOf="@id/progress_indicator">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1" />
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
 
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1" />
 
-                            <androidx.cardview.widget.CardView
-                                android:id="@+id/image_kpi_stats_card"
-                                android:layout_width="wrap_content"
-                                android:layout_height="@dimen/_60sdp"
-                                android:layout_marginLeft="@dimen/_10sdp"
-                                android:layout_marginTop="@dimen/_5sdp"
-                                android:layout_marginRight="@dimen/_10sdp"
-                                android:layout_marginBottom="@dimen/_10sdp"
-                                app:cardCornerRadius="@dimen/_4sdp"
-                                app:cardUseCompatPadding="true"
-                                app:layout_constraintTop_toBottomOf="@+id/date_text">
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_margin="@dimen/_5sdp"
-                                    android:orientation="horizontal">
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/image_table_stats_card"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="@dimen/_60sdp"
+                                    android:layout_marginLeft="@dimen/_10sdp"
+                                    android:layout_marginTop="@dimen/_5sdp"
+                                    android:layout_marginRight="@dimen/_10sdp"
+                                    android:layout_marginBottom="@dimen/_10sdp"
+                                    app:cardCornerRadius="@dimen/_4sdp"
+                                    app:cardUseCompatPadding="true"
+                                    app:layout_constraintTop_toBottomOf="@+id/date_text">
 
                                     <LinearLayout
-                                        android:layout_width="wrap_content"
+
+                                        android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:orientation="vertical"
+                                        android:layout_margin="@dimen/_5sdp"
+                                        android:orientation="horizontal">
 
-                                        >
-
-                                        <TextView
-                                            android:id="@+id/pie_chart_text"
+                                        <LinearLayout
                                             android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_marginRight="@dimen/_10sdp"
-                                            android:layout_weight="1"
-                                            android:gravity="center"
-                                            android:hint="PieChart"
-                                            android:textColorHint="@color/clear_grey"
-                                            android:textStyle="bold" />
+                                            android:layout_height="match_parent"
+                                            android:orientation="vertical"
 
+                                            >
+
+                                            <TextView
+                                                android:id="@+id/table_text"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_weight="1"
+                                                android:gravity="center"
+                                                android:text="Analyses\nSupérviseur"
+                                                android:textColor="@color/purpleLogin"
+                                                android:textStyle="bold" />
+
+
+                                        </LinearLayout>
+
+                                        <ImageView
+                                            android:id="@+id/image_table_stats"
+                                            android:layout_width="@dimen/_40sdp"
+                                            android:layout_height="@dimen/_40sdp"
+                                            android:src="@drawable/outline_table_rows_24"
+                                            app:tint="@color/purpleLogin" />
 
                                     </LinearLayout>
 
-                                    <ImageView
-                                        android:id="@+id/image_kpi_stats"
-                                        android:layout_width="@dimen/_40sdp"
-                                        android:layout_height="@dimen/_40sdp"
-                                        android:src="@drawable/outline_pie_chart_24"
-                                        app:tint="@color/clear_grey" />
 
-                                </LinearLayout>
+                                </androidx.cardview.widget.CardView>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1" />
 
 
-                            </androidx.cardview.widget.CardView>
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/image_kpi_stats_card"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="@dimen/_60sdp"
+                                    android:layout_marginLeft="@dimen/_10sdp"
+                                    android:layout_marginTop="@dimen/_5sdp"
+                                    android:layout_marginRight="@dimen/_10sdp"
+                                    android:layout_marginBottom="@dimen/_10sdp"
+                                    app:cardCornerRadius="@dimen/_4sdp"
+                                    app:cardUseCompatPadding="true"
+                                    app:layout_constraintTop_toBottomOf="@+id/date_text">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1" />
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_margin="@dimen/_5sdp"
+                                        android:orientation="horizontal">
+
+                                        <LinearLayout
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="match_parent"
+                                            android:orientation="vertical"
+
+                                            >
+
+                                            <TextView
+                                                android:id="@+id/pie_chart_text"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginRight="@dimen/_10sdp"
+                                                android:layout_weight="1"
+                                                android:gravity="center"
+                                                android:hint="PieChart"
+                                                android:textColorHint="@color/clear_grey"
+                                                android:textStyle="bold" />
+
+
+                                        </LinearLayout>
+
+                                        <ImageView
+                                            android:id="@+id/image_kpi_stats"
+                                            android:layout_width="@dimen/_40sdp"
+                                            android:layout_height="@dimen/_40sdp"
+                                            android:src="@drawable/outline_pie_chart_24"
+                                            app:tint="@color/clear_grey" />
+
+                                    </LinearLayout>
+
+
+                                </androidx.cardview.widget.CardView>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1" />
+
+                            </LinearLayout>
+
 
                         </LinearLayout>
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/valider_kpi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/_20sdp"
+                            android:layout_marginBottom="@dimen/_5sdp"
+                            android:background="@drawable/corned_white_purple"
+                            android:text="Valider"
+                            android:textColor="@color/purpleLogin" />
 
 
                     </LinearLayout>
 
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/valider_kpi"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/_20sdp"
-                        android:layout_marginBottom="@dimen/_5sdp"
-                        android:background="@drawable/corned_white_purple"
-                        android:text="Valider"
-                        android:textColor="@color/purpleLogin" />
+                </androidx.core.widget.NestedScrollView>
+
+            </androidx.cardview.widget.CardView>
 
 
-                </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </androidx.core.widget.NestedScrollView>
-
-        </androidx.cardview.widget.CardView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-
-    </layout>
+</layout>

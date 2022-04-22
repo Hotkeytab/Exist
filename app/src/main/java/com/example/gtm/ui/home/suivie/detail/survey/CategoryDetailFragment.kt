@@ -25,10 +25,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class CategoryDetailFragment : Fragment(), CategoryDetailAdapter.CategoryDetailItemListener {
+class CategoryDetailFragment : Fragment(), CategoryDetailNewAdapter.CategoryDetailNewItemListener {
 
     private lateinit var binding: FragmentCategoryDetailBinding
-    private lateinit var adapterDetailCategory: CategoryDetailAdapter
+    private lateinit var adapterDetailCategory: CategoryDetailNewAdapter
     private var listaCategory = ArrayList<QuestionCategory>()
     private var myVal: String? = ""
     lateinit var sharedPref: SharedPreferences
@@ -93,7 +93,7 @@ class CategoryDetailFragment : Fragment(), CategoryDetailAdapter.CategoryDetailI
     private fun setupRecycleViewCategory() {
 
         adapterDetailCategory =
-            CategoryDetailAdapter(this, requireActivity(), myVal!!,(activity as SuiviDetailActivity))
+            CategoryDetailNewAdapter(this, requireActivity(), myVal!!,(activity as SuiviDetailActivity))
         binding.categoryRecycleview.isMotionEventSplittingEnabled = false
         binding.categoryRecycleview.layoutManager = LinearLayoutManager(requireContext())
         binding.categoryRecycleview.layoutManager = LinearLayoutManager(
