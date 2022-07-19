@@ -77,6 +77,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
     private var filesNumber = 0
     private var visiteId = 0
     var recentPercent = 0
+    var recentPercent1 = 0
 
 
     override fun onCreateView(
