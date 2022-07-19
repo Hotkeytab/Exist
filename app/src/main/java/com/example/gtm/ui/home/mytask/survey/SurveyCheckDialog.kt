@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.DialogFragment
 import com.example.gtm.R
 import dagger.hilt.android.AndroidEntryPoint
@@ -14,12 +13,11 @@ import kotlinx.android.synthetic.main.dialog_quiz_confirmation.*
 import android.view.*
 import android.widget.FrameLayout
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import com.example.gtm.data.entities.remote.VisitPost
-import com.example.gtm.data.entities.response.SuccessResponse
-import com.example.gtm.data.entities.response.TimeClass
-import com.example.gtm.data.entities.response.Visite
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.category.SuccessResponse
+import com.example.gtm.data.entities.response.mytaskplanning.timeservice.TimeClass
+import com.example.gtm.data.entities.response.mytaskplanning.getvisite.Visite
 import com.example.gtm.ui.home.mytask.LocationValueListener
 import com.example.gtm.ui.home.mytask.MyTaskViewModel
 import com.example.gtm.ui.home.mytask.TaskAdapter
@@ -28,7 +26,6 @@ import com.example.gtm.ui.home.mytask.survey.quiz.MyQuizViewModel
 import com.example.gtm.utils.resources.Resource
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.dialog_choix_visitee.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

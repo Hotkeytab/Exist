@@ -12,42 +12,30 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import android.view.*
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.cardview.widget.CardView
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.gtm.R
-import com.example.gtm.data.entities.response.DataX
-import com.example.gtm.data.entities.response.SurveyResponse
-import com.example.gtm.data.entities.response.Visite
-import com.example.gtm.data.entities.response.VisiteResponse
+import com.example.gtm.data.entities.response.suivieplanning.ResponsesOfAllQuestions
+import com.example.gtm.data.entities.response.suivieplanning.SurveyResponse
+import com.example.gtm.data.entities.response.mytaskplanning.getvisite.Visite
+import com.example.gtm.data.entities.response.mytaskplanning.getvisite.VisiteResponse
 import com.example.gtm.databinding.FragmentSuiviePlanningBinding
-import com.example.gtm.databinding.FragmentTaskBinding
 import com.example.gtm.ui.drawer.DrawerActivity
 import com.example.gtm.ui.home.mytask.*
-import com.example.gtm.ui.home.mytask.TaskFragment
-import com.example.gtm.ui.home.mytask.survey.SurveyCheckDialog
 import com.example.gtm.utils.resources.Resource
-import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.dialog_add_visite.*
 import kotlinx.android.synthetic.main.fragment_task.*
 import kotlinx.android.synthetic.main.fragment_task.swiperefreshlayout
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -57,10 +45,6 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
 
 @AndroidEntryPoint
 class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemListener {
@@ -69,7 +53,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
     private lateinit var binding: FragmentSuiviePlanningBinding
     private lateinit var adapterTask: SuiviePlanningBlocAdapter
     private var listaTasks = ArrayList<Visite>()
-    private var listaSurveyResponse = ArrayList<DataX>()
+    private var listaSurveyResponse = ArrayList<ResponsesOfAllQuestions>()
     lateinit var sharedPref: SharedPreferences
     private lateinit var responseData: Resource<VisiteResponse>
     private lateinit var responseData2: Resource<SurveyResponse>
@@ -333,7 +317,7 @@ class SuiviePlanningFragment : Fragment(), SuiviePlanningBlocAdapter.TaskItemLis
 
             //If response is good
             if (responseData2.responseCode == 200) {
-                listaSurveyResponse = responseData2.data!!.data as ArrayList<DataX>
+                listaSurveyResponse = responseData2.data!!.data as ArrayList<ResponsesOfAllQuestions>
                 setupRecycleView()
                 binding.progressIndicator.visibility = View.GONE
 

@@ -2,7 +2,6 @@ package com.example.gtm.ui.home.mytask.positionmap
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,12 +9,10 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.example.gtm.R
-import com.example.gtm.data.entities.response.DataXX
-import com.example.gtm.data.entities.response.GetStore
-import com.example.gtm.data.entities.response.ModifyStoreResponse
+import com.example.gtm.data.entities.response.mytaskplanning.ajoutervisite.ModifyStoreResponse
+import com.example.gtm.data.entities.response.mytaskplanning.ajoutervisite.StoreServiceAjouterVisite
 import com.example.gtm.ui.home.mytask.LocationValueListener
 import com.example.gtm.ui.home.mytask.StaticMapClicked
-import com.example.gtm.ui.home.mytask.addvisite.AddVisiteDialogViewModel
 import com.example.gtm.utils.remote.Internet.InternetCheck
 import com.example.gtm.utils.remote.Internet.InternetCheckDialog
 import com.example.gtm.utils.resources.Resource
@@ -27,10 +24,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
-import com.google.android.gms.maps.CameraUpdate
 import kotlinx.android.synthetic.main.fragment_position_map.*
-import kotlinx.android.synthetic.main.item_task.*
-import com.google.android.gms.maps.GoogleMap.OnMapClickListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -41,7 +35,7 @@ import okhttp3.RequestBody
 @AndroidEntryPoint
 class AddPositionMapDialog(
     name: String,
-    store2: DataXX
+    store2: StoreServiceAjouterVisite
 ) :
     DialogFragment(), OnMapReadyCallback {
 

@@ -15,8 +15,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.example.gtm.R
 import com.example.gtm.data.entities.remote.SignInPost
-import com.example.gtm.data.entities.response.SignInResponse
-import com.example.gtm.data.entities.response.UserResponse
+import com.example.gtm.data.entities.response.login.SignInResponse
+import com.example.gtm.data.entities.response.login.UserResponse
 import com.example.gtm.databinding.FragmentSignInBinding
 import com.example.gtm.ui.drawer.DrawerActivity
 import com.example.gtm.utils.extensions.trimStringEditText
@@ -90,7 +90,6 @@ class SignInFragment : Fragment(), DialogInterface.OnDismissListener {
 
         return binding.root
     }
-
 
     //SignIn function
     @DelicateCoroutinesApi

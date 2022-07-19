@@ -46,6 +46,9 @@
         <action
             android:id="@+id/action_categoryFragment_to_questionNewFragment"
             app:destination="@id/questionNewFragment" />
+        <action
+            android:id="@+id/action_categoryFragment_to_compteRenduFragment"
+            app:destination="@id/compteRenduFragment" />
     </fragment>
     <fragment
         android:id="@+id/questionFragment"
@@ -68,6 +71,15 @@
         tools:layout="@layout/fragment_question_new" >
         <action
             android:id="@+id/action_questionNewFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/compteRenduFragment"
+        android:name="com.example.gtm.ui.home.mytask.survey.compterendu.CompteRenduFragment"
+        android:label="fragment_compte_rendu"
+        tools:layout="@layout/fragment_compte_rendu" >
+        <action
+            android:id="@+id/action_compteRenduFragment_to_categoryFragment"
             app:destination="@id/categoryFragment" />
     </fragment>
 </navigation>

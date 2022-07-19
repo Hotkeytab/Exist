@@ -16,6 +16,8 @@ class QuestionFragmentViewModel  @Inject constructor(
     private val surveyRepository: SurveyRepository
 ):ViewModel(){
 
-    suspend fun postSurveyResponse(files: ArrayList<MultipartBody.Part?>,surveyResponse: RequestBody) =
-        surveyRepository.postSurveyResponse(files,surveyResponse)
+    suspend fun postSurveyResponse(files: ArrayList<MultipartBody.Part?>,surveyResponse: RequestBody ,report: RequestBody) =
+        surveyRepository.postSurveyResponse(files,surveyResponse,report)
 }
+
+

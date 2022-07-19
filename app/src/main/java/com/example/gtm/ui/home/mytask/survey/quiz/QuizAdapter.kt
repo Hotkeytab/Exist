@@ -1,15 +1,13 @@
 package com.example.gtm.ui.home.mytask.survey.quiz
 
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.example.gtm.R
-import com.example.gtm.data.entities.response.QuizData
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.quiz.QuizData
 import com.example.gtm.databinding.ItemQuizBinding
 import com.example.gtm.ui.home.mytask.positionmap.PositionMapDialog
 
@@ -20,7 +18,7 @@ class QuizAdapter(private val listener: QuizFragment, activity: FragmentActivity
     private val activityIns = activity
 
     interface QuizItemListener {
-        fun onClickedQuiz(quiz: QuizData,surveyId : Int)
+        fun onClickedQuiz(quiz: QuizData, surveyId : Int)
     }
 
     private val items = ArrayList<QuizData>()

@@ -2,20 +2,16 @@ package com.example.gtm.ui.home.mytask
 
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.DialogFragment
 import com.example.gtm.R
 import dagger.hilt.android.AndroidEntryPoint
 import android.view.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.gtm.data.entities.response.SuccessResponseWithMessage
-import com.example.gtm.data.entities.response.TimeClass
-import com.example.gtm.data.entities.response.Visite
+import com.example.gtm.data.entities.response.mytaskplanning.supprimervisite.SuccessResponseDeleteVisite
+import com.example.gtm.data.entities.response.mytaskplanning.getvisite.Visite
 import com.example.gtm.utils.resources.Resource
 import kotlinx.android.synthetic.main.dialog_delete_store.*
-import kotlinx.android.synthetic.main.dialog_delete_store.progress_indicator
-import kotlinx.android.synthetic.main.fragment_task.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -32,7 +28,7 @@ class SupprimerVisiteDialog(
 
     val visiteId = visiteId2
     val positionVisite = positionVisite2
-    private lateinit var response: Resource<SuccessResponseWithMessage>
+    private lateinit var response: Resource<SuccessResponseDeleteVisite>
     private val viewModel: MyTaskViewModel by viewModels()
     private val taskAdapter = taskAdapter2
     private val items = items2

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -15,7 +14,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -24,12 +22,10 @@ import com.example.gtm.R
 import com.example.gtm.data.entities.remote.ImagePath
 import com.example.gtm.data.entities.remote.QuestionPost
 import com.example.gtm.data.entities.remote.SurveyPost
-import com.example.gtm.data.entities.response.QuestionCategory
-import com.example.gtm.data.entities.response.Quiz
-import com.example.gtm.data.entities.response.QuizData
-import com.example.gtm.data.entities.response.SuccessResponse
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.quiz.QuestionCategory
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.quiz.QuizData
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.category.SuccessResponse
 import com.example.gtm.data.entities.ui.Image
-import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.databinding.FragmentCategoryBinding
 import com.example.gtm.ui.drawer.DrawerActivity
 import com.example.gtm.ui.home.mytask.survey.question.QuestionFragmentViewModel
@@ -51,13 +47,15 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.concurrent.schedule
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
-import java.text.DecimalFormat
+import androidx.core.os.bundleOf
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.compterendu.PostSubjectCompteRendu
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.compterendu.Subject
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.compterendu.SubjectCompteRendu
+import java.util.*
+import kotlin.concurrent.schedule
 
 
 @AndroidEntryPoint
@@ -131,6 +129,13 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
             if (!((activity as DrawerActivity).loading))
                 findNavController().navigate(R.id.action_categoryFragment_to_quizFragment)
         }
+        /*
+
+        binding.AjoutCompteRendu.setOnClickListener {
+            if (!((activity as DrawerActivity).loading))
+                findNavController().navigate(R.id.action_categoryFragment_to_compteRenduFragment)
+        }
+       */
 
         //Get Store Object with ALl Responses Inside
         myVal = arguments?.getString("quizObject")
@@ -153,6 +158,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
 
         //Send Questions Results
+        //Old method without compte rendu
         binding.envoyerQuestionnaireButton.setOnClickListener {
 
             //Search for Incomplete Obligat Questions
@@ -183,10 +189,23 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
         }
 
+        //(activity as DrawerActivity).SubjectCompteRendu!!.add(subjectCompteRendu)
+       // Log.d("drawer",(activity as DrawerActivity).SubjectCompteRendu!!.get(0).toString())
+
+
+        //New Method with compte rendu included
+        val bundle = bundleOf("quizObject" to myVal)
+        binding.AjoutCompteRendu.setOnClickListener {
+            findNavController().navigate(R.id.action_categoryFragment_to_compteRenduFragment,bundle)
+        }
+
+
+
     }
 
 
     //Set Up RecycleView for Questions
+
     private fun setupRecycleViewCategory() {
 
         adapterCategory =
@@ -278,6 +297,33 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
                 }
             }
         }
+        val imagesRendu = ArrayList<ImagePath?>()
+        val imagesRendu1 = ArrayList<Image?>()
+
+
+        var reduLast: PostSubjectCompteRendu? =  PostSubjectCompteRendu()
+
+        if(!((activity as DrawerActivity).SubjectCompteRendu!!.isEmpty())){
+
+
+            for ( renduX in (activity as DrawerActivity).SubjectCompteRendu!!){
+
+                for(i in renduX.Images!!){
+                    convertToFileRendu(i, imagesRendu, listMultipartBody)}
+
+            }
+
+
+
+        }
+
+
+
+
+
+
+
+
 
 
 
@@ -285,6 +331,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
         val finalAverageBefore: Double = (average / coefTotal)
         val stringDecimal = (finalAverageBefore.toString()).substring(0, 3)
 
+         // var rendu= SubjectCompteRendu()
 
         val qp2 =
             SurveyPost(
@@ -293,14 +340,24 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
                 visiteId,
                 surveyId.toLong(),
                 stringDecimal.toDouble(),
-                listBody
+                listBody,
+
+
             )
+        Log.d("q2",qp2.toString())
+
 
 
         val userNewJson = jacksonObjectMapper().writeValueAsString(qp2)
         val bodyJson = RequestBody.create(
             "application/json; charset=utf-8".toMediaTypeOrNull(),
             userNewJson
+        )
+
+        val userNewJson1 = jacksonObjectMapper().writeValueAsString(reduLast)
+        val bodyJson1 = RequestBody.create(
+            "application/json; charset=utf-8".toMediaTypeOrNull(),
+            userNewJson1
         )
 
         filesNumber = listMultipartBody.size
@@ -310,8 +367,10 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
         GlobalScope.launch(Dispatchers.Main) {
             responseData = viewModel.postSurveyResponse(
                 listMultipartBody,
-                bodyJson
+                bodyJson,
+                bodyJson1
             ) as Resource<SuccessResponse>
+            Log.d("fromQesToC",userNewJson1.toString())
 
             if (responseData.responseCode == 201) {
                 val snack = Snackbar.make(
@@ -340,6 +399,8 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
                 (activity as DrawerActivity).loading = false
             }
         }
+
+        (activity as DrawerActivity).SubjectCompteRendu!!.clear()
     }
 
 
@@ -375,6 +436,50 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryItemListener,
 
             val mbp = MultipartBody.Part.createFormData(
                 file.name, file.name,
+                body
+            )
+
+            listMultipartBody.add(mbp)
+
+            requireActivity().contentResolver.delete(selectedImageUri, null, null)
+
+        }
+
+        return null
+
+
+    }
+    private fun convertToFileRendu(
+        image: Image,
+        images: ArrayList<ImagePath?>?,
+        listMultipartBody: ArrayList<MultipartBody.Part?>
+    ): MultipartBody.Part? {
+
+        val selectedImageUri = getImageUri(requireContext(), image.url)
+
+        if (selectedImageUri != null) {
+            val parcelFileDescriptor =
+                requireActivity().contentResolver.openFileDescriptor(selectedImageUri, "r", null)
+                    ?: return null
+
+            val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
+
+            val file = File(
+                requireActivity().cacheDir,
+                requireActivity().contentResolver.getFileName(selectedImageUri)
+            )
+
+            val body = ProgressRequestBody(file, "image", this)
+
+
+            val outputStream = FileOutputStream(file)
+            inputStream.copyTo(outputStream)
+
+
+            images!!.add(ImagePath(file.name))
+
+            val mbp = MultipartBody.Part.createFormData(
+                "reportPicture", "reportPicture",
                 body
             )
 

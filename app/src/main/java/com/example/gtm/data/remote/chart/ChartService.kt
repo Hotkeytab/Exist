@@ -1,18 +1,10 @@
 package com.example.gtm.data.remote.chart
 
 
-import com.example.gtm.data.entities.custom.chart.ChartResponse
-import com.example.gtm.data.entities.response.*
-import com.example.gtm.data.entities.ui.User
-import okhttp3.MultipartBody
+import com.example.gtm.data.entities.response.kpi.piechart.ChartResponse
+import com.example.gtm.data.entities.response.kpi.analysesupervisuer.AnalyseKpi
 import retrofit2.Response
 import retrofit2.http.*
-import okhttp3.RequestBody
-import retrofit2.Call
-
-import retrofit2.http.POST
-
-import retrofit2.http.Multipart
 
 
 interface ChartService {

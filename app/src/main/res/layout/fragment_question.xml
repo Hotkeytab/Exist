@@ -173,10 +173,10 @@
                         android:id="@+id/plus_image"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:layout_marginTop="@dimen/_20sdp"
-                        android:visibility="gone"
-                        android:gravity="center">
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:visibility="visible">
 
                         <androidx.cardview.widget.CardView
 
@@ -205,13 +205,12 @@
 
                     </LinearLayout>
 
-
                     <ImageView
                         android:id="@+id/show_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:visibility="gone" />
+                        android:visibility="visible" />
 
 
                 </LinearLayout>
@@ -236,9 +235,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_weight="1"
+                android:visibility="visible"
                 app:cardCornerRadius="@dimen/_4sdp"
-                app:cardUseCompatPadding="true"
-                android:visibility="gone">
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -253,6 +252,7 @@
                         android:layout_height="@dimen/_25sdp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_arowback"
+                        android:visibility="visible"
                         app:tint="@color/purpleLogin" />
 
                     <TextView
@@ -269,12 +269,14 @@
                         android:gravity="center"
                         android:text="Précédent"
                         android:textColor="@color/black"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:visibility="visible" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:visibility="visible" />
 
                 </LinearLayout>
 
@@ -283,7 +285,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="200" />
+                android:layout_weight="200"
+                android:visibility="visible" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/suivant"
@@ -341,9 +344,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_weight="1"
+                android:visibility="visible"
                 app:cardCornerRadius="@dimen/_4sdp"
-                app:cardUseCompatPadding="true"
-                android:visibility="gone">
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -373,7 +376,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1" />
-
 
 
                 </LinearLayout>

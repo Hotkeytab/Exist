@@ -1,17 +1,13 @@
 package com.example.gtm.ui.home.suivie.detail
 
 
-import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.example.gtm.R
-import com.example.gtm.data.entities.response.QuizData
-import com.example.gtm.data.entities.response.Survey
+import com.example.gtm.data.entities.response.suivieplanning.Survey
 import com.example.gtm.databinding.ItemQuizBinding
 import com.example.gtm.ui.home.mytask.positionmap.PositionMapDialog
 import java.text.SimpleDateFormat
@@ -26,7 +22,7 @@ class SuivieDetailFragmentAdapter(private val listener: SuivieDetailFragment, ac
     private val sdActivity = sdActivity2
 
     interface SuivieDetailItemListener {
-        fun onClickedQuiz(quiz: Survey,surveyId : Int)
+        fun onClickedQuiz(quiz: Survey, surveyId : Int)
     }
 
     private val items = ArrayList<Survey>()

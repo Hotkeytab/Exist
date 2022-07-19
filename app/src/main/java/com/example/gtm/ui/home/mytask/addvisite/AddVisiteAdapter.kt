@@ -1,33 +1,16 @@
 package com.example.gtm.ui.home.mytask.addvisite
 
-import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.gtm.R
-import com.example.gtm.data.entities.response.DataXX
-import com.example.gtm.data.entities.response.Survey
-import com.example.gtm.data.entities.response.Visite
+import com.example.gtm.data.entities.response.mytaskplanning.ajoutervisite.StoreServiceAjouterVisite
 import com.example.gtm.databinding.ItemAddStoreBinding
-import com.example.gtm.databinding.ItemTaskBinding
-import com.example.gtm.ui.drawer.DrawerActivity
-import com.example.gtm.ui.home.mytask.positionmap.PositionMapDialog
-import kotlinx.android.synthetic.main.dialog_edit_profile.*
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
 
 class AddVisiteAdapter(
     private val listener: AddVisteDialog,
@@ -36,14 +19,14 @@ class AddVisiteAdapter(
 
 
     interface TaskItemListener {
-        fun onClickedTask(taskId: Int,lat:Double?,lng:Double?,name: String,store:DataXX)
+        fun onClickedTask(taskId: Int,lat:Double?,lng:Double?,name: String,store: StoreServiceAjouterVisite)
 
     }
 
-    private val items = ArrayList<DataXX>()
+    private val items = ArrayList<StoreServiceAjouterVisite>()
 
 
-    fun setItems(items: ArrayList<DataXX>) {
+    fun setItems(items: ArrayList<StoreServiceAjouterVisite>) {
         this.items.clear()
         this.items.addAll(items)
         notifyDataSetChanged()
@@ -75,7 +58,7 @@ class TaskViewHolder(
     View.OnClickListener {
 
 
-    private lateinit var visiteResponse: DataXX
+    private lateinit var visiteResponse: StoreServiceAjouterVisite
     lateinit var sharedPref: SharedPreferences
 
     init {
@@ -83,7 +66,7 @@ class TaskViewHolder(
     }
 
 
-    fun bind(item: DataXX) {
+    fun bind(item: StoreServiceAjouterVisite) {
         this.visiteResponse = item
 
 

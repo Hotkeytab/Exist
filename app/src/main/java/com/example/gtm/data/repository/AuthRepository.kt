@@ -9,4 +9,6 @@ class AuthRepository  @Inject constructor(
     private val  authDataSource: AuthRemoteDataSource
 ) {
     suspend fun login (signinObject: SignInPost) = authDataSource.login(signinObject)
+
+
 }

@@ -1,7 +1,6 @@
 package com.example.gtm.ui.home.mytask.survey.category
 
 import android.graphics.Color
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -14,10 +13,8 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.example.gtm.R
-import com.example.gtm.data.entities.response.QuestionCategory
-import com.example.gtm.data.entities.response.QuizData
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.quiz.QuestionCategory
 import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.ui.drawer.DrawerActivity
 import com.google.android.material.snackbar.Snackbar
@@ -151,7 +148,6 @@ class CategoryViewHolder(
             if (!addedValues) {
                 for (j in categoryResponse.questionSubCategories) {
 
-
                     i++
                     test = drawerActivity.listOfQuestionsPerSc[j.questions[0].questionSubCategoryId]
 
@@ -162,8 +158,6 @@ class CategoryViewHolder(
 
                         inflater.id = j.id
                         inflater.title_subcateg.text = j.name
-
-
 
 
 

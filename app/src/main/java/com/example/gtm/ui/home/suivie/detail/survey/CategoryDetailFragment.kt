@@ -11,15 +11,10 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gtm.R
-import com.example.gtm.data.entities.response.QuestionCategory
-import com.example.gtm.data.entities.response.QuizData
-import com.example.gtm.data.entities.response.Survey
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.quiz.QuestionCategory
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.quiz.QuizData
 import com.example.gtm.databinding.FragmentCategoryDetailBinding
-import com.example.gtm.databinding.FragmentSuivieDetailBinding
-import com.example.gtm.ui.drawer.DrawerActivity
-import com.example.gtm.ui.home.mytask.survey.category.CategoryAdapter
 import com.example.gtm.ui.home.suivie.detail.SuiviDetailActivity
-import com.example.gtm.ui.home.suivie.detail.SuivieDetailFragmentAdapter
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -60,7 +55,7 @@ class CategoryDetailFragment : Fragment(), CategoryDetailNewAdapter.CategoryDeta
 
 
 
-        //COnvert myVal Json to QUizData Object
+        //Convert myVal Json to QUizData Object
         val gson = Gson()
         val objectList = gson.fromJson(myVal, QuizData::class.java)
 
@@ -94,6 +89,8 @@ class CategoryDetailFragment : Fragment(), CategoryDetailNewAdapter.CategoryDeta
 
         adapterDetailCategory =
             CategoryDetailNewAdapter(this, requireActivity(), myVal!!,(activity as SuiviDetailActivity))
+        Log.d("valmeher",myVal.toString())
+
         binding.categoryRecycleview.isMotionEventSplittingEnabled = false
         binding.categoryRecycleview.layoutManager = LinearLayoutManager(requireContext())
         binding.categoryRecycleview.layoutManager = LinearLayoutManager(

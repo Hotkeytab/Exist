@@ -3,7 +3,6 @@ package com.example.gtm.ui.home.suivie
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,10 +10,9 @@ import android.widget.LinearLayout
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gtm.R
-import com.example.gtm.data.entities.response.DataX
-import com.example.gtm.data.entities.response.Visite
+import com.example.gtm.data.entities.response.suivieplanning.ResponsesOfAllQuestions
+import com.example.gtm.data.entities.response.mytaskplanning.getvisite.Visite
 import com.example.gtm.databinding.ItemBlocSuivieBinding
-import com.example.gtm.databinding.ItemTaskBinding
 import com.example.gtm.ui.drawer.DrawerActivity
 import com.example.gtm.ui.home.mytask.StaticMapClicked
 import com.example.gtm.ui.home.mytask.daysFilter
@@ -30,7 +28,7 @@ class SuiviePlanningBlocAdapter(
     private val listener: SuiviePlanningFragment,
     activity: FragmentActivity,
     activityDrawer2: DrawerActivity,
-    listaSurveyResponse2: ArrayList<DataX>
+    listaSurveyResponse2: ArrayList<ResponsesOfAllQuestions>
 ) :
     RecyclerView.Adapter<TaskViewBlocHolder>() {
 
@@ -81,7 +79,7 @@ class TaskViewBlocHolder(
     private val activityIns: FragmentActivity,
     private val parent: ViewGroup,
     private val activityDrawer: DrawerActivity,
-    private val listaSurveyResponse: ArrayList<DataX>
+    private val listaSurveyResponse: ArrayList<ResponsesOfAllQuestions>
 ) : RecyclerView.ViewHolder(itemBinding.root),
     View.OnClickListener {
 
@@ -145,10 +143,10 @@ class TaskViewBlocHolder(
     }
 
 
-    private fun initStore(item:Visite) : View
+    private fun initStore(item: Visite) : View
     {
         var suivie = false
-        val afterSuiviArray = ArrayList<DataX>()
+        val afterSuiviArray = ArrayList<ResponsesOfAllQuestions>()
 
 
         val inflater =
@@ -256,7 +254,7 @@ class TaskViewBlocHolder(
         return parent.findViewWithTag<LinearLayout>(tag)
     }
 
-    private fun transformArray(afterSuiviArray: ArrayList<DataX>): String {
+    private fun transformArray(afterSuiviArray: ArrayList<ResponsesOfAllQuestions>): String {
         return Gson().toJson(afterSuiviArray)
     }
 

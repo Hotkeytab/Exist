@@ -17,16 +17,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gtm.R
 import com.example.gtm.data.entities.custom.QuestionNewPost
 import com.example.gtm.data.entities.custom.UserInf
-import com.example.gtm.data.entities.remote.QuestionPost
-import com.example.gtm.data.entities.response.Question
-import com.example.gtm.data.entities.response.QuestionSubCategory
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.quiz.Question
 import com.example.gtm.data.entities.ui.Image
-import com.example.gtm.databinding.FragmentKpiGraphBinding
 import com.example.gtm.databinding.FragmentQuestionNewBinding
 import com.example.gtm.ui.drawer.DrawerActivity
-import com.example.gtm.ui.home.mytask.survey.question.AfficherImageDialog
-import com.example.gtm.ui.home.mytask.survey.question.ChoixImageDialog
-import com.example.gtm.ui.home.mytask.survey.question.ImageAdapter
 import com.example.gtm.utils.remote.Internet.InternetCheckDialog
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -72,6 +66,9 @@ class QuestionNewFragment : Fragment(), ImageNewAdapter.ImageItemListener {
         //Get Passed Params and Objects
         val myVal = arguments?.getString("questionObject")
         myVar2 = arguments?.getString("quizObject")
+
+
+
         emptyQuestion = arguments?.getBoolean("empty")!!
 
         //Convert Json String to Question Object
@@ -207,6 +204,8 @@ class QuestionNewFragment : Fragment(), ImageNewAdapter.ImageItemListener {
             )
             (activity as DrawerActivity).surveyPostArrayList[userInf] = myQusObject
             val bundle = bundleOf("quizObject" to myVar2)
+            Log.d("fromQesToC",myQusObject.toString())
+
             findNavController().navigate(
                 R.id.action_questionNewFragment_to_categoryFragment,
                 bundle

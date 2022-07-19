@@ -3,15 +3,13 @@ package com.example.gtm.ui.home.mytask
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gtm.R
-import com.example.gtm.data.entities.response.Survey
-import com.example.gtm.data.entities.response.Visite
+import com.example.gtm.data.entities.response.mytaskplanning.getvisite.Visite
 import com.example.gtm.databinding.ItemTaskBinding
 import com.example.gtm.ui.drawer.DrawerActivity
 import com.example.gtm.ui.home.mytask.positionmap.PositionMapDialog
@@ -31,25 +29,22 @@ class TaskAdapter(
 ) :
     RecyclerView.Adapter<TaskViewHolder>() {
 
-
     private val activityIns = activity
     private val activityDrawer = activityDrawer2
     private val listaTask = listaTasks2
 
     interface TaskItemListener {
-        fun onClickedTask(taskId: Int, distance: String, visite: Visite,theDistance: Float)
+        fun onClickedTask(taskId: Int, distance: String, visite: Visite, theDistance: Float)
 
     }
 
     private val items = ArrayList<Visite>()
 
 
-    fun setItems(items: ArrayList<Visite>) {
+    fun setItems(items: ArrayList<Visite>){
         this.items.clear()
         this.items.addAll(items)
-        notifyDataSetChanged()
-
-    }
+        notifyDataSetChanged()}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val binding: ItemTaskBinding =
@@ -249,12 +244,7 @@ class TaskViewHolder(
             visiteResponse.storeId,
             finalDistance,
             visiteResponse,
-            theDistance
-        )
-
-
-
-    }
+            theDistance) }
 
 
     //calculate Distance
@@ -268,8 +258,7 @@ class TaskViewHolder(
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
         val distance = earthRadius * c
         val meterConversion = 1609
-        return (distance * meterConversion.toFloat()).toFloat()
-    }
+        return (distance * meterConversion.toFloat()).toFloat()}
 
 
 

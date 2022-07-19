@@ -1,73 +1,41 @@
 package com.example.gtm.ui.home.mytask.addvisite
 
-import android.annotation.SuppressLint
-import android.annotation.TargetApi
-import android.app.Activity
-import android.content.ContentUris
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.example.gtm.R
 import dagger.hilt.android.AndroidEntryPoint
-import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
-import android.os.Build
-import android.provider.DocumentsContract
-import android.provider.MediaStore
-import android.util.Log
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.gtm.BuildConfig
 import com.example.gtm.data.entities.remote.VisitPost
-import com.example.gtm.data.entities.response.*
-import com.example.gtm.data.entities.ui.Image
-import com.example.gtm.ui.drawer.DrawerActivity
-import com.example.gtm.ui.home.mytask.MyTaskViewModel
-import com.example.gtm.ui.home.mytask.TaskAdapter
-import com.example.gtm.ui.home.mytask.survey.SurveyCheckDialog
 import com.example.gtm.ui.home.mytask.survey.quiz.MyQuizViewModel
 import com.example.gtm.utils.resources.Resource
 import kotlinx.android.synthetic.main.dialog_add_visite.*
-import kotlinx.android.synthetic.main.dialog_choix_image.*
-import kotlinx.android.synthetic.main.dialog_choix_visitee.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import android.content.DialogInterface
-import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.Fragment
 import android.text.Editable
 
 import android.text.TextWatcher
 import android.view.*
 import android.widget.FrameLayout
 import androidx.fragment.app.FragmentManager
-import com.example.gtm.ui.home.mytask.positionmap.AddPositionMapDialog
 import com.example.gtm.ui.home.mytask.positionmap.AjouterPositionDialog
-import com.example.gtm.ui.home.mytask.positionmap.PositionMapDialog
 import com.example.gtm.utils.remote.Internet.InternetCheck
 import com.example.gtm.utils.remote.Internet.InternetCheckDialog
 import kotlinx.android.synthetic.main.dialog_edit_profile.*
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
+import com.example.gtm.data.entities.response.mytaskplanning.ajoutervisite.GetStore
+import com.example.gtm.data.entities.response.mytaskplanning.ajoutervisite.StoreServiceAjouterVisite
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.category.SuccessResponse
+import com.example.gtm.data.entities.response.mytaskplanning.getvisite.Visite
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -83,7 +51,7 @@ class AddVisteDialog(
     private lateinit var responseDataStores: Resource<GetStore>
     private lateinit var responseAdd: Resource<SuccessResponse>
     private lateinit var adapterAddVisite: AddVisiteAdapter
-    private var listaDataXX = ArrayList<DataXX>()
+    private var listaDataXX = ArrayList<StoreServiceAjouterVisite>()
     private var userId = 0
     lateinit var sharedPref: SharedPreferences
     private lateinit var dialogInternet: InternetCheckDialog
@@ -143,7 +111,7 @@ class AddVisteDialog(
                             search_text.text.toString()
                         )
                     }
-                    adapterAddVisite.setItems(newArrayList as ArrayList<DataXX>)
+                    adapterAddVisite.setItems(newArrayList as ArrayList<StoreServiceAjouterVisite>)
                 }
 
 
@@ -169,7 +137,7 @@ class AddVisteDialog(
         lat: Double?,
         lng: Double?,
         name: String,
-        store: DataXX
+        store: StoreServiceAjouterVisite
     ) {
 
 
@@ -253,7 +221,7 @@ class AddVisteDialog(
             //If Response is Good
             if (responseDataStores.responseCode == 200) {
                 progress_indicator.visibility = View.GONE
-                listaDataXX = responseDataStores.data!!.data as ArrayList<DataXX>
+                listaDataXX = responseDataStores.data!!.data as ArrayList<StoreServiceAjouterVisite>
                 setupRecycleViewPredictionDetail()
             } else {
                 if (progress_indicator != null)

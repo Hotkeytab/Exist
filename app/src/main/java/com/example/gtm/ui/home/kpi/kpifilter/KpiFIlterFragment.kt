@@ -35,15 +35,19 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.gtm.data.entities.custom.KpiStats
-import com.example.gtm.data.entities.custom.chart.ChartResponse
-import com.example.gtm.data.entities.custom.chart.DataChart
-import com.example.gtm.data.entities.response.*
+import com.example.gtm.data.entities.response.kpi.piechart.ChartResponse
+import com.example.gtm.data.entities.response.kpi.piechart.DataChart
+import com.example.gtm.data.entities.response.kpi.Quiz
+import com.example.gtm.data.entities.response.kpi.analysesupervisuer.AnalyseKpi
+import com.example.gtm.data.entities.response.kpi.analysesupervisuer.ChoixSuperAnalyse
+import com.example.gtm.data.entities.response.mytaskplanning.ajoutervisite.GetStore
+import com.example.gtm.data.entities.response.mytaskplanning.ajoutervisite.StoreServiceAjouterVisite
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.quiz.QuizData
 import com.example.gtm.ui.home.kpi.KpiFinalResultActivity
 import com.example.gtm.ui.home.kpi.piechart.PieChartLastActivity
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_kpi_f_ilter.swiperefreshlayout
 import kotlinx.android.synthetic.main.fragment_kpi_f_ilter.topAppBar
-import kotlinx.android.synthetic.main.fragment_task.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -61,8 +65,8 @@ class KpiFIlterFragment : Fragment() {
     private val viewModelKpi: KpiFilterFragmentViewModel by viewModels()
 
     //List of StoreXX
-    private var listaDataXX = ArrayList<DataXX>()
-    private var listaKpi = ArrayList<DataXXX>()
+    private var listaDataXX = ArrayList<StoreServiceAjouterVisite>()
+    private var listaKpi = ArrayList<ChoixSuperAnalyse>()
     private lateinit var responseDataQuestionnaire: Resource<Quiz>
     private lateinit var responseKpi: Resource<AnalyseKpi>
     private lateinit var responseChart: Resource<ChartResponse>
@@ -333,7 +337,7 @@ class KpiFIlterFragment : Fragment() {
     }
 
     //End Date must be >= to Start Date
-    private fun controleDate(): Boolean {
+        private fun controleDate(): Boolean {
        /* day_debut_picker =
             "${date_debut_picker.year}-${(date_debut_picker.month + 1)}-${date_debut_picker.dayOfMonth}"
         day_fin_picker =
@@ -418,7 +422,7 @@ class KpiFIlterFragment : Fragment() {
                     progress_indicator.visibility = View.GONE
 
                 //Get list of stores as listaDataXX
-                listaDataXX = responseDataStores.data!!.data as ArrayList<DataXX>
+                listaDataXX = responseDataStores.data!!.data as ArrayList<StoreServiceAjouterVisite>
 
                 //Convert List of Store to Map storeName -> storeId
                 getSubListStore()
@@ -433,6 +437,8 @@ class KpiFIlterFragment : Fragment() {
                 // Repeat getStoresAndQuestionnaires() until we get good response
             } else {
 
+
+                if(fm != null)
                 progressUploadDialog.dismiss()
                 getStoresAndQuestionnaires()
 
@@ -455,7 +461,7 @@ class KpiFIlterFragment : Fragment() {
                 if (responseDataQuestionnaire.responseCode == 200) {
                     //Extract List of Questionnaires from response
                     listaQuiz = responseDataQuestionnaire.data!!.data as ArrayList<QuizData>
-
+              Log.d("kyuraku",listaQuiz.toString())
                     //Convert List of Questionnaire to Map quizName -> quizId
                     getSubListQuestionnaire()
                     progressUploadDialog.dismiss()
@@ -597,6 +603,7 @@ class KpiFIlterFragment : Fragment() {
                 //Get List of CHar from response
                 listaChar = responseChart.data?.data as ArrayList<DataChart>
 
+
                 // Get Unique Name of every Store
                 extractStore()
 
@@ -734,13 +741,15 @@ class KpiFIlterFragment : Fragment() {
             //If >Everything is good
             if (responseKpi.responseCode == 200) {
 
+
                 //Remove progress dialog and clear all errors
                 progressUploadDialog.dismiss()
                 binding.errorTextKpi.visibility = View.GONE
 
 
                 //GetLista Kpi From response as DataXXX
-                listaKpi = responseKpi.data!!.data as ArrayList<DataXXX>
+                listaKpi = responseKpi.data!!.data as ArrayList<ChoixSuperAnalyse>
+           Log.d("kyurakuu",listaKpi.toString())
 
 
                 //Prepare KPI Object for Analyse superviseur

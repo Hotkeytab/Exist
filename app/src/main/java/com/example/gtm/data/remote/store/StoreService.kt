@@ -1,13 +1,11 @@
 package com.example.gtm.data.remote.store
 
 
-import com.example.gtm.data.entities.response.*
-import com.example.gtm.data.entities.ui.User
-import okhttp3.MultipartBody
+import com.example.gtm.data.entities.response.mytaskplanning.ajoutervisite.GetStore
+import com.example.gtm.data.entities.response.mytaskplanning.ajoutervisite.ModifyStoreResponse
 import retrofit2.Response
 import retrofit2.http.*
 import okhttp3.RequestBody
-import retrofit2.Call
 
 import retrofit2.http.POST
 

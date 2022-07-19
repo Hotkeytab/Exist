@@ -14,7 +14,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -26,8 +25,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.gtm.data.entities.response.Visite
-import com.example.gtm.data.entities.response.VisiteResponse
+import com.example.gtm.data.entities.response.mytaskplanning.getvisite.Visite
+import com.example.gtm.data.entities.response.mytaskplanning.getvisite.VisiteResponse
 import com.example.gtm.databinding.FragmentTaskBinding
 import com.example.gtm.ui.drawer.DrawerActivity
 import com.example.gtm.ui.home.mytask.survey.SurveyCheckDialog
@@ -38,7 +37,6 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.fragment_task.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -51,18 +49,16 @@ import android.view.*
 import com.example.gtm.R
 import android.view.MenuInflater
 import androidx.activity.OnBackPressedCallback
-import androidx.fragment.app.commitNow
 import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.gtm.data.entities.response.TimeClass
 import com.example.gtm.ui.home.mytask.addvisite.AddVisteDialog
 import com.example.gtm.ui.home.suivie.ChoixImageDialogSuivie
-import kotlinx.android.synthetic.main.dialog_add_visite.*
 import kotlinx.android.synthetic.main.fragment_task.swiperefreshlayout
 
 // In this fragment , I had to do many filters because the backend service is giving me wrong results
 // For example : if I ask for  getVisite() Between 6th April and 10th April , the service will give me
-// Results Between 5th April and 11th April , that's why I had to filter and verify data before showing it
+// Results Between 5th April and 11th April ,
+// that's why I had to filter and verify data before showing it
 
 @AndroidEntryPoint
 class TaskFragment : Fragment(), TaskAdapter.TaskItemListener,

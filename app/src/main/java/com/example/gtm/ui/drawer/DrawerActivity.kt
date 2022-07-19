@@ -5,12 +5,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.SystemClock
-import android.util.Log
 import android.view.MenuItem
-import android.view.View
 import androidx.activity.viewModels
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
@@ -18,25 +14,23 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.gtm.R
 import com.example.gtm.data.entities.custom.QuestionNewPost
 import com.example.gtm.data.entities.custom.UserInf
-import com.example.gtm.data.entities.remote.QuestionPost
-import com.example.gtm.data.entities.remote.SurveyPost
-import com.example.gtm.data.entities.response.UserResponse
-import com.example.gtm.data.entities.response.Visite
+import com.example.gtm.data.entities.remote.ImagePath
+import com.example.gtm.data.entities.response.login.UserResponse
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.compterendu.PostSubjectCompteRendu
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.compterendu.SubjectCompteRendu
+import com.example.gtm.data.entities.response.mytaskplanning.getvisite.Visite
 import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.data.entities.ui.User
 import com.example.gtm.ui.auth.AuthActivity
 import com.example.gtm.ui.drawer.profile.EditProfileDialog
 import com.example.gtm.ui.home.kpi.KpiGraphFragment
-import com.example.gtm.ui.home.kpi.piechart.KpiFragment
 import com.example.gtm.ui.home.mytask.BeforeHomeFragment
 import com.example.gtm.ui.home.suivie.SuiviePlanningFragment
-import com.example.gtm.utils.animations.UiAnimations
 import com.example.gtm.utils.resources.Resource
 import com.example.gtm.utils.token.SessionManager
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.fragment_task.progress_indicator
 import kotlinx.android.synthetic.main.nav_header_main.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -65,6 +59,8 @@ class DrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
     //This array is used  to post final response for quiz
     var surveyPostArrayList: HashMap<UserInf, QuestionNewPost> = HashMap<UserInf, QuestionNewPost>()
+
+     var SubjectCompteRendu: ArrayList<PostSubjectCompteRendu>? = ArrayList<PostSubjectCompteRendu>()
 
     //Current fragment
     var nowFragment = 0

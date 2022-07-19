@@ -3,7 +3,6 @@ package com.example.gtm.ui.home.mytask.survey.quiz
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,10 +16,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.gtm.R
-import com.example.gtm.data.entities.response.DataX
-import com.example.gtm.data.entities.response.Quiz
-import com.example.gtm.data.entities.response.QuizData
-import com.example.gtm.data.entities.response.SurveyResponse
+import com.example.gtm.data.entities.response.suivieplanning.ResponsesOfAllQuestions
+import com.example.gtm.data.entities.response.kpi.Quiz
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.quiz.QuizData
+import com.example.gtm.data.entities.response.suivieplanning.SurveyResponse
 import com.example.gtm.data.entities.ui.Survey
 import com.example.gtm.databinding.FragmentQuizBinding
 import com.example.gtm.ui.drawer.DrawerActivity
@@ -34,7 +33,6 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.dialog_add_visite.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -49,7 +47,7 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
     private lateinit var adapterSurvey: QuizAdapter
     private lateinit var responseDataQuiz: Resource<Quiz>
     private lateinit var responseData2: Resource<SurveyResponse>
-    private var listaSurveyResponse = ArrayList<DataX>()
+    private var listaSurveyResponse = ArrayList<ResponsesOfAllQuestions>()
     private var listaQuiz = ArrayList<QuizData>()
     private val viewModel: MyQuizViewModel by viewModels()
     private val viewModel2: MyTaskViewModel by viewModels()
@@ -204,9 +202,9 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
 
         for (i in listaSurveyResponse) {
             if (i.surveyId == quizId)
-                return true
+                return false
         }
-        return false
+        return false // filter questionnaire effectué
     }
 
 
@@ -222,17 +220,19 @@ class QuizFragment : Fragment(), QuizAdapter.QuizItemListener {
                 responseData2 =
                     viewModel2.getSurveyResponse(userId.toString(), dateTimeBegin, dateTimeBegin)
 
+            if (responseData2 != null) {
 
-            if (responseData2.responseCode == 200) {
-                listaSurveyResponse = responseData2.data!!.data as ArrayList<DataX>
+                if (responseData2.responseCode == 200) {
+                    listaSurveyResponse = responseData2.data!!.data as ArrayList<ResponsesOfAllQuestions>
 
 
-                listaQuiz =
-                    listaQuiz.filter { list -> !searchForQuiz(list.id) } as ArrayList<QuizData>
+                    listaQuiz =
+                        listaQuiz.filter { list -> !searchForQuiz(list.id) } as ArrayList<QuizData>
 
-                setupRecycleViewSurvey()
-            } else {
-                checkInternet()
+                    setupRecycleViewSurvey()
+                } else {
+                    checkInternet()
+                }
             }
         }
     }

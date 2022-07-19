@@ -1,7 +1,5 @@
 package com.example.gtm.ui.home.suivie.detail.survey
 
-import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,15 +10,10 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.example.gtm.R
-import com.example.gtm.data.entities.response.QuestionCategory
-import com.example.gtm.data.entities.response.QuizData
-import com.example.gtm.data.entities.ui.Survey
-import com.example.gtm.ui.drawer.DrawerActivity
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.quiz.QuestionCategory
 import com.example.gtm.ui.home.suivie.detail.SuiviDetailActivity
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.fragment_category.*
 import kotlinx.android.synthetic.main.item_sous_category.view.*
 
 

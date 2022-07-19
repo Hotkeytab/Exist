@@ -3,15 +3,14 @@ package com.example.gtm.ui.home.mytask.survey.question
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gtm.R
-import com.example.gtm.data.entities.response.Question
-import com.example.gtm.data.entities.response.QuestionSubCategory
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.quiz.Question
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.quiz.QuestionSubCategory
 import com.example.gtm.data.entities.ui.Image
 import com.example.gtm.databinding.FragmentQuestionBinding
 import com.google.gson.Gson
@@ -34,7 +33,8 @@ import androidx.fragment.app.viewModels
 import com.example.gtm.data.entities.remote.ImagePath
 import com.example.gtm.data.entities.remote.QuestionPost
 import com.example.gtm.data.entities.remote.SurveyPost
-import com.example.gtm.data.entities.response.SuccessResponse
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.category.SuccessResponse
+import com.example.gtm.data.entities.response.mytaskplanning.detailservicequestionnaire.compterendu.SubjectCompteRendu
 import com.example.gtm.ui.drawer.DrawerActivity
 import com.example.gtm.utils.remote.Internet.InternetCheck
 import com.example.gtm.utils.remote.Internet.InternetCheckDialog
@@ -516,6 +516,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
             listBody.add(questionPost)
 
         }
+//val rendu = SubjectCompteRendu()
 
         val qp2 = SurveyPost(
             userId.toLong(),
@@ -523,7 +524,8 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
             visiteId,
             surveyId.toLong(),
             0.0,
-            listBody
+            listBody,
+            //rendu
         )
 
         val userNewJson = jacksonObjectMapper().writeValueAsString(qp2)
@@ -533,20 +535,23 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
         )
 
 
-        checkInternet(listMultipartBody, bodyJson)
+        checkInternet(listMultipartBody, bodyJson )
     }
 
 
     private fun getQuestions(
         listMultipartBody: ArrayList<MultipartBody.Part?>,
         bodyJson: RequestBody
-    ) {
+
+    ) {/*
         GlobalScope.launch(Dispatchers.Main) {
             responseData = viewModel.postSurveyResponse(
                 listMultipartBody,
-                bodyJson
+                bodyJson,
+                bodyJson1
             ) as Resource<SuccessResponse>
         }
+        */
     }
 
     private fun nextCategory() {
@@ -606,7 +611,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
     ) {
         InternetCheck { internet ->
             if (internet)
-                getQuestions(listMultipartBody, bodyJson)
+                getQuestions(listMultipartBody, bodyJson )
             else {
 
                 //  progress_indicator_dialog.visibility = View.INVISIBLE
@@ -617,7 +622,7 @@ class QuestionFragment : Fragment(), ImageAdapter.ImageItemListener,
                 fm.executePendingTransactions();
 
                 dialogInternet.dialog!!.setOnCancelListener {
-                    checkInternet(listMultipartBody, bodyJson)
+                    checkInternet(listMultipartBody, bodyJson )
                 }
 
 

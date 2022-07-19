@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,7 @@ import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.gtm.R
-import com.example.gtm.data.entities.response.EditProfileResponse
+import com.example.gtm.data.entities.response.profile.EditProfileResponse
 import com.example.gtm.data.entities.ui.User
 import com.example.gtm.ui.drawer.DrawerActivityViewModel
 import com.example.gtm.utils.Image.UploadRequestBody

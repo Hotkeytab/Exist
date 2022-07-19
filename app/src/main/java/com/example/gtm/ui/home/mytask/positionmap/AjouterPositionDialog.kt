@@ -2,29 +2,18 @@ package com.example.gtm.ui.home.mytask.positionmap
 
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.DialogFragment
 import com.example.gtm.R
 import dagger.hilt.android.AndroidEntryPoint
 import android.view.*
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import com.example.gtm.data.entities.response.DataXX
-import com.example.gtm.data.entities.response.SuccessResponseWithMessage
-import com.example.gtm.data.entities.response.TimeClass
-import com.example.gtm.data.entities.response.Visite
-import com.example.gtm.utils.resources.Resource
+import com.example.gtm.data.entities.response.mytaskplanning.ajoutervisite.StoreServiceAjouterVisite
 import kotlinx.android.synthetic.main.dialog_delete_store.*
-import kotlinx.android.synthetic.main.dialog_delete_store.progress_indicator
-import kotlinx.android.synthetic.main.fragment_task.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
 class AjouterPositionDialog(
         name2: String,
-        store2: DataXX
+        store2: StoreServiceAjouterVisite
 ) :
     DialogFragment() {
 
